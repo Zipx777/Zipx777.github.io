@@ -12,9 +12,9 @@ $(function(){
 function tileMouseover() {
     var tileText = $(this).text();
     if (tileText == "") {
-        $(this).css("background-color", "green");
+        $(this).css("background-color", "lightgreen");
     } else {
-        $(this).css("background-color", "red");
+        $(this).css("background-color", "lightred");
     }
 }
 
