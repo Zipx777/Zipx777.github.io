@@ -425,8 +425,8 @@ Small Device Styles
 }
 
 .board {
-  width: 492px;
-  height: 492px;
+  width: 456px;
+  height: 456px;
   background-color: black;
   border: 4px solid blue;
 }
