@@ -424,6 +424,14 @@ Small Device Styles
 
 }
 
+.board {
+  border: 2px solid green;
+}
+
+.tictactoesquare {
+  border: 2px solid yellow;
+}
+
 .tile {
   width: 20px;
   height: 20px;
