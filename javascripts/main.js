@@ -1,4 +1,6 @@
 //document ready function
 $(function(){
-    alert("hello");
+    $(".tile").mouseover(function() {
+        $(this).css("background-color", "red");
+    })
 });
