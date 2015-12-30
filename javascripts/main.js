@@ -58,7 +58,7 @@ function checkForBattleWin(square) {
     var tiles = square.children();
     var playerHasTile;
     var i;
-    for (i = 0; i < tiles.length i++) {
+    for (i = 0; i < tiles.length; i++) {
         if (tiles[i].text() == nextMove) {
             playerHasTile[i] = true;
         } else {
@@ -66,7 +66,7 @@ function checkForBattleWin(square) {
         }
     }
     
-    var playerWon = false:
+    var playerWon = false;
     if (playerHasTile[4]) {
         if (playerHasTile[0] && playerHasTile[8]) {
             playerWon = true;
