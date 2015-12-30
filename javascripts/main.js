@@ -6,7 +6,6 @@ $(function(){
     $(".tile").mouseover(tileMouseover);
     $(".tile").mouseout(tileMouseout);
     $(".tile").click(tileClick);
-    alert("starting");
 });
 
 //mouse moves onto a tile
@@ -29,12 +28,10 @@ function tileMouseout() {
 
 //the player clicked on a tile
 function tileClick() {
-    alert("1");
     var tileText = $(this).text();
     if (tileText == "") {
         $(this).text(nextMove);
         if (checkForBattleWin($(this).parent())) {
-            alert("3");
             alert(nextMove + " won a battle");
         }
         updateNextMoveVar();
@@ -65,7 +62,7 @@ function checkForBattleWin(square) {
             playerHasTile[i] = false;
         }
     }
-    
+    alert("3");
     var playerWon = false;
     if (playerHasTile[4]) {
         if (playerHasTile[0] && playerHasTile[8]) {
