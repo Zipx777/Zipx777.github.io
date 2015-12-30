@@ -427,6 +427,6 @@ Small Device Styles
 .tile {
   width: 20px;
   height: 20px;
-  background-color: red
+  background-color: red;
   border: 2px solid black;
 }
