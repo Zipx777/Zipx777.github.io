@@ -31,8 +31,8 @@ function tileClick() {
     var tileText = $(this).text();
     if (tileText == "") {
         $(this).text(nextMove);
-        alert("test6");
-        alert($(this).parent()[0].children()[0].text());
+        alert("test7");
+        alert($(this).parent().length);
         if (checkForBattleWin($(this).parent())) {
             alert(nextMove + " won a battle");
         }
