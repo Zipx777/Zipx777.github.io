@@ -425,11 +425,14 @@ Small Device Styles
 }
 
 .board {
+  width: 300px
+  height: 300px;
   border: 2px solid green;
 }
 
 .tictactoesquare {
-  border: 2px solid yellow;
+  float: left;
+  border: 2px solid black;
 }
 
 .tile {
@@ -437,5 +440,5 @@ Small Device Styles
   height: 20px;
   float: left;
   background-color: red;
-  border: 2px solid black;
+  border: 2px solid white;
 }
