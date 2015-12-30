@@ -1,7 +1,7 @@
 //document ready function
 $(function(){
-    $(".tile").mouseover(tileMouseover($(this)));
-    $(".tile").mouseout(tileMouseout($(this)));
+    $(".tile").mouseover(tileMouseover());
+    $(".tile").mouseout(tileMouseout());
     /*
     $(".tile").mouseover(function() {
         $(this).css("background-color", "red");
@@ -14,11 +14,11 @@ $(function(){
 });
 
 //mouse moves onto a tile
-function tileMouseover(tile) {
-    $(tile).css("background-color", "red");
+function tileMouseover() {
+    $(this).css("background-color", "red");
 }
 
 //mouse leaves a tile
 function tileMouseout(tile) {
-    $(tile).css("background-color", "white");
+    $(this).css("background-color", "white");
 }
