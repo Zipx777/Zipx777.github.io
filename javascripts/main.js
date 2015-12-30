@@ -29,12 +29,11 @@ function tileMouseout() {
 
 //the player clicked on a tile
 function tileClick() {
-    var tile = $(this);
     alert("1");
-    var tileText = tile.text();
+    var tileText = $(this).text();
     if (tileText == "") {
-        tile.text(nextMove);
-        if (checkForBattleWin(tile.parent())) {
+        $(this).text(nextMove);
+        if (checkForBattleWin($(this).parent())) {
             alert("3");
             alert(nextMove + " won a battle");
         }
