@@ -13,17 +13,17 @@ function tileMouseover() {
     var tileText = $(this).text();
     if (tileText == "") {
         $(this).css("background-color", "lightgreen");
-        $(this).css("border", "2px solid green");
+        $(this).css("border", "4px solid green");
     } else {
         $(this).css("background-color", "lightcoral");
-        $(this).css("border", "2px solid red");
+        $(this).css("border", "4px solid red");
     }
 }
 
 //mouse leaves a tile, reset color and border
 function tileMouseout() {
     $(this).css("background-color", "white");
-    $(this).css("border", "2px solid black");
+    $(this).css("border", "4px solid black");
 }
 
 function tileClick() {
