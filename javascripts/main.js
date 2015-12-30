@@ -1,7 +1,7 @@
 //document ready function
 $(function(){
     $(".tile").mouseover(tileMouseover($(this)));
-    $(".tile").mouseout*(tileMouseout)($(this)));
+    $(".tile").mouseout(tileMouseout($(this)));
     /*
     $(".tile").mouseover(function() {
         $(this).css("background-color", "red");
