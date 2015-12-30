@@ -29,10 +29,12 @@ function tileMouseout() {
 //the player clicked on a tile
 function tileClick() {
     var tile = $(this);
+    alert("1");
     var tileText = tile.text();
     if (tileText == "") {
         tile.text(nextMove);
         if (checkForBattleWin(tile.parent())) {
+            alert("3");
             alert(nextMove + " won a battle");
         }
         updateNextMoveVar();
@@ -52,6 +54,7 @@ function updateNextMoveVar() {
 //checks to see if current player won one of the tictactoe squares
 //returns true if the current player won the square by having 3 in a row
 function checkForBattleWin(square) {
+    alert("2");
     var tiles = square.children();
     var playerHasTile;
     var i;
