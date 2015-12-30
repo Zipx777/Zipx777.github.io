@@ -59,13 +59,14 @@ function checkForBattleWin(square) {
     
     //loop through all tiles in this tictactoe board, record which spaces current player has
     for (i = 0; i < 9; i++) {
+        alert("start loop for i = " + i);
         if (currentTile.text() == nextMove) {
-            alert("found one in " + i)
             playerHasTile[i] = true;
         } else {
             playerHasTile[i] = false;
         }
         currentTile = currentTile.next();
+        alert("end loop for i = " + i);
     }
     
     //look for win conditions for current player
