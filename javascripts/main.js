@@ -52,8 +52,9 @@ function updateNextMoveVar() {
 //returns true if the current player won the square by having 3 in a row
 function checkForBattleWin(square) {
     var firstTile = square.children().first();
-    alert("test3");
+    alert("test4");
     alert(firstTile.text());
+    alert(firstTile.next().text());
     var tiles = square.children();
     var playerHasTile;
     var i;
