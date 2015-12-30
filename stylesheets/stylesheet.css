@@ -438,15 +438,18 @@ Small Device Styles
 
 .tile {
   width: 20px;
-  height: 20px;
+  height: 20px; /*don't forget to change line-height lower down to match this*/
   float: left;
   background-color: white;
   border: 2px solid black;
   
-  display: table-cell;
   text-align: center;
-  vertical-align: middle;
+  line-height: 20px; /*needs to change if the height of this class ever changes*/
   
+  /* should work but doesn't seem to
+  display: table-cell;
+    vertical-align: middle;
+  */
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
