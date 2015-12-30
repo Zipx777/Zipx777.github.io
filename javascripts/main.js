@@ -53,10 +53,9 @@ function updateNextMoveVar() {
 function checkForBattleWin(square) {
     var firstTile = square.children().first();
     var currentTile = firstTile;
-    alert("test5");
     var playerHasTile = [];
     var i;
-    alert("test1");
+
     //loop through all tiles in this tictactoe board, record which spaces current player has
     for (i = 0; i < 9; i++) {
         if (currentTile.text() == nextMove) {
@@ -65,7 +64,7 @@ function checkForBattleWin(square) {
             playerHasTile[i] = false;
         }
         currentTile = currentTile.next();
-        alert("endloop");
+        alert(playerHasTile[i]);
     }
     
     //look for win conditions for current player
