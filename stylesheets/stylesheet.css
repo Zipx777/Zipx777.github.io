@@ -425,15 +425,15 @@ Small Device Styles
 }
 
 .board {
-  width: 300px;
-  height: 300px;
+  width: 246px;
+  height: 246px;
   background-color: black;
-  border: 2px solid green;
+  border: 2px solid blue;
 }
 
 .tictactoesquare {
   float: left;
-  border: 2px solid black;
+  border: 5px solid black;
 }
 
 .tile {
