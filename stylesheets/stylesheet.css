@@ -425,26 +425,26 @@ Small Device Styles
 }
 
 .board {
-  width: 246px;
-  height: 246px;
+  width: 592px;
+  height: 592px;
   background-color: black;
-  border: 2px solid blue;
+  border: 4px solid blue;
 }
 
 .tictactoesquare {
   float: left;
-  border: 5px solid black;
+  border: 10px solid black;
 }
 
 .tile {
-  width: 20px;
-  height: 20px; /*don't forget to change line-height lower down to match this*/
+  width: 40px;
+  height: 40px; /*don't forget to change line-height lower down to match this*/
   float: left;
   background-color: white;
   border: 2px solid black;
   
   text-align: center;
-  line-height: 20px; /*needs to change if the height of this class ever changes*/
+  line-height: 40px; /*needs to change if the height of this class ever changes*/
   
   /* should work but doesn't seem to
   display: table-cell;
