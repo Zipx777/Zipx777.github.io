@@ -6,6 +6,7 @@ $(function(){
     $(".tile").mouseover(tileMouseover);
     $(".tile").mouseout(tileMouseout);
     $(".tile").click(tileClick);
+    alert("starting");
 });
 
 //mouse moves onto a tile
