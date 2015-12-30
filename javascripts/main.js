@@ -55,10 +55,11 @@ function checkForBattleWin(square) {
     var playerHasTile;
     var i;
     for (i = 0; i < tiles.length; i++) {
-        alert(i);
         if (tiles[i].text() == nextMove) {
+            alert(nextMove + " in " + i)
             playerHasTile[i] = true;
         } else {
+            alert(nextMove + " not in " + i)
             playerHasTile[i] = false;
         }
     }
