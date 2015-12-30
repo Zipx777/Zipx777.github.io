@@ -52,19 +52,23 @@ function updateNextMoveVar() {
 //returns true if the current player won the square by having 3 in a row
 function checkForBattleWin(square) {
     var firstTile = square.children().first();
-    alert("test4");
-    alert(firstTile.text());
-    alert(firstTile.next().text());
-    var tiles = square.children();
+    var currentTile = firstTile;
+    alert("test5");
     var playerHasTile;
     var i;
-    for (i = 0; i < tiles.length; i++) {
-        if (tiles[i].text() == nextMove) {
+    
+    //loop through all tiles in this tictactoe board, record which spaces current player has
+    for (i = 0; i < 9; i++) {
+        if (currentTile.text() == nextMove) {
+            alert("found one in " + i)
             playerHasTile[i] = true;
         } else {
             playerHasTile[i] = false;
         }
+        currentTile = currentTile.next();
     }
+    
+    //look for win conditions for current player
     var playerWon = false;
     if (playerHasTile[4]) {
         if (playerHasTile[0] && playerHasTile[8]) {
