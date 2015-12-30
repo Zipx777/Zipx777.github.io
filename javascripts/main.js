@@ -64,7 +64,6 @@ function checkForBattleWin(square) {
             playerHasTile[i] = false;
         }
         currentTile = currentTile.next();
-        alert(playerHasTile[i]);
     }
     
     //look for win conditions for current player
