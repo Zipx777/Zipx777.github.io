@@ -1,16 +1,11 @@
+//keeps track of whether X or O is next, starts with X
+var nextMove = "X";
+
 //document ready function
 $(function(){
     $(".tile").mouseover(tileMouseover);
     $(".tile").mouseout(tileMouseout);
-    /*
-    $(".tile").mouseover(function() {
-        $(this).css("background-color", "red");
-    })
-    
-    $(".tile").mouseout(function() {
-        $(this).css("background-color", "white");
-    })
-    */
+    $(".tile").click(tileClick);
 });
 
 //mouse moves onto a tile
@@ -19,6 +14,19 @@ function tileMouseover() {
 }
 
 //mouse leaves a tile
-function tileMouseout(tile) {
+function tileMouseout() {
     $(this).css("background-color", "white");
+}
+
+function tileClick() {
+    $(this).text(nextMove);
+    updateNextMoveVar();
+}
+
+function updateNextMoveVar() {
+    if (nextMove == "X") {
+        nextMove = "O";
+    } else {
+        nextMove = "X";
+    }
 }
