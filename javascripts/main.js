@@ -26,18 +26,76 @@ function tileMouseout() {
     $(this).css("border", "4px solid black");
 }
 
+//the player clicked on a tile
 function tileClick() {
-    var tileText = $(this).text();
+    var tile = $(this);
+    var tileText = tile.text();
     if (tileText == "") {
-        $(this).text(nextMove);
+        tile.text(nextMove);
+        if (checkForBattleWin(tile.parent())) {
+            alert(nextMove + " won a battle");
+        }
         updateNextMoveVar();
     }
 }
 
+//change next move to opposite of what it was this turn
+//always call this last when used in other functions
 function updateNextMoveVar() {
     if (nextMove == "X") {
         nextMove = "O";
     } else {
         nextMove = "X";
     }
+}
+
+//checks to see if current player won one of the tictactoe squares
+//returns true if the current player won the square by having 3 in a row
+function checkForBattleWin(square) {
+    var tiles = square.children();
+    var playerHasTile;
+    var i;
+    for (i = 0; i < tiles.length i++) {
+        if (tiles[i].text() == nextMove) {
+            playerHasTile[i] = true;
+        } else {
+            playerHasTile[i] = false;
+        }
+    }
+    
+    var playerWon = false:
+    if (playerHasTile[4]) {
+        if (playerHasTile[0] && playerHasTile[8]) {
+            playerWon = true;
+        }
+        if (playerHasTile[1] && playerHasTile[7]) {
+            playerWon = true;
+        }
+        if (playerHasTile[2] && playerHasTile[6]) {
+            playerWon = true;
+        }
+        if (playerHasTile[3] && playerHasTile[5]) {
+            playerWon = true;
+        }
+    }
+    
+    if (playerHasTile[0]) {
+        if (playerHasTile[3] && playerHasTile[6]) {
+            playerWon = true;
+        }
+        if (playerHasTile[1] && playerHasTile[2]) {
+            playerWon = true;
+        }
+    }
+    
+    if (playerHasTile[8]) {
+        if (playerHasTile[2] && playerHasTile[5]) {
+            playerWon = true;
+        }
+        if (playerHasTile[6] && playerHasTile[7]) {
+            playerWon = true;
+        }
+    }
+    
+    return playerWon;
 }
