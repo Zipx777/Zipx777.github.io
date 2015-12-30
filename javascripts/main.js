@@ -14,7 +14,7 @@ function tileMouseover() {
     if (tileText == "") {
         $(this).css("background-color", "lightgreen");
     } else {
-        $(this).css("background-color", "lightred");
+        $(this).css("background-color", "lightcoral");
     }
 }
 
