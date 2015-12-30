@@ -443,6 +443,10 @@ Small Device Styles
   background-color: white;
   border: 2px solid black;
   
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
