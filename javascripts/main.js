@@ -51,9 +51,11 @@ function updateNextMoveVar() {
 //checks to see if current player won one of the tictactoe squares
 //returns true if the current player won the square by having 3 in a row
 function checkForBattleWin(square) {
-    var tiles = square.children();
+    alert("test1");
     alert("children " + square.children()[0].text());
     alert("tiles " + tiles[0].text());
+    var tiles = square.children();
+
     var playerHasTile;
     var i;
     for (i = 0; i < tiles.length; i++) {
