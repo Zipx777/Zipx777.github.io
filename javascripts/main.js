@@ -1,1 +1,6 @@
-console.log('This would be the main JS file.');
+//document ready function
+$(function(){
+    $("p").click(function(){
+        $(this).hide();
+    });
+});
