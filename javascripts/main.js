@@ -15,10 +15,10 @@ $(function(){
 
 //mouse moves onto a tile
 function tileMouseover(tile) {
-    tile.css("background-color", "red");
+    $(tile).css("background-color", "red");
 }
 
 //mouse leaves a tile
 function tileMouseout(tile) {
-    tile.css("background-color", "white");
+    $(tile).css("background-color", "white");
 }
