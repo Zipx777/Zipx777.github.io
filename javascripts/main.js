@@ -10,7 +10,12 @@ $(function(){
 
 //mouse moves onto a tile
 function tileMouseover() {
-    $(this).css("background-color", "red");
+    var tileText = $(this).text();
+    if (tileText == "") {
+        $(this).css("background-color", "green");
+    } else {
+        $(this).css("background-color", "red");
+    }
 }
 
 //mouse leaves a tile
@@ -19,8 +24,11 @@ function tileMouseout() {
 }
 
 function tileClick() {
-    $(this).text(nextMove);
-    updateNextMoveVar();
+    var tileText = $(this).text();
+    if (tileText == "") {
+        $(this).text(nextMove);
+        updateNextMoveVar();
+    }
 }
 
 function updateNextMoveVar() {
