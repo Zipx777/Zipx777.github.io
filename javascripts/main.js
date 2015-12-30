@@ -52,17 +52,16 @@ function updateNextMoveVar() {
 //returns true if the current player won the square by having 3 in a row
 function checkForBattleWin(square) {
     var tiles = square.children();
-    alert(tiles.length);
     var playerHasTile;
     var i;
     for (i = 0; i < tiles.length; i++) {
+        alert(i);
         if (tiles[i].text() == nextMove) {
             playerHasTile[i] = true;
         } else {
             playerHasTile[i] = false;
         }
     }
-    alert("3");
     var playerWon = false;
     if (playerHasTile[4]) {
         if (playerHasTile[0] && playerHasTile[8]) {
