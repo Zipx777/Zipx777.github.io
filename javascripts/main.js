@@ -60,8 +60,32 @@ function identifyNextPlayableSquare(tile) {
     var tileID = tile.attr("id");
     var nextSquareNum = tileID.charAt(5);
     var nextSquareID = "square" + nextSquareNum;
+    var nextSquareObj = $("#" + nextSquareID);
+    
     $(".tictactoesquare").removeClass("playable");
-    $("#" + nextSquareID).addClass("playable");
+    if (squareIsFull(nextSquareObj)) {
+        $(".tictactoesquare").addClass("playable");
+    } else {
+        nextSquareObj.addClass("playable");   
+    }
+}
+
+//returns true if every tile in the square has a letter in it
+function squareIsFull(square) {
+    var firstTile = square.children().first();
+    var currentTile = firstTile;
+
+    //loop through all tiles in this tictactoe board, return false if any space is empty
+    var i;
+    for (i = 0; i < 9; i++) {
+        if (currentTile.text() == "" {
+            return false;
+        }
+        currentTile = currentTile.next();
+    }
+    
+    //gets here if every tile in the square had a mark in it
+    return true;
 }
 
 //returns true if tile is a valid move for current player
