@@ -43,7 +43,7 @@ function tileClick() {
     if (tileIsValidMove($(this))) {
         $(this).text(nextMove);
         if (checkForBattleWin($(this).parent())) {
-            alert(nextMove + " won a battle");
+            //alert(nextMove + " won a battle");
         }
         identifyNextPlayableSquare($(this));
         updateNextMoveVar();
