@@ -6,7 +6,29 @@ $(function(){
     $(".tile").mouseover(tileMouseover);
     $(".tile").mouseout(tileMouseout);
     $(".tile").click(tileClick);
+    prepareGameBoard();
 });
+
+//setup IDs on squares and tiles, set all squares to playable
+function prepareGameBoard() {
+    assignSquareIDs();
+    assignSquareAndTileIDs();
+    setSquaresToPlayable();
+}
+
+//assigns IDs to each square, and each tile within the squares
+function assignSquareAndTileIDs() {
+    $(".tictactoesquare").each(function(i) {
+        $(this).attr("id", "square" + i);
+        $(this).children().each(function(n) {
+            $(this).attr("id", "tile" + i + "" + n);
+        });
+    });
+}
+
+function setSquaresToPlayable() {
+    $(".tictactoesquare").addClass(".playable");
+}
 
 //mouse moves onto a tile
 function tileMouseover() {
