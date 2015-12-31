@@ -23,8 +23,7 @@ function prepareGameBoard() {
 
 //mouse moves onto a tile
 function tileMouseover() {
-    var tileText = $(this).text();
-    if (tileText == "") {
+    if (tileIsValidMove($(this))) {
         $(this).css("background-color", "lightgreen");
         $(this).css("border", "4px solid green");
     } else {
@@ -68,7 +67,9 @@ function identifyNextPlayableSquare(tile) {
 //returns true if tile is a valid move for current player
 function tileIsValidMove(tile) {
     if (tile.text() == "") {
-        return true;
+        if (tile.parent().hasClass("playable")) {
+            return true;
+        }
     }
     return false;
 }
