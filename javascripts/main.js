@@ -26,7 +26,7 @@ function assignSquareAndTileIDs() {
 }
 
 function setSquaresToPlayable() {
-    $(".tictactoesquare").addClass(".playable");
+    $(".tictactoesquare").addClass("playable");
 }
 
 //mouse moves onto a tile
