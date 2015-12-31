@@ -28,14 +28,21 @@ function tileMouseout() {
 
 //the player clicked on a tile
 function tileClick() {
-    var tileText = $(this).text();
-    if (tileText == "") {
+    if (tileIsValidMove($(this))) {
         $(this).text(nextMove);
         if (checkForBattleWin($(this).parent())) {
             alert(nextMove + " won a battle");
         }
         updateNextMoveVar();
     }
+}
+
+//returns true if tile is a valid move for current player
+function tileIsValidMove(tile) {
+    if (tile.text() == "") {
+        return true;
+    }
+    return false;
 }
 
 //change next move to opposite of what it was this turn
