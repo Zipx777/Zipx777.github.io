@@ -60,10 +60,9 @@ Assigns playable class to those ones, removes it from others
 function identifyNextPlayableSquare(tile) {
     var tileID = tile.attr("id");
     var nextSquareNum = tileID.charAt(5);
-    alert(nextSquareNum);
     var nextSquareID = "square" + nextSquareNum;
     $(".tictactoesquare").removeClass("playable");
-    $("#" + nextSquareNum).addClass("playable");
+    $("#" + nextSquareID).addClass("playable");
 }
 
 //returns true if tile is a valid move for current player
