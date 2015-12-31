@@ -179,8 +179,7 @@ function resetClick() {
         currentSquare.addClass("playable");
         
         //reset tile text to be blank
-        var currentTile = currentSquare.first();
-        alert(currentTile.length);
+        var currentTile = currentSquare.children().first();
         var j;
         for (j = 0; j < 9; j++) {
             currentTile = currentTile.next();
