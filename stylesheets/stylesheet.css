@@ -461,3 +461,7 @@ Small Device Styles
   -moz-user-select: none;
   -ms-user-select: none;
 }
+
+.playable {
+  border: 4px solid blue;
+}
