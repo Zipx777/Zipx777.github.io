@@ -6,6 +6,7 @@ $(function(){
     $(".tile").mouseover(tileMouseover);
     $(".tile").mouseout(tileMouseout);
     $(".tile").click(tileClick);
+    $("#resetButton").click(resetClick);
     prepareGameBoard();
 });
 
@@ -164,4 +165,28 @@ function checkForBattleWin(square) {
     }
     
     return playerWon;
+}
+
+//reset game state to start
+function resetClick() {
+    var squares = $(".tictactoesquare");
+    var currentSquare = squares.first();
+    
+    var i;
+    for (i = 0; i < 9; i++) {
+        //make sure every square has one copy of the playable class
+        currentSquare.removeClass("playable");
+        currentSquare.addClass("playable");
+        
+        //reset tile text to be blank
+        var currentTile = currentSquare.first();
+        var j;
+        for (j = 0; j < 9; j++) {
+            currentTile.text("");
+            currentTile = currentTile.next();
+        }
+        currentSquare = currentSquare.next()
+    }
+    squares.removeClass("playable");
+    squares.addClass("playable");
 }
