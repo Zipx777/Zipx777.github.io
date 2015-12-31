@@ -78,7 +78,7 @@ function squareIsFull(square) {
     //loop through all tiles in this tictactoe board, return false if any space is empty
     var i;
     for (i = 0; i < 9; i++) {
-        if (currentTile.text() == "" {
+        if (currentTile.text() == "") {
             return false;
         }
         currentTile = currentTile.next();
