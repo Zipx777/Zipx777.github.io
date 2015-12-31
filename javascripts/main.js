@@ -11,7 +11,6 @@ $(function(){
 
 //setup IDs on squares and tiles, set all squares to playable
 function prepareGameBoard() {
-    assignSquareIDs();
     assignSquareAndTileIDs();
     setSquaresToPlayable();
 }
