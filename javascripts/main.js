@@ -91,7 +91,9 @@ function squareIsFull(square) {
 //returns true if tile is a valid move for current player
 function tileIsValidMove(tile) {
     if (tile.text() == "") {
+        alert("1");
         if (tile.parent().hasClass("playable")) {
+            alert("2");
             return true;
         }
     }
