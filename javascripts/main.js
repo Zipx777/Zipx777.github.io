@@ -187,6 +187,4 @@ function resetClick() {
         }
         currentSquare = currentSquare.next()
     }
-    squares.removeClass("playable");
-    squares.addClass("playable");
 }
