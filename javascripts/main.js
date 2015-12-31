@@ -179,12 +179,14 @@ function resetClick() {
         currentSquare.addClass("playable");
         
         //reset tile text to be blank
+        /*
         var currentTile = currentSquare.first();
         var j;
         for (j = 0; j < 9; j++) {
             currentTile.text("");
             currentTile = currentTile.next();
         }
+        */
         currentSquare = currentSquare.next()
     }
 }
