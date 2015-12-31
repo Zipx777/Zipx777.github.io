@@ -9,15 +9,11 @@ $(function(){
     prepareGameBoard();
 });
 
-//setup IDs on squares and tiles, set all squares to playable
+//setup IDs on squares and tiles, set all squares to playable to start
+//the IDs are used to determine which square the player has to play on next
 function prepareGameBoard() {
-    assignSquareAndTileIDs();
-    setSquaresToPlayable();
-}
-
-//assigns IDs to each square, and each tile within the squares
-function assignSquareAndTileIDs() {
     $(".tictactoesquare").each(function(i) {
+        $(this).addClass("playable");
         $(this).attr("id", "square" + i);
         $(this).children().each(function(n) {
             $(this).attr("id", "tile" + i + "" + n);
