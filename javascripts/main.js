@@ -21,10 +21,6 @@ function prepareGameBoard() {
     });
 }
 
-function setSquaresToPlayable() {
-    $(".tictactoesquare").addClass("playable");
-}
-
 //mouse moves onto a tile
 function tileMouseover() {
     var tileText = $(this).text();
@@ -50,8 +46,24 @@ function tileClick() {
         if (checkForBattleWin($(this).parent())) {
             alert(nextMove + " won a battle");
         }
+        identifyNextPlayableSquare($(this));
         updateNextMoveVar();
     }
+}
+
+/*
+Figures out which square or squares are playable next turn using the tile that was marked last turn
+The tile the player put their mark in indicates which square will be playable
+If this points to a full square, the player can play on any square
+Assigns playable class to those ones, removes it from others
+*/
+function identifyNextPlayableSquare(tile) {
+    var tileID = tile.attr("id");
+    var nextSquareNum = tileID.charAt(5);
+    alert(nextSquareNum);
+    var nextSquareID = "square" + nextSquareNum;
+    $(".tictactoesquare").removeClass("playable");
+    $("#" + nextSquareNum).addClass("playable");
 }
 
 //returns true if tile is a valid move for current player
