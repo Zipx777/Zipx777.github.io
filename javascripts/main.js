@@ -19,6 +19,7 @@ function prepareGameBoard() {
             $(this).attr("id", "tile" + i + "" + n);
         });
     });
+    $("#turnIndicator").text(nextMove);
 }
 
 //mouse moves onto a tile
@@ -106,6 +107,7 @@ function updateNextMoveVar() {
     } else {
         nextMove = "X";
     }
+    $("#turnIndicator").text(nextMove);
 }
 
 //checks to see if current player won one of the tictactoe squares
