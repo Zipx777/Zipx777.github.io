@@ -182,6 +182,7 @@ function resetClick() {
         var currentTile = currentSquare.children().first();
         var j;
         for (j = 0; j < 9; j++) {
+            currentTile.text("");
             currentTile = currentTile.next();
         }
         currentSquare = currentSquare.next()
