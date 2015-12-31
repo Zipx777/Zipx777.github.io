@@ -180,9 +180,9 @@ function resetClick() {
         
         //reset tile text to be blank
         var currentTile = currentSquare.first();
+        alert(currentTile.length);
         var j;
         for (j = 0; j < 9; j++) {
-            alert(currentTile.text());
             currentTile = currentTile.next();
         }
         currentSquare = currentSquare.next()
