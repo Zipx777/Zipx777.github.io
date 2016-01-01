@@ -178,12 +178,14 @@ function checkForBattleWin(square) {
 function resetClick() {
     var squares = $(".tictactoesquare");
     var currentSquare = squares.first();
-    
+    $(".squareWonTile").hide();
     var i;
     for (i = 0; i < squares.length; i++) {
         //make sure every square has one copy of the playable class
         currentSquare.removeClass("playable");
         currentSquare.addClass("playable");
+        
+        currentSquare.removeClass("wonSquare");
         
         //reset tile text to be blank
         var tiles = currentSquare.children(".tile");
@@ -191,6 +193,7 @@ function resetClick() {
         var j;
         for (j = 0; j < tiles.length; j++) {
             currentTile.text("");
+            currentTile.show();
             currentTile = currentTile.next();
         }
         currentSquare = currentSquare.next()
