@@ -466,12 +466,12 @@ Small Device Styles
   border: 10px solid lightgreen;
 }
 
-//used to mark a square that someone has won
+/*used to mark a square that someone has won*/
 .wonSquare {
   
 }
 
-//tile to cover an entire square and display a giant X or O
+/*tile to cover an entire square and display a giant X or O*/
 .squareWonTile {
   /*px amount is based on tictactoesquare dimensions*/
   height: 144px;
