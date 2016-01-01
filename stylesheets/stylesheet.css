@@ -483,3 +483,11 @@ Small Device Styles
   font-weight: bold;
   text-align: center;
 }
+
+#turnDisplay {
+  float: left;
+}
+
+#resetButtonDiv {
+  float: right;
+}
