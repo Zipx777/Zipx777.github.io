@@ -180,6 +180,14 @@ function resetClick() {
     var currentSquare = squares.first();
     $(".squareWonTile").hide();
     var i;
+    
+    squares.removeClass("playable");
+    squares.addClass("playable");
+    squares.removeClass("wonSquare");
+    var tiles = squares.children(".tiles");
+    tiles.text("");
+    tiles.show();
+    /*
     for (i = 0; i < squares.length; i++) {
         //make sure every square has one copy of the playable class
         currentSquare.removeClass("playable");
@@ -198,4 +206,5 @@ function resetClick() {
         }
         currentSquare = currentSquare.next()
     }
+    */
 }
