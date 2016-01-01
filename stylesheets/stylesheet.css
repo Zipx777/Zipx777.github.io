@@ -466,10 +466,20 @@ Small Device Styles
   border: 10px solid lightgreen;
 }
 
+//used to mark a square that someone has won
 .wonSquare {
+  
+}
+
+//tile to cover an entire square and display a giant X or O
+.squareWonTile {
+  /*px amount is based on tictactoesquare dimensions*/
+  height: 144px;
+  width: 144px;
+  line-height: 144px;
+  
   background-color: white;
   font-size: 8em;
   font-weight: bold;
   text-align: center;
-  line-height: 144px; /*needs to change if the height of the tictactoe square ever changes*/
 }
