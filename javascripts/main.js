@@ -16,7 +16,7 @@ function prepareGameBoard() {
     $(".tictactoesquare").each(function(i) {
         $(this).addClass("playable");
         $(this).attr("id", "square" + i);
-        $(this).children().each(function(n) {
+        $(this).children(".tile").each(function(n) {
             $(this).attr("id", "tile" + i + "" + n);
         });
     });
@@ -45,10 +45,10 @@ function tileClick() {
     if (tileIsValidMove($(this))) {
         $(this).text(nextMove);
         if (checkForBattleWin($(this).parent())) {
-            //alert(nextMove + " won a battle");
-            $(this).parent().children().hide();
-            $(this).parent().addClass("wonSquare");
-            $(this).parent().text(nextMove);
+            //someone won a square, hide the tiles and display a big X or O
+            $(this).parent().children(".tile").hide();
+            //$(this).parent().addClass("wonSquare");
+            //$(this).parent().text(nextMove);
         }
         identifyNextPlayableSquare($(this));
         updateNextMoveVar();
@@ -77,12 +77,12 @@ function identifyNextPlayableSquare(tile) {
 
 //returns true if every tile in the square has a letter in it
 function squareIsFull(square) {
-    var firstTile = square.children().first();
-    var currentTile = firstTile;
+    var tiles = square.children(".tile");
+    var currentTile = tiles.first();
 
     //loop through all tiles in this tictactoe board, return false if any space is empty
     var i;
-    for (i = 0; i < 9; i++) {
+    for (i = 0; i < tiles.length; i++) {
         if (currentTile.text() == "") {
             return false;
         }
@@ -117,13 +117,13 @@ function updateNextMoveVar() {
 //checks to see if current player won one of the tictactoe squares
 //returns true if the current player won the square by having 3 in a row
 function checkForBattleWin(square) {
-    var firstTile = square.children().first();
-    var currentTile = firstTile;
+    var tiles = square.children(".tile");
+    var currentTile = tiles.first();
     var playerHasTile = [];
     var i;
 
     //loop through all tiles in this tictactoe board, record which spaces current player has
-    for (i = 0; i < 9; i++) {
+    for (i = 0; i < tiles.length; i++) {
         if (currentTile.text() == nextMove) {
             playerHasTile[i] = true;
         } else {
@@ -176,15 +176,16 @@ function resetClick() {
     var currentSquare = squares.first();
     
     var i;
-    for (i = 0; i < 9; i++) {
+    for (i = 0; i < squares.length; i++) {
         //make sure every square has one copy of the playable class
         currentSquare.removeClass("playable");
         currentSquare.addClass("playable");
         
         //reset tile text to be blank
-        var currentTile = currentSquare.children().first();
+        var tiles = currentSquare.children(".tile");
+        var currentTile = tiles.first();
         var j;
-        for (j = 0; j < 9; j++) {
+        for (j = 0; j < tiles.length; j++) {
             currentTile.text("");
             currentTile = currentTile.next();
         }
