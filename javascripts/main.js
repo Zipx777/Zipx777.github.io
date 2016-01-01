@@ -47,6 +47,8 @@ function tileClick() {
         if (checkForBattleWin($(this).parent())) {
             //alert(nextMove + " won a battle");
             $(this).parent().children().hide();
+            $(this).parent().addClass("wonSquare");
+            $(this).parent().text(nextMove);
         }
         identifyNextPlayableSquare($(this));
         updateNextMoveVar();
