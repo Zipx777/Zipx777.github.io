@@ -184,9 +184,13 @@ function resetClick() {
     squares.removeClass("playable");
     squares.addClass("playable");
     squares.removeClass("wonSquare");
-    var tiles = squares.children(".tiles");
-    tiles.text("");
-    tiles.show();
+    
+    squares.each(function() {
+        var tiles = $(this).children(".tile"); 
+        tiles.text("");
+        tiles.show();
+    });
+    
     /*
     for (i = 0; i < squares.length; i++) {
         //make sure every square has one copy of the playable class
