@@ -465,3 +465,11 @@ Small Device Styles
 .playable {
   border: 10px solid lightgreen;
 }
+
+.wonSquare {
+  background-color: white;
+  font-size: 8em;
+  font-weight: bold;
+  text-align: center;
+  line-height: 144px; /*needs to change if the height of the tictactoe square ever changes*/
+}
