@@ -44,11 +44,15 @@ function tileMouseout() {
 function tileClick() {
     if (tileIsValidMove($(this))) {
         $(this).text(nextMove);
-        if (checkForBattleWin($(this).parent())) {
+        var square = $(this).parent();
+        if (checkForBattleWin(square)) {
             //someone won a square, hide the tiles and display a big X or O
-            $(this).parent().children(".tile").hide();
-            //$(this).parent().addClass("wonSquare");
-            //$(this).parent().text(nextMove);
+            square.children(".tile").hide();
+            square.addClass("wonSquare");
+            
+            var squareWonTile = square.children(".squareWonTile");
+            squareWonTile.text(nextMove);
+            squareWonTile.show();
         }
         identifyNextPlayableSquare($(this));
         updateNextMoveVar();
