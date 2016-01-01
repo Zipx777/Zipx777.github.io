@@ -484,10 +484,14 @@ Small Device Styles
   text-align: center;
 }
 
+#gameBoardFooter {
+  border: 2px solid black;
+}
+
 #turnDisplay {
   float: left;
 }
 
-#resetButtonDiv {
+#resetButton {
   float: right;
 }
