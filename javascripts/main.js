@@ -73,7 +73,12 @@ function identifyNextPlayableSquare(tile) {
     
     $(".tictactoesquare").removeClass("playable");
     if (nextSquareObj.hasClass("wonSquare") || squareIsFull(nextSquareObj)) {
-        $(".tictactoesquare").addClass("playable");
+        //loop through all squares, mark each square that isn't full or won as playable
+        $(".tictactoesquare").each(function() {
+            if (!($(this).hasClass("wonSquare")) && !(squareIsFull($(this)))) {
+                $(this).addClass("playable");
+            }
+        });
     } else {
         nextSquareObj.addClass("playable");   
     }
