@@ -53,9 +53,10 @@ function tileClick() {
             var squareWonTile = square.children(".squareWonTile");
             squareWonTile.text(nextMove);
             squareWonTile.show();
-            var win = checkForGameWin();
+            var gameStateWin = checkForGameWin();
             if (win) {
-                alert(nextMove + " won the game with " + win);
+                finishGame(gameStateWin);
+                return;
             }
         }
         identifyNextPlayableSquare($(this));
@@ -241,6 +242,18 @@ function checkForThreeInARow(playerHasTile) {
     }
     
     return threeInARow;
+}
+
+//marks winning tiles
+function finishGame(gameStateWin) {
+    $(".tictactoesquare").removeClass("playable");
+    var i;
+    for (i = 0; i < gameStateWin.length; i++) {
+        var squareNum = gameStateWin.chatAt(i);
+        var squareID = "square" + squareNum;
+        $("#" + squareID).addClass("playable");
+    }
+    alert("game won");
 }
 
 //reset game state to start
