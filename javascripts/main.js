@@ -196,6 +196,7 @@ function checkForGameWin() {
         } else {
             playerHasSquare[i] = false;
         }
+        currentSquare = currentSquare.next();
     }
     
     var j;
