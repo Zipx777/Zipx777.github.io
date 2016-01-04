@@ -249,7 +249,7 @@ function finishGame(gameStateWin) {
     $(".tictactoesquare").removeClass("playable");
     var i;
     for (i = 0; i < gameStateWin.length; i++) {
-        var squareNum = gameStateWin.chatAt(i);
+        var squareNum = gameStateWin.charAt(i);
         var squareID = "square" + squareNum;
         $("#" + squareID).addClass("playable");
     }
