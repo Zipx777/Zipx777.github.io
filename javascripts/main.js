@@ -53,8 +53,9 @@ function tileClick() {
             var squareWonTile = square.children(".squareWonTile");
             squareWonTile.text(nextMove);
             squareWonTile.show();
-            if (checkForGameWin()) {
-                alert(nextMove + " won the game");
+            var win = checkForGameWin();
+            if (win) {
+                alert(nextMove + " won the game with " + win);
             }
         }
         identifyNextPlayableSquare($(this));
@@ -202,40 +203,40 @@ function checkForGameWin() {
     return checkForThreeInARow(playerHasSquare);
 }
 
-//returns true if array passed indicates that the mark passed has 3 in a row
+//returns a string representing which tiles caused the win, or blank if no win
 //array represents 3x3 square of tiles left to right, top to bottom
 function checkForThreeInARow(playerHasTile) {
-    var threeInARow = false;
+    var threeInARow = "";
     if (playerHasTile[4]) {
         if (playerHasTile[0] && playerHasTile[8]) {
-            threeInARow = true;
+            threeInARow = "048";
         }
         if (playerHasTile[1] && playerHasTile[7]) {
-            threeInARow = true;
+            threeInARow = "147";
         }
         if (playerHasTile[2] && playerHasTile[6]) {
-            threeInARow = true;
+            threeInARow = "246";
         }
         if (playerHasTile[3] && playerHasTile[5]) {
-            threeInARow = true;
+            threeInARow = "345";
         }
     }
     
     if (playerHasTile[0]) {
         if (playerHasTile[3] && playerHasTile[6]) {
-            threeInARow = true;
+            threeInARow = "036";
         }
         if (playerHasTile[1] && playerHasTile[2]) {
-            threeInARow = true;
+            threeInARow = "012";
         }
     }
     
     if (playerHasTile[8]) {
         if (playerHasTile[2] && playerHasTile[5]) {
-            threeInARow = true;
+            threeInARow = "258";
         }
         if (playerHasTile[6] && playerHasTile[7]) {
-            threeInARow = true;
+            threeInARow = "678";
         }
     }
     
