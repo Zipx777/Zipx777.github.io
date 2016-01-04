@@ -54,7 +54,7 @@ function tileClick() {
             squareWonTile.text(nextMove);
             squareWonTile.show();
             var gameStateWin = checkForGameWin();
-            if (win) {
+            if (gameStateWin) {
                 finishGame(gameStateWin);
                 return;
             }
