@@ -199,10 +199,6 @@ function checkForGameWin() {
         currentSquare = currentSquare.next();
     }
     
-    var j;
-    for (j = 0; j < playerHasSquare.length; j++) {
-        alert(playerHasSquare[j]);
-    }
     return checkForThreeInARow(playerHasSquare);
 }
 
