@@ -198,6 +198,10 @@ function checkForGameWin() {
         }
     }
     
+    var j;
+    for (j = 0; j < playerHasSquare.length; j++) {
+        alert(playerHasSquare[i]);
+    }
     return checkForThreeInARow(playerHasSquare);
 }
 
