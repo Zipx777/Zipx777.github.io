@@ -53,6 +53,9 @@ function tileClick() {
             var squareWonTile = square.children(".squareWonTile");
             squareWonTile.text(nextMove);
             squareWonTile.show();
+            if (checkForGameWin()) {
+                alert(nextMove + " won the game");
+            }
         }
         identifyNextPlayableSquare($(this));
         updateNextMoveVar();
@@ -177,6 +180,65 @@ function checkForBattleWin(square) {
     }
     
     return playerWon;
+}
+
+//return true if current player has won the entire game
+function checkForGameWin() {
+    var squares = $(".tictactoesquare");
+    var currentSquare = squares.first();
+    var playerHasSquare = [];
+    var i;
+    
+    //loop through all the squares, record which squares the current player has 
+    for (i = 0; i < squares.length; i++) {
+        if ((currentSquare.hasClass("wonSquare")) && (currentSquare.children(".squareWonTile").first().text() == nextMove)) {
+            playerHasSquare[i] = true;
+        } else {
+            playerHasSquare[i] = false;
+        }
+    }
+    
+    return checkForThreeInARow(playerHasSquare);
+}
+
+//returns true if array passed indicates that the mark passed has 3 in a row
+//array represents 3x3 square of tiles left to right, top to bottom
+function checkForThreeInARow(playerHasTile) {
+    var threeInARow = false;
+    if (playerHasTile[4]) {
+        if (playerHasTile[0] && playerHasTile[8]) {
+            threeInARow = true;
+        }
+        if (playerHasTile[1] && playerHasTile[7]) {
+            threeInARow = true;
+        }
+        if (playerHasTile[2] && playerHasTile[6]) {
+            threeInARow = true;
+        }
+        if (playerHasTile[3] && playerHasTile[5]) {
+            threeInARow = true;
+        }
+    }
+    
+    if (playerHasTile[0]) {
+        if (playerHasTile[3] && playerHasTile[6]) {
+            threeInARow = true;
+        }
+        if (playerHasTile[1] && playerHasTile[2]) {
+            threeInARow = true;
+        }
+    }
+    
+    if (playerHasTile[8]) {
+        if (playerHasTile[2] && playerHasTile[5]) {
+            threeInARow = true;
+        }
+        if (playerHasTile[6] && playerHasTile[7]) {
+            threeInARow = true;
+        }
+    }
+    
+    return threeInARow;
 }
 
 //reset game state to start
