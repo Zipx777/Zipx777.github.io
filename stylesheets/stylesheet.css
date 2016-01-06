@@ -486,6 +486,8 @@ Small Device Styles
 
 #gameBoardFooter {
   border: 2px solid black;
+  height: 40px;
+  width: 496px;
 }
 
 .finalSquare {
