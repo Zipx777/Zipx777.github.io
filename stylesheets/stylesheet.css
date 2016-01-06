@@ -491,9 +491,8 @@ Small Device Styles
 
 /*area below the board, contains turnDisplay and resetButton*/
 #gameBoardFooter {
-  border: 2px solid black;
   height: 40px;
-  width: 496px;
+  width: 500px;
 }
 
 /*displays current player's turn*/
