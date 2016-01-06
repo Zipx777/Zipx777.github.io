@@ -251,7 +251,6 @@ function finishGame(gameStateWin) {
     for (i = 0; i < gameStateWin.length; i++) {
         var squareNum = gameStateWin.charAt(i);
         var squareID = "square" + squareNum;
-        //$("#" + squareID).addClass("playable");
         $("#" + squareID).addClass("finalSquare");
     }
     alert("game won");
@@ -265,6 +264,7 @@ function resetClick() {
     
     var squares = $(".tictactoesquare");
     squares.removeClass("playable");
+    squares.removeClass("finalSquare");
     squares.addClass("playable");
     squares.removeClass("wonSquare");
     
