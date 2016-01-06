@@ -488,6 +488,9 @@ Small Device Styles
   border: 2px solid black;
 }
 
+.finalSquare {
+  color: green;
+}
 #turnDisplay {
   float: left;
 }
