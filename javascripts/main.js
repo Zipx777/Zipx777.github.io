@@ -253,7 +253,7 @@ function finishGame(gameStateWin) {
         var squareID = "square" + squareNum;
         $("#" + squareID).addClass("finalSquare");
     }
-    alert("game won");
+    $("#turnIndicatorText").text(" Won!");
 }
 
 //reset game state to start
@@ -273,4 +273,6 @@ function resetClick() {
         tiles.text("");
         tiles.show();
     });
+    
+    $("#turnIndicatorText").text("s Turn");
 }
