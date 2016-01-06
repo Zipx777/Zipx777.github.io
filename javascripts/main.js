@@ -61,6 +61,10 @@ function tileClick() {
         }
         identifyNextPlayableSquare($(this));
         updateNextMoveVar();
+    } else {
+        //this case only comes up if player clicks on the tile the previous player just marked
+        $(this).css("background-color", "lightcoral");
+        $(this).css("border", "4px solid red");
     }
 }
 
@@ -253,7 +257,7 @@ function finishGame(gameStateWin) {
         var squareID = "square" + squareNum;
         $("#" + squareID).addClass("finalSquare");
     }
-    $("#turnIndicatorText").text(" Won!");
+    $("#turnIndicatorText").text(" won!");
 }
 
 //reset game state to start
