@@ -523,6 +523,8 @@ Small Device Styles
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  
+  cursor: default;
 }
 
 /*button that resets board state*/
@@ -544,5 +546,5 @@ Small Device Styles
   -moz-user-select: none;
   -ms-user-select: none;
   
-  cursor: default;
+  cursor: pointer;
 }
