@@ -462,10 +462,8 @@ Small Device Styles
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-}
-
-.tile:hover {
-  cursor: hand;
+  
+  cursor: pointer;
 }
 
 .playable {
