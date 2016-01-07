@@ -464,6 +464,10 @@ Small Device Styles
   -ms-user-select: none;
 }
 
+.tile:hover {
+  cursor: hand;
+}
+
 .playable {
   border: 10px solid lightgreen;
 }
