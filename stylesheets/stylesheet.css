@@ -424,6 +424,9 @@ Small Device Styles
 
 }
 
+
+/*Ultimate TicTacToe*/
+
 #ultimateBoard {
   width: 492px;
   height: 492px;
@@ -547,4 +550,35 @@ Small Device Styles
   -ms-user-select: none;
   
   cursor: pointer;
+}
+
+/*end tictactoe section*/
+
+/*navbar*/
+
+#outerNavbar {
+	background-color: black;
+	height: 30px;
+}
+
+#innerNavbar {
+	max-width: 640px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.navbarOption {
+	height: 30px;
+	width: 100px;
+	float: left;
+	background: linear-gradient(white, lightblue);
+	color: black;
+	line-height: 30px;
+	text-align: center;
+	font-weight: bold;
+	border-right: 1px solid black;
+}
+
+.navbarOption:hover {
+	background: linear-gradient(darkgray, lightblue);
 }
