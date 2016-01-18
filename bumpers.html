@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Zipx777.GitHub.io : website">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/bumpers.css">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="javascripts/bumpers/Keys.js"></script>
+	<script src="javascripts/bumpers/Player.js"></script>
+	<script src="javascripts/bumpers/Puck.js"></script>
+	<script src="javascripts/bumpers/Goal.js"></script>
+	<script src="javascripts/bumpers/requestAnimationFrame.js"></script>
+    <script src="javascripts/bumpers/bumpers.js"></script>
+	
+    <title>Zipx777.GitHub.io</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Zipx777">View on GitHub</a>
+
+          <h1 id="project_title">Zipx777's homepage</h1>
+          <h2 id="project_tagline">fun stuff arriving slowly</h2>
+
+        </header>
+		
+		<div id="outerNavbar">
+			<div id="innerNavbar">
+				<a href="index.html"><div class="navbarOption">TicTacToe</div></a>
+				<a href="mptest.html"><div class="navbarOption">MP Test</div></a>
+				<a href="bumpers.html"><div class="navbarOption">Bumpers</div></a>					
+			</div>
+		</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bumpers</h3>
+		<p>When you hit the puck, it changes to be your color.  When the puck hits a goal, the goal changes to be the puck's color. You win when all 4 goals are your color.</p>
+		
+		<div id="bumpersBoard">
+			<canvas id="bumpersCanvas"></canvas>
+		</div>
+		<div id="bumpersBoardFooter">
+			<div id="playerOneArea" class="bumpersBoardFooterArea">
+				<select id="player1Color">
+				</select>
+			</div>
+			<div id="bumpersStartPauseButtonArea" class="bumpersBoardFooterArea">
+				<button id="bumpersStartPauseButton">Start</button>
+			</div>
+			<div id="bumpersResetButtonArea" class="bumpersBoardFooterArea">
+				<button id="bumpersResetButton">Reset</button>
+			</div>
+			<div id="playerTwoArea" class="bumpersBoardFooterArea">
+				<select id="player2Color">
+				</select>
+			</div>
+		</div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
