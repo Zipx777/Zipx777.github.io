@@ -48,7 +48,7 @@ var Player = function(startX, startY, pColor) {
 	
 	//update player position, return true if player's position changed
 	//takes a Keys object as a parameter, with bools up, left, down, and right
-	var update = function(keys) {		
+	var update = function(ctx, keys) {		
 		var prevX = x,
 			prevY = y;
 			
@@ -67,6 +67,12 @@ var Player = function(startX, startY, pColor) {
 		if (keys.right) {
 			x += speed;
 		}
+		
+		//stop player going out of bounds
+		x = Math.max(0 + radius, x);
+		x = Math.min(ctx.canvas.width - radius, x);
+		y = Math.max(0 + radius, y);
+		y = Math.min(ctx.canvas.height - radius, y);
 		
 		return ((prevX != x) || (prevY != y));
 	};
