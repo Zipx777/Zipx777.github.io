@@ -1,6 +1,7 @@
 var canvas,
 	ctx,
 	players,
+	winningPlayer,
 	goals,
 	puck,
 	arrowKeys,
@@ -39,6 +40,9 @@ function initializeVariables() {
 			new Goal(ctx.canvas.width, (ctx.canvas.height / 2), "vertical")];	
 		
 	players = [new Player(0, 0, "red"), new Player(0, 0, "blue")];	
+	
+	//when a player wins the game, this will be set to 0 or 1
+	winningPlayer = -1;
 	
 	puck = new Puck(0, 0);
 	
@@ -85,6 +89,7 @@ function positionPiecesAtStart() {
 		
 		puck.setX(ctx.canvas.width / 2);
 		puck.setY(ctx.canvas.height / 2);
+		puck.reset(); //randomizes direction
 }
 
 //handler when a key is pressed
@@ -135,6 +140,7 @@ function startPauseClicked() {
 function resetClicked() {
 	gamePaused = true;
 	gameRunning = false;
+	winningPlayer = -1;
 	
 	$("#bumpersStartPauseButton").text("Start");
 	$("#bumpersStartPauseButton").prop("disabled", false);
@@ -160,7 +166,9 @@ function resetPuck() {
 	puck.reset();
 }
 
+//***************
 //main game loop
+//***************
 function animate() {
 	update();
 	
@@ -174,8 +182,8 @@ function update() {
 	if (!gamePaused) {
 		if (!checkForWin()) {
 			//update the players
-			players[0].update(wasdKeys);
-			players[1].update(arrowKeys);
+			players[0].update(ctx, wasdKeys);
+			players[1].update(ctx, arrowKeys);
 			
 			//update the puck
 			puck.update(ctx, players);
@@ -208,28 +216,35 @@ function draw() {
 	
 	//draw the puck
 	puck.draw(ctx);
+	
+	//if a player has won, display win text
+	if (winningPlayer >= 0) {
+		ctx.font = "30px Verdana";
+		ctx.fillStyle = players[winningPlayer].getColor();
+		ctx.fillText("Player " + (winningPlayer + 1) + " won!", (ctx.canvas.width / 2) - 100, ctx.canvas.height / 2);
+	}
 }
 
 //check for a game win, return true if the game was won
 function checkForWin() {
 	//loop through all goals to see if they were all last hit by the same player		
-	var winningPlayer = goals[0].getLastPlayerHit();
+	var potentialWinner = goals[0].getLastPlayerHit();
 	var win = true;
 	
-	//win is false if winningPlayer is -1 because that means the goal hasn't been hit yet
-	if (winningPlayer == -1) {
+	//win is false if potentialWinner is -1 because that means the goal hasn't been hit yet
+	if (potentialWinner == -1) {
 		win = false;
 	}
 	
 	var j;
 	for (j = 0; j < goals.length; j++) {
-		if (goals[j].getLastPlayerHit() != winningPlayer) {
+		if (goals[j].getLastPlayerHit() != potentialWinner) {
 			win = false;
 		}
 	}
 	
 	if (win) {
-		gameWon(winningPlayer);
+		gameWon(potentialWinner);
 	}
 	return win;
 }
@@ -237,5 +252,6 @@ function checkForWin() {
 //game was won by a player
 function gameWon(p) {
 	gamePaused = true;
+	winningPlayer = p;;
 	$("#bumpersStartPauseButton").prop("disabled", true);
 }
