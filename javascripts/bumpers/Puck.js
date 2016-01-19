@@ -43,8 +43,20 @@ var Puck = function(startX, startY) {
 		y = newY;
 	};
 	
+	//resets puck color and randomizes initial direction
 	var reset = function() {
 		color = "gray";
+		
+		var rand1 = Math.random();
+		var rand2 = Math.random();
+		
+		if (rand1 < 0.5) {
+			xSpeed = xSpeed * -1;
+		}
+		
+		if (rand2 < 0.5) {
+			ySpeed = ySpeed * -1;
+		}
 	}
 	
 	//updates puck position
