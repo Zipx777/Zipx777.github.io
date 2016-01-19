@@ -3,6 +3,7 @@ var Puck = function(startX, startY) {
 	var x = startX,
 		y = startY,
 		color = "gray",
+		lastPlayerHit = -1,
 		radius = 8,
 		xSpeed = 4,
 		ySpeed = 4;
@@ -21,6 +22,11 @@ var Puck = function(startX, startY) {
 	var getColor = function() {
 		return color;
 	};
+	
+	//return which player last hit the puck
+	var getLastPlayerHit = function() {
+		return lastPlayerHit;
+	}
 	
 	//return puck radius
 	var getRadius = function() {
@@ -68,6 +74,7 @@ var Puck = function(startX, startY) {
 			if ((Math.abs(xDiff) <= combinedRadii) && (Math.abs(yDiff) <= combinedRadii)) {
 				//the puck has collided with a player
 				color = players[i].getColor();
+				lastPlayerHit = i;
 				
 				//calculate physics result of the collision, change puck's speed
 				handlePuckPlayerCollision(players[i]);
@@ -124,6 +131,7 @@ var Puck = function(startX, startY) {
 		getY: getY,
 		getRadius: getRadius,
 		getColor: getColor,
+		getLastPlayerHit: getLastPlayerHit,
 		setX: setX,
 		setY: setY,
 		reset: reset,
