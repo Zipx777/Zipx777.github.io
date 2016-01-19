@@ -3,6 +3,7 @@ var Goal = function(startX, startY, ori) {
 	var x = startX,
 		y = startY,
 		color = "gray",
+		lastPlayerHit = -1,
 		longSide = 180,
 		shortSide = 16,
 		orientation = ori; //either "horizontal" or "vertical"
@@ -26,6 +27,11 @@ var Goal = function(startX, startY, ori) {
 		return height;
 	};
 	
+	//get last player who hit this with the puck
+	var getLastPlayerHit = function() {
+		return lastPlayerHit;
+	}
+	
 	//set goal color
 	var setColor = function(newColor) {
 		color = newColor;
@@ -34,6 +40,7 @@ var Goal = function(startX, startY, ori) {
 	//reset the goal to starting state
 	var reset = function() {
 		color = "gray";
+		lastPlayerHit = -1;
 	}
 	
 	//update the goal, change color if collision with puck
@@ -47,6 +54,7 @@ var Goal = function(startX, startY, ori) {
 		
 		if (xDiff <= combinedWidth && yDiff <= combinedHeight) {
 			color = puck.getColor();
+			lastPlayerHit = puck.getLastPlayerHit();
 		}
 	};
 	
@@ -60,6 +68,7 @@ var Goal = function(startX, startY, ori) {
 	return {
 		getWidth: getWidth,
 		getHeight: getHeight,
+		getLastPlayerHit: getLastPlayerHit,
 		setColor: setColor,
 		reset: reset,
 		update: update,
