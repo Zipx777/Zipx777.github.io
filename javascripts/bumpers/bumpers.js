@@ -135,14 +135,16 @@ function startPauseClicked() {
 function resetClicked() {
 	gamePaused = true;
 	gameRunning = false;
+	
 	$("#bumpersStartPauseButton").text("Start");
+	$("#bumpersStartPauseButton").prop("disabled", false);
 	
 	positionPiecesAtStart();
 	resetGoals();
 	resetPuck();
 	
 	$("#player1Color").prop("disabled", false);
-	$("#player2Color").prop("disabled", false);
+	$("#player2Color").prop("disabled", false);	
 }
 
 //reset goals' states
@@ -160,28 +162,31 @@ function resetPuck() {
 
 //main game loop
 function animate() {
-	if (!gamePaused) {
-		update();
-	}
+	update();
+	
 	draw();
-
+	
 	window.requestAnimFrame(animate);
 }
 
 //update game pieces' positions
 function update() {
-	//update the players
-	players[0].update(wasdKeys);
-	players[1].update(arrowKeys);
-	
-	//update the goals
-	var j;
-	for (j = 0; j < goals.length; j++) {
-		goals[j].update(puck);
+	if (!gamePaused) {
+		if (!checkForWin()) {
+			//update the players
+			players[0].update(wasdKeys);
+			players[1].update(arrowKeys);
+			
+			//update the puck
+			puck.update(ctx, players);
+			
+			//update the goals
+			var i;
+			for (i = 0; i < goals.length; i++) {
+				goals[i].update(puck);
+			}	
+		}			
 	}
-	
-	//update the puck
-	puck.update(ctx, players);
 }
 
 //draw the canvas
@@ -203,4 +208,34 @@ function draw() {
 	
 	//draw the puck
 	puck.draw(ctx);
+}
+
+//check for a game win, return true if the game was won
+function checkForWin() {
+	//loop through all goals to see if they were all last hit by the same player		
+	var winningPlayer = goals[0].getLastPlayerHit();
+	var win = true;
+	
+	//win is false if winningPlayer is -1 because that means the goal hasn't been hit yet
+	if (winningPlayer == -1) {
+		win = false;
+	}
+	
+	var j;
+	for (j = 0; j < goals.length; j++) {
+		if (goals[j].getLastPlayerHit() != winningPlayer) {
+			win = false;
+		}
+	}
+	
+	if (win) {
+		gameWon(winningPlayer);
+	}
+	return win;
+}
+
+//game was won by a player
+function gameWon(p) {
+	gamePaused = true;
+	$("#bumpersStartPauseButton").prop("disabled", true);
 }
