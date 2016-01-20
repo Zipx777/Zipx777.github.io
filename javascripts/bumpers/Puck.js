@@ -46,6 +46,7 @@ var Puck = function(startX, startY) {
 	//resets puck color and randomizes initial direction
 	var reset = function() {
 		color = "gray";
+		lastPlayerHit = -1;
 		
 		var rand1 = Math.random();
 		var rand2 = Math.random();
