@@ -1,5 +1,6 @@
 //keeps track of whether X or O is next, starts with X
 var nextMove = "X";
+var tieGameOver = false;
 
 //document ready function
 $(function(){
@@ -83,11 +84,17 @@ function identifyNextPlayableSquare(tile) {
     $(".tictactoesquare").removeClass("playable");
     if (nextSquareObj.hasClass("wonSquare") || squareIsFull(nextSquareObj)) {
         //loop through all squares, mark each square that isn't full or won as playable
+		var allSquaresFull = true;
         $(".tictactoesquare").each(function() {
             if (!($(this).hasClass("wonSquare")) && !(squareIsFull($(this)))) {
                 $(this).addClass("playable");
+				allSquaresFull = false;
             }
         });
+		
+		if (allSquaresFull) {
+			tieGameOver = true;			
+		}
     } else {
         nextSquareObj.addClass("playable");   
     }
@@ -130,6 +137,10 @@ function updateNextMoveVar() {
         nextMove = "X";
     }
     $("#turnIndicator").text(nextMove);
+	if (tieGameOver) {
+		$("#turnIndicator").text("Tie Game");
+		$("#turnIndicatorText").text("");
+	}
 }
 
 //checks to see if current player won one of the tictactoe squares
@@ -262,10 +273,12 @@ function finishGame(gameStateWin) {
 
 //reset game state to start
 function resetClick() {
-    var squareWonTiles = $(".squareWonTile")
+    var squareWonTiles = $(".squareWonTile");
     squareWonTiles.hide();
     squareWonTiles.text("");
     
+	tieGameOver = false;
+	
     var squares = $(".tictactoesquare");
     squares.removeClass("playable");
     squares.removeClass("finalSquare");
@@ -278,5 +291,6 @@ function resetClick() {
         tiles.show();
     });
     
+	$("#turnIndicator").text(nextMove);
     $("#turnIndicatorText").text("s Turn");
 }
