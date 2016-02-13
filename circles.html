@@ -8,12 +8,14 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/circles.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
 	
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script> 
 	<script src="javascripts/bumpers/requestAnimationFrame.js"></script>
 	<script src="javascripts/circles/Circle.js"></script>
     <script src="javascripts/circles/main.js"></script>
-	
+	  
     <title>Zipx777.GitHub.io</title>
   </head>
 
@@ -38,7 +40,7 @@
 			</div>
 		</div>
     </div>
-
+	  
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
@@ -47,6 +49,15 @@
 		
 		<div id="circlesBoard">
 			<canvas id="circlesCanvas"></canvas>
+		</div>
+		<div id="circlesBoardFooter">
+			<button id="circlesRestartButton">Restart</button>
+			<button id="circlesRandomizeButton">Randomize</button>
+			
+			<div id="sliderArea">
+				<div id="slider"></div>
+			</div>
+			<div id="sliderText">Realistic with some bugs</div>
 		</div>
       </section>
     </div>
