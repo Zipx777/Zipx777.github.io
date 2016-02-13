@@ -67,10 +67,13 @@ var Circle = function(startX, startY, startXSpeed, startYSpeed, startColor) {
 		ySpeed = newYSpeed;
 	};
 	
-	//adjust circle's speed based on collision with another circle
-	//also adjusts other circle's speed (tentative testing)
-	//assumes circles have collided and are moving towards each other at least a little bit
-	var collisionWithCircle = function(c) {
+	/*
+	adjust circle's speed based on collision with another circle
+	also adjusts other circle's speed
+	assumes circles have collided and are moving towards each other at least a little bit
+	the most realistic circle to circle collision function
+	*/
+	var collision0WithCircle = function(c) {
 		
 		var angleBetweenCircs;
 		var speed1, newSpeed1, angle1, newAngle1, paraSpeed1, newParaSpeed1, perpSpeed1;
@@ -88,13 +91,13 @@ var Circle = function(startX, startY, startXSpeed, startYSpeed, startColor) {
 		
 		perpSpeed1 = speed1 * Math.sin(angle1 - angleBetweenCircs);
 		perpSpeed2 = speed2 * Math.sin(angle2 - angleBetweenCircs);
-		//alert("2");
+
 		newParaSpeed1 = paraSpeed2;
 		newParaSpeed2 = paraSpeed1;
 		
 		newAngle1 = Math.atan2(perpSpeed1, newParaSpeed1) + angleBetweenCircs;
 		newAngle2 = Math.atan2(perpSpeed2, newParaSpeed2) + angleBetweenCircs;
-		//alert("3");
+
 		newSpeed1 = Math.sqrt(Math.pow(perpSpeed1, 2) + Math.pow(newParaSpeed1, 2));
 		newSpeed2 = Math.sqrt(Math.pow(perpSpeed2, 2) + Math.pow(newParaSpeed2, 2));
 		
@@ -103,8 +106,162 @@ var Circle = function(startX, startY, startXSpeed, startYSpeed, startColor) {
 		
 		c.setXSpeed(newSpeed2 * Math.cos(newAngle2));
 		c.setYSpeed(newSpeed2 * Math.sin(newAngle2));	
-			
 	};
+	
+	/*
+	adjust circle's speed based on collision with another circle
+	also adjusts other circle's speed (tentative testing)
+	assumes circles have collided and are moving towards each other at least a little bit
+	slightly weirder than normal, only change is adding 1 to newParaSpeeds
+	*/
+	var collision1WithCircle = function(c) {
+		
+		var angleBetweenCircs;
+		var speed1, newSpeed1, angle1, newAngle1, paraSpeed1, newParaSpeed1, perpSpeed1;
+		var speed2, newSpeed2, angle2, newAngle2, paraSpeed2, newParaSpeed2, perpSpeed2;
+
+		angle1 = Math.atan2(ySpeed, xSpeed);
+		angle2 = Math.atan2(c.getYSpeed(), c.getXSpeed());
+		angleBetweenCircs = Math.atan2(y - c.getY(), x - c.getX());
+
+		speed1 = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+		speed2 = Math.sqrt(Math.pow(c.getXSpeed(), 2) + Math.pow(c.getYSpeed(), 2));
+		
+		paraSpeed1 = speed1 * Math.cos(angle1 - angleBetweenCircs);
+		paraSpeed2 = speed2 * Math.cos(angle2 - angleBetweenCircs);
+		
+		perpSpeed1 = speed1 * Math.sin(angle1 - angleBetweenCircs);
+		perpSpeed2 = speed2 * Math.sin(angle2 - angleBetweenCircs);
+
+		newParaSpeed1 = paraSpeed2 - 1;
+		newParaSpeed2 = paraSpeed1 - 1;
+		
+		newAngle1 = Math.atan2(perpSpeed1, newParaSpeed1) + angleBetweenCircs;
+		newAngle2 = Math.atan2(perpSpeed2, newParaSpeed2) + angleBetweenCircs;
+
+		newSpeed1 = Math.sqrt(Math.pow(perpSpeed1, 2) + Math.pow(newParaSpeed1, 2));
+		newSpeed2 = Math.sqrt(Math.pow(perpSpeed2, 2) + Math.pow(newParaSpeed2, 2));
+		
+		xSpeed = newSpeed1 * Math.cos(newAngle1);
+		ySpeed = newSpeed1 * Math.sin(newAngle1);
+		
+		c.setXSpeed(newSpeed2 * Math.cos(newAngle2));
+		c.setYSpeed(newSpeed2 * Math.sin(newAngle2));				
+	};
+	
+	/*
+	used to make circles bunch together and sort of move around together, main change is in physics udpate function
+	*/
+	var collision2WithCircle = function(c) {
+		
+		var angleBetweenCircs;
+		var speed1, newSpeed1, angle1, newAngle1, paraSpeed1, newParaSpeed1, perpSpeed1;
+		var speed2, newSpeed2, angle2, newAngle2, paraSpeed2, newParaSpeed2, perpSpeed2;
+
+		angle1 = Math.atan2(ySpeed, xSpeed);
+		angle2 = Math.atan2(c.getYSpeed(), c.getXSpeed());
+		angleBetweenCircs = Math.atan2(y - c.getY(), x - c.getX());
+
+		speed1 = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+		speed2 = Math.sqrt(Math.pow(c.getXSpeed(), 2) + Math.pow(c.getYSpeed(), 2));
+		
+		paraSpeed1 = speed1 * Math.cos(angle1 - angleBetweenCircs);
+		paraSpeed2 = speed2 * Math.cos(angle2 - angleBetweenCircs);
+		
+		perpSpeed1 = speed1 * Math.sin(angle1 - angleBetweenCircs);
+		perpSpeed2 = speed2 * Math.sin(angle2 - angleBetweenCircs);
+
+		newParaSpeed1 = paraSpeed2;
+		newParaSpeed2 = paraSpeed1;
+		
+		newAngle1 = Math.atan2(perpSpeed1, newParaSpeed1) + angleBetweenCircs;
+		newAngle2 = Math.atan2(perpSpeed2, newParaSpeed2) + angleBetweenCircs;
+
+		newSpeed1 = Math.sqrt(Math.pow(perpSpeed1, 2) + Math.pow(newParaSpeed1, 2));
+		newSpeed2 = Math.sqrt(Math.pow(perpSpeed2, 2) + Math.pow(newParaSpeed2, 2));
+		
+		xSpeed = newSpeed1 * Math.cos(newAngle1);
+		ySpeed = newSpeed1 * Math.sin(newAngle1);
+		
+		//c.setXSpeed(newSpeed2 * Math.cos(newAngle2));
+		//c.setYSpeed(newSpeed2 * Math.sin(newAngle2));			
+	};
+	
+	/*
+	causes weird black-hole-like behavior
+	*/
+	var collision3WithCircle = function(c) {
+		
+		var angleBetweenCircs;
+		var speed1, newSpeed1, angle1, newAngle1, paraSpeed1, newParaSpeed1, perpSpeed1;
+		var speed2, newSpeed2, angle2, newAngle2, paraSpeed2, newParaSpeed2, perpSpeed2;
+
+		angle1 = Math.atan2(ySpeed, xSpeed);
+		angle2 = Math.atan2(c.getYSpeed(), c.getXSpeed());
+		angleBetweenCircs = Math.atan2(y - c.getY(), x - c.getX());
+
+		speed1 = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+		speed2 = Math.sqrt(Math.pow(c.getXSpeed(), 2) + Math.pow(c.getYSpeed(), 2));
+		
+		paraSpeed1 = speed1 * Math.cos(angle1 - angleBetweenCircs);
+		paraSpeed2 = speed2 * Math.cos(angle2 - angleBetweenCircs);
+		
+		perpSpeed1 = speed1 * Math.sin(angle1 - angleBetweenCircs);
+		perpSpeed2 = speed2 * Math.sin(angle2 - angleBetweenCircs);
+
+		newParaSpeed1 = paraSpeed2 - 2;
+		newParaSpeed2 = paraSpeed1 - 2;
+		
+		newAngle1 = Math.atan2(perpSpeed1, newParaSpeed1) + angleBetweenCircs;
+		newAngle2 = Math.atan2(perpSpeed2, newParaSpeed2) + angleBetweenCircs;
+
+		newSpeed1 = Math.sqrt(Math.pow(perpSpeed1, 2) + Math.pow(newParaSpeed1, 2));
+		newSpeed2 = Math.sqrt(Math.pow(perpSpeed2, 2) + Math.pow(newParaSpeed2, 2));
+		
+		xSpeed = newSpeed1 * Math.cos(newAngle1);
+		ySpeed = newSpeed1 * Math.sin(newAngle1);
+		
+		//c.setXSpeed(newSpeed2 * Math.cos(newAngle2));
+		//c.setYSpeed(newSpeed2 * Math.sin(newAngle2));				
+	};
+	
+	/*
+	hard to explain
+	*/
+	var collision4WithCircle = function(c) {
+		
+		var angleBetweenCircs;
+		var speed1, newSpeed1, angle1, newAngle1, paraSpeed1, newParaSpeed1, perpSpeed1;
+		var speed2, newSpeed2, angle2, newAngle2, paraSpeed2, newParaSpeed2, perpSpeed2;
+
+		angle1 = Math.atan2(ySpeed, xSpeed);
+		angle2 = Math.atan2(c.getYSpeed(), c.getXSpeed());
+		angleBetweenCircs = Math.atan2(y - c.getY(), x - c.getX());
+
+		speed1 = Math.sqrt(Math.pow(xSpeed, 2) + Math.pow(ySpeed, 2));
+		speed2 = Math.sqrt(Math.pow(c.getXSpeed(), 2) + Math.pow(c.getYSpeed(), 2));
+		
+		paraSpeed1 = speed1 * Math.cos(angle1 - angleBetweenCircs);
+		paraSpeed2 = speed2 * Math.cos(angle2 - angleBetweenCircs);
+		
+		perpSpeed1 = speed1 * Math.sin(angle1 - angleBetweenCircs);
+		perpSpeed2 = speed2 * Math.sin(angle2 - angleBetweenCircs);
+
+		newParaSpeed1 = paraSpeed2 - 2;
+		newParaSpeed2 = paraSpeed1 - 2;
+		
+		newAngle1 = Math.atan2(perpSpeed1, newParaSpeed1) + angleBetweenCircs;
+		newAngle2 = Math.atan2(perpSpeed2, newParaSpeed2) + angleBetweenCircs;
+
+		newSpeed1 = Math.sqrt(Math.pow(perpSpeed1, 2) + Math.pow(newParaSpeed1, 2));
+		newSpeed2 = Math.sqrt(Math.pow(perpSpeed2, 2) + Math.pow(newParaSpeed2, 2));
+		
+		xSpeed = newSpeed1 * Math.cos(newAngle1);
+		ySpeed = newSpeed1 * Math.sin(newAngle1);
+		
+		//c.setXSpeed(newSpeed2 * Math.cos(newAngle2));
+		//c.setYSpeed(newSpeed2 * Math.sin(newAngle2));			
+	};	
 	
 	//update Circle position and speed
 	var update = function(ctx, g, cor) {		
@@ -172,7 +329,11 @@ var Circle = function(startX, startY, startXSpeed, startYSpeed, startColor) {
 		setRadius: setRadius,
 		setXSpeed: setXSpeed,
 		setYSpeed: setYSpeed,
-		collisionWithCircle: collisionWithCircle,
+		collision0WithCircle: collision0WithCircle,
+		collision1WithCircle: collision1WithCircle,
+		collision2WithCircle: collision2WithCircle,
+		collision3WithCircle: collision3WithCircle,
+		collision4WithCircle: collision4WithCircle,
 		update: update,
 		draw: draw
 	};
