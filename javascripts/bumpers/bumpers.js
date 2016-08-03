@@ -151,6 +151,9 @@ function resetClicked() {
 	
 	$("#player1Color").prop("disabled", false);
 	$("#player2Color").prop("disabled", false);	
+	
+	wasdKeys.reset();
+	arrowKeys.reset();
 }
 
 //reset goals' states
