@@ -69,6 +69,7 @@ var Keys = function(directionType) {
 		right: right,
 		down: down,
 		onKeyDown: onKeyDown,
-		onKeyUp: onKeyUp
+		onKeyUp: onKeyUp,
+		reset: reset
 	};
 }
