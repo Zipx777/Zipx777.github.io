@@ -87,6 +87,11 @@ function sliderMoved(event, ui) {
 	var newVal = ui.value;
 	physicsType = newVal;
 	$("#sliderText").text(physicsNames[newVal]);
+	
+	var i;
+	for (i = 0; i < circles.length; i++) {
+		saveCircleStarts[i] = [circles[i].getX(), circles[i].getY(), circles[i].getXSpeed(), circles[i].getYSpeed()];
+	}
 }
 
 //reset circles to the positions and velocities they started this round with
