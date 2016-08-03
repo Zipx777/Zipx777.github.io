@@ -108,6 +108,11 @@ function keyDownHandler(e) {
 
 //handler for when a key is released
 function keyUpHandler(e) {
+	//fix for spacebar doing last click action on keyUp bug
+	if (e.which == 32) {
+		e.preventDefault();
+	}
+	
 	arrowKeys.onKeyUp(e);
 	wasdKeys.onKeyUp(e);
 }
