@@ -56,6 +56,13 @@ var Keys = function(directionType) {
 		}
 	}
 	
+	var reset = function() {
+		left = false;
+		up = false;
+		right = false;
+		down = false;
+	}
+	
 	return {
 		up: up,
 		left: left,
