@@ -5,7 +5,7 @@ var tileWidth;
 var tileHeight;
 
 //current state of all tiles (alive vs dead)
-var boardState;
+var boardState
 
 //a place to temporarily store what the next step in the simulation will be
 var futureBoardState;
@@ -29,12 +29,12 @@ function initializeVariables() {
 	boardWidth = 700;
 	boardHeight = 500;
 
-	tileWidth = 20;
-	tileHeight = 20;
+	tileWidth = 10;
+	tileHeight = 10;
 	
 	boardState = [];
 	futureBoardState = [];
-	savedBoardState = [];
+	savedBoardState = []
 	
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		boardState[i] = [];
@@ -98,7 +98,6 @@ function startStopClick() {
 		stopSimulation();
 	} else {
 		getBoardState();
-		
 		simulationRunning = true;
 		$(this).text("Pause");
 		runSimulation();
@@ -133,6 +132,7 @@ function singleSimulationStep() {
 			var neighborCount = countNeighbors(i, j);
 			if (tileIsAlive(i,j)) {
 				totalAlive++;
+				
 				if (neighborCount < 2 || neighborCount > 3) {
 					futureBoardState[i][j] = 0;
 				} else {
@@ -145,12 +145,14 @@ function singleSimulationStep() {
 					futureBoardState[i][j] = 0;
 				}
 			}
+			
+			if (boardState[i][j] != futureBoardState[i][j]) {
+				updateTile(i,j,futureBoardState[i][j]);
+			}
 		}
 	}
 	
-	boardState = futureBoardState;
-	
-	updateBoard();
+	copyArray(boardState, futureBoardState);
 	
 	if (totalAlive == 0) {
 		stopSimulation();
@@ -178,10 +180,23 @@ function countNeighbors(i, j) {
 
 //returns whether the passed tile is alive
 function tileIsAlive(i,j) {
-	return $("#" + i + "_" + j).hasClass("alive");
+	return (boardState[i][j] == 1);
+}
+
+//update visual state of tile to match actual state
+function updateTile(i, j, state) {
+	var tile = $("#" + i + "_" + j);
+	tile.removeClass("alive");
+	tile.removeClass("dead");
+	if (state == 0) {
+		tile.addClass("dead");
+	} else if (state == 1) {
+		tile.addClass("alive");
+	}
 }
 
 //update visual state of board to match actual state
+//DEPRECATED: currently unused, due to optimizations
 function updateBoard() {
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		for (var j = 0; j < boardWidth/tileWidth; j++) {
@@ -206,17 +221,25 @@ function clearClick() {
 function clearBoard() {
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		for (var j = 0; j < boardWidth/tileWidth; j++) {
-			boardState[i][j] = 0;
+			if (boardState[i][j] = 1) {
+				boardState[i][j] = 0;
+				updateTile(i,j,0);
+			}
 		}
 	}
-	updateBoard();
 }
 
 function resetClick() {
 	clearBoard();
 	stopSimulation();
-	copyArray(boardState, savedBoardState);
-	updateBoard();
+	for (var i = 0; i < boardHeight/tileHeight; i++) {
+		for (var j = 0; j < boardWidth/tileWidth; j++) {
+			if (boardState[i][j] != savedBoardState[i][j]) {
+				updateTile(i,j,savedBoardState[i][j]);
+				boardState[i][j] = savedBoardState[i][j];
+			}
+		}
+	}
 }
 
 var timestep = 1000 / 60;
