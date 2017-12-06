@@ -54,13 +54,28 @@ function initializeVariables() {
 function initializeBoard() {
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		for (var j = 0; j < boardWidth/tileWidth; j++) {
-			var testTile = $("<div></div>");
-			testTile.addClass("tile");
-			testTile.addClass("dead");
-			testTile.attr("id", i + "_" + j);
-			$("#lifeBoard").append(testTile);
+			var newTile = $("<div></div>");
+			newTile.addClass("tile");
+			newTile.addClass("dead");
+			newTile.attr("id", i + "_" + j);
+			$("#lifeBoard").append(newTile);
 		}
 	}
+	
+	for (var i = 1; i < 9; i++) {
+		var newOption = $("<option></option>");
+		newOption.attr("value", i);
+		newOption.text(i);
+		$("#alive_min").append(newOption);
+		$("#alive_max").append(newOption.clone());
+		$("#dead_min").append(newOption.clone());
+		$("#dead_max").append(newOption.clone());
+	}
+	
+	$("#alive_min option[value=2]").attr("selected", true);
+	$("#alive_max option[value=3]").attr("selected", true);
+	$("#dead_min option[value=3]").attr("selected", true);
+	$("#dead_max option[value=3]").attr("selected", true);
 }
 
 //set up functions to handle events like clicks
@@ -125,6 +140,11 @@ function stepClick() {
 }
 
 function singleSimulationStep() {
+	var aliveMin = $("#alive_min").find(":selected").val();
+	var aliveMax = $("#alive_max").find(":selected").val();
+	var deadMin = $("#dead_min").find(":selected").val();
+	var deadMax = $("#dead_max").find(":selected").val();
+
 	var totalAlive = 0;	
 	
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
@@ -133,16 +153,16 @@ function singleSimulationStep() {
 			if (tileIsAlive(i,j)) {
 				totalAlive++;
 				
-				if (neighborCount < 2 || neighborCount > 3) {
+				if (neighborCount < aliveMin || neighborCount > aliveMax) {
 					futureBoardState[i][j] = 0;
 				} else {
 					futureBoardState[i][j] = 1;
 				}
 			} else {
-				if (neighborCount == 3) {
-					futureBoardState[i][j] = 1;
-				} else {
+				if (neighborCount < deadMin || neighborCount > deadMax) {
 					futureBoardState[i][j] = 0;
+				} else {
+					futureBoardState[i][j] = 1;
 				}
 			}
 			
@@ -241,7 +261,7 @@ function resetClick() {
 		}
 	}
 }
-
+	
 var timestep = 1000 / 60;
 
 //start simulation that will repeat itself
