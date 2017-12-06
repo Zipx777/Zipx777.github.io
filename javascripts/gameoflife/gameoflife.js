@@ -26,7 +26,7 @@ $(function() {
 
 //set global variables to their initial values
 function initializeVariables() {
-	boardWidth = 700;
+	boardWidth = 640;
 	boardHeight = 500;
 
 	tileWidth = 10;
