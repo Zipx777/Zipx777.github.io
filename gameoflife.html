@@ -44,10 +44,7 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Game of Life</h3>
-		<p>Activate squares by clicking on them, and then hit "Start" or "Step" to run through the simulation. Squares multiply or die off depending on a set of rules:<br />
-		<br />
-		A living square dies unless it has 2 or 3 neighbors.<br />
-		A square becomes alive if it has 3 neighbors.</p>
+		<p>Activate squares by clicking on them, and then hit "Start" or "Step" to run through the simulation. Squares multiply or die off depending on a set of rules that can be customized below the board.<br />
 		<div id="lifeBoard">
 		</div>
 		<div id="lifeControlBar">
@@ -55,6 +52,13 @@
 			<button id="stepButton">Step</button>
 			<button id="resetButton">Reset</button>
 			<button id="clearButton">Clear</button>
+			<p>A living square dies unless it has between 
+			<select id="alive_min"></select> and 
+			<select id="alive_max"></select> living neighbors
+			<br />
+			A dormant square becomes alive if it has between 
+			<select id="dead_min"></select> and 
+			<select id="dead_max"></select> living neighbors</p>
 		</div>
       </section>
     </div>
