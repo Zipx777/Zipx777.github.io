@@ -11,6 +11,7 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	
+	<script src="javascripts/gameoflife/examplePatterns.js"></script>
     <script src="javascripts/gameoflife/gameoflife.js"></script>
 	<script src="javascripts/bumpers/requestAnimationFrame.js"></script>
 	
@@ -52,13 +53,17 @@
 			<button id="stepButton">Step</button>
 			<button id="resetButton">Reset</button>
 			<button id="clearButton">Clear</button>
-			<p>A living square dies unless it has between 
+			<p>
+			A living square dies unless it has between 
 			<select id="alive_min"></select> and 
 			<select id="alive_max"></select> living neighbors
 			<br />
 			A dormant square becomes alive if it has between 
 			<select id="dead_min"></select> and 
-			<select id="dead_max"></select> living neighbors</p>
+			<select id="dead_max"></select> living neighbors
+			</p>
+			<p>Example patterns: <select id="exampleSelect"></select><button id="exampleCreateButton">Create</button></p>
+			<p><button id="testOutputButton">Test - Board Output</button></p>
 		</div>
       </section>
     </div>
