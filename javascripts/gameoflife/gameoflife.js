@@ -18,8 +18,10 @@ var simulationRunning;
 //document ready function
 $(function() {
 	initializeVariables();
-	
+
 	initializeBoard();
+
+	initializeSelectOptions();
 	
 	initializeEventHandlers();
 });
@@ -61,7 +63,10 @@ function initializeBoard() {
 			$("#lifeBoard").append(newTile);
 		}
 	}
-	
+}
+
+//set up options in dropdown select boxes
+function initializeSelectOptions() {
 	for (var i = 1; i < 9; i++) {
 		var newOption = $("<option></option>");
 		newOption.attr("value", i);
@@ -76,6 +81,13 @@ function initializeBoard() {
 	$("#alive_max option[value=3]").attr("selected", true);
 	$("#dead_min option[value=3]").attr("selected", true);
 	$("#dead_max option[value=3]").attr("selected", true);
+	
+	examplePatterns.forEach(function(val, key) {
+		var newOption = $("<option></option>");
+		newOption.attr("value", key);
+		newOption.text(key);
+		$("#exampleSelect").append(newOption);
+	});
 }
 
 //set up functions to handle events like clicks
@@ -85,6 +97,9 @@ function initializeEventHandlers() {
 	$("#stepButton").mousedown(stepClick);
 	$("#clearButton").mousedown(clearClick);
 	$("#resetButton").mousedown(resetClick);
+	$("#exampleCreateButton").mousedown(exampleCreateClick);
+	
+	$("#testOutputButton").mousedown(outputLivingTiles);
 }
 
 //player clicks on a tile
@@ -112,7 +127,7 @@ function startStopClick() {
 	if (simulationRunning) {
 		stopSimulation();
 	} else {
-		getBoardState();
+		//getBoardState();
 		simulationRunning = true;
 		$(this).text("Pause");
 		runSimulation();
@@ -206,11 +221,11 @@ function tileIsAlive(i,j) {
 //update visual state of tile to match actual state
 function updateTile(i, j, state) {
 	var tile = $("#" + i + "_" + j);
-	tile.removeClass("alive");
-	tile.removeClass("dead");
 	if (state == 0) {
+		tile.removeClass("alive");
 		tile.addClass("dead");
 	} else if (state == 1) {
+		tile.removeClass("dead");
 		tile.addClass("alive");
 	}
 }
@@ -261,8 +276,21 @@ function resetClick() {
 		}
 	}
 }
+
+function exampleCreateClick() {
+	var pattern = $("#exampleSelect").find(":selected").val();
+	var patternPoints = examplePatterns.get(pattern);
 	
-var timestep = 1000 / 60;
+	clearBoard();
+	stopSimulation();
+	
+	for (var i = 0; i < patternPoints.length; i++) {
+		updateTile(patternPoints[i][0], patternPoints[i][1], 1);
+	}
+	
+	getBoardState();
+	copyArray(savedBoardState, boardState);
+}
 
 //start simulation that will repeat itself
 function runSimulation() {
@@ -281,6 +309,20 @@ function testArrayAlert(array) {
 	}
 	alert(state);
 }
+
+function outputLivingTiles() {
+	var livingTiles = "";
+	for (var i = 0; i < boardHeight/tileHeight; i++) {
+		for (var j = 0; j < boardWidth/tileWidth; j++) {
+			if (tileIsAlive(i,j)) {
+				livingTiles += "[" + i + "," + j + "],";
+				livingTiles += "\n";
+			}
+		}		
+	}
+	alert(livingTiles);
+}
+
 
 //pause the simulation, or if there are 0 alive tiles stop it
 function stopSimulation() {
