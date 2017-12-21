@@ -207,3 +207,12 @@ var swirlArr = [
 	[28,36]
 ];
 examplePatterns.set("Swirl", swirlArr);
+
+var seedArr = [
+	[27,42],
+	[28,41],
+	[28,42],
+	[29,42],
+	[29,43]
+];
+examplePatterns.set("Seed", seedArr);
