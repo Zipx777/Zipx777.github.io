@@ -9,10 +9,10 @@
 }
 
 #lifeControlBar {
-	width: 640px;
-	height: 100px;
+	width: 630px;
 	background-color: lightgray;
 	border: 4px solid darkblue;
+	padding: 5px;
 }
 
 .tile {
