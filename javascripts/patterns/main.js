@@ -28,7 +28,7 @@ function initializeVariables() {
 	ctx = canvas[0].getContext("2d");
 	gameLoop = null;
 	countUpdater = null;
-	tickRate = 10;
+	tickRate = 100;
 	defaultDistanceFraction = 0.5;
 	distanceFraction = defaultDistanceFraction;
 	
@@ -65,7 +65,7 @@ function initializeSlider() {
 	$("#slider").slider({
 		value: defaultDrawSpeed,
 		min: 1,
-		max: 5,
+		max: 6,
 		step: 1,
 		slide: sliderMoved
 	});
@@ -103,9 +103,11 @@ function sliderMoved(event, ui) {
 
 function startClicked() {
 	killSimulation();
-	currentPoint = getAvgOfSeedPoints();
-	gameLoop = setInterval(animate, tickRate);
-	countUpdater = setInterval(updateCount, 100);
+	if (seedPoints.length > 2) {
+		currentPoint = getAvgOfSeedPoints();
+		gameLoop = setInterval(animate, tickRate);
+		countUpdater = setInterval(updateCount, 100);
+	}
 }
 
 function getAvgOfSeedPoints() {
@@ -150,7 +152,7 @@ function getMiddlePoint(x1, y1, x2, y2) {
 //main game loop
 //***************
 function animate() {
-	for (var i = 0; i < 1; i++) {
+	for (var i = 0; i < Math.pow(10, drawSpeed/2); i++) {
 		update();
 
 		draw();
