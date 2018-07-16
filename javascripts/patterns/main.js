@@ -1,5 +1,6 @@
 var canvas,
 	ctx,
+	isRunning,
 	gameLoop,
 	countUpdater,
 	tickRate,
@@ -23,7 +24,7 @@ $(function() {
 });
 
 function initializeVariables() {
-	
+	isRunning = false;
 	canvas = $("#patternsCanvas");
 	ctx = canvas[0].getContext("2d");
 	gameLoop = null;
@@ -73,8 +74,7 @@ function initializeSlider() {
 
 //link events to their event handler functions
 function setEventHandlers() {
-	$("#patternsStartButton").click(startClicked);
-	$("#patternsStopButton").click(stopClicked);
+	$("#patternsStartStopButton").click(startStopClicked);
 	$("#patternsClearButton").click(clearClicked);
 	
 	$("#patternsCanvas").click(canvasClicked);
@@ -101,13 +101,32 @@ function sliderMoved(event, ui) {
 	drawSpeed = newVal;
 }
 
-function startClicked() {
-	killSimulation();
-	if (seedPoints.length > 2) {
-		currentPoint = getAvgOfSeedPoints();
-		gameLoop = setInterval(animate, tickRate);
-		countUpdater = setInterval(updateCount, 100);
+function startStopClicked() {
+	if (isRunning) {
+		stopSimulation();
+	} else {
+		if (seedPoints.length > 2) {
+			startSimulation();
+		} else {
+			alert("Need at least 3 starting points.");
+		}
 	}
+}
+
+function startSimulation() {
+	killSimulation();
+	isRunning = true;
+	
+	currentPoint = getAvgOfSeedPoints();
+	gameLoop = setInterval(animate, tickRate);
+	countUpdater = setInterval(updateCount, 100);
+	$("#patternsStartStopButton").text("Stop");
+}
+
+function stopSimulation() {
+	killSimulation();
+	isRunning = false;
+	$("#patternsStartStopButton").text("Start");
 }
 
 function getAvgOfSeedPoints() {
@@ -123,12 +142,8 @@ function getAvgOfSeedPoints() {
 	return pt;
 }
 
-function stopClicked() {
-	killSimulation();
-}
-
 function clearClicked() {
-	killSimulation();
+	stopSimulation();
 	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	seedPoints = [];
 	pointCount = 0;
@@ -177,7 +192,7 @@ function draw() {
 }
 
 function updateCount() {
-	$("#sliderText").text(pointCount);
+	$("#pointCountDisplay").text(pointCount);
 }
 
 //currently unused
