@@ -46,7 +46,7 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Patterns</h3>
-		<p>Click to place at least 3 points. The algorithm with start in the middle and then follow these steps:<br />
+		<p>Click to place at least 3 points anywhere inside the black rectangle. The algorithm with start in the middle and then follow these steps:<br />
 		<br />
 		1. Randomly pick one of placed points<br />
 		2. Move halfway between your current location and that point<br />
@@ -60,14 +60,23 @@
 			<canvas id="patternsCanvas" height="400" width="600"></canvas>
 		</div>
 		<div id="patternsBoardFooter">
-			<button id="patternsStartButton" class="bigButton">Start</button>
-			<button id="patternsStopButton" class="bigButton">Stop</button>
-			<button id="patternsClearButton" class="bigButton">Clear</button>
-			<select id="moveFractionSelector"></select>
-			<div id="sliderArea">
+			<button id="patternsStartStopButton" class="footerSection bigButton">Start</button>
+			<div id="sliderArea" class="footerSection">
 				<div id="slider"></div>
+				<div id="sliderText">Speed</div>
 			</div>
-			<div id="sliderText">Point size</div>
+			
+			<div class="footerSection">
+				<select id="moveFractionSelector"></select>
+				<div id="moveFractionText">Move %</div>
+			</div>
+			
+			<div class="footerSection">
+				<div id="pointCountDisplay">0</div>
+				<div id="pointCountText"># of Points</div>
+			</div>
+			
+			<button id="patternsClearButton" class="footerSection bigButton">Clear</button>
 		</div>
       </section>
     </div>
