@@ -1,0 +1,13 @@
+/*Turret*/
+
+#turretArea {
+	border: 20px solid black;
+	height: 400px;
+	width: 600px;
+}
+
+#turretCanvas {
+	background-color: white;
+	height: 100%;
+	width: 100%;
+}
