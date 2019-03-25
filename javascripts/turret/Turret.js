@@ -4,10 +4,17 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		y = startY,
 		color = "orangered",
 		radius = startRadius || 12,
-		rotationSpeed = startRotationSpeed || 5,
+		rotationSpeed = startRotationSpeed || 3,
 		facingVector = startFacingVector || new Vector(1,0),
 		playerDirection = new Vector(1,0),
-		fired = false;
+		delayBetweenShots = 5,
+		burstLength = 5,
+		currentShotsFiredInBurstCount = 0,
+		firingDelay = 100,
+		tickCount = 0,
+		lastShotFiredTick = 0,
+		playerFirstSeenTick = 0,
+		hasTarget = false;
 		
 	//return value of x
 	var getX = function() {
@@ -47,6 +54,7 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 	
 	//update Turret rotation/facing
 	var update = function(playerX, playerY, projectiles) {
+		tickCount += 1;
 		var vectorToPlayer = new Vector(playerX - x, playerY - y);
 		playerDirection = vectorToPlayer.normalize();
 		
@@ -60,11 +68,25 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		
 		if (Math.abs(signedAngleBetween) * 180 / Math.PI < rotationSpeed) {
 			facingVector = playerDirection;
-			if (!fired) {
-				fired = false;
-				projectiles.push(new Projectile(x,y,playerDirection));
+			if (!hasTarget) {
+				hasTarget = true;
+				playerFirstSeenTick = tickCount;
+			}
+			if (tickCount - playerFirstSeenTick > firingDelay) {
+				if (currentShotsFiredInBurstCount < burstLength) {
+					if (tickCount - lastShotFiredTick > delayBetweenShots) {
+						lastShotFiredTick = tickCount;
+						currentShotsFiredInBurstCount += 1;
+						projectiles.push(new Projectile(x+(Math.random()*4)-2,y+(Math.random()*4)-2,playerDirection));
+					}
+				} else {
+					currentShotsFiredInBurstCount = 0;
+					playerFirstSeenTick = tickCount;
+				}
 			}
 		} else {
+			hasTarget = false;
+			playerFirstSeenTick = tickCount;
 			var angleChange = 0;
 			if (signedAngleBetween > 0) {
 				angleChange = rotationSpeed;
