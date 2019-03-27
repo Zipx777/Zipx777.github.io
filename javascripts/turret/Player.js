@@ -2,7 +2,7 @@
 var Player = function(startX, startY) {
 	var x = startX,
 		y = startY,
-		speed = 20,
+		speed = 5,
 		color = "blue",
 		radius = 10;
 		
