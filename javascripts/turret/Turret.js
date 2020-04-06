@@ -18,7 +18,8 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		tickCount = 0,
 		lastShotFiredTick = 0,
 		playerFirstSeenTick = 0,
-		targetInFront = false;
+		targetInFront = false,
+		firingAngleError = 2;
 
 	//return value of x
 	var getX = function() {
@@ -113,7 +114,18 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 					if (tickCount - lastShotFiredTick > delayBetweenShots) {
 						lastShotFiredTick = tickCount;
 						currentShotsFiredInBurstCount += 1;
-						projectiles.push(new Projectile(x+(Math.random()*4)-2,y+(Math.random()*4)-2,facingVector));
+
+						//offset positions slightly to avoid visual weirdness from exact path follows
+						var xSlightOffset = Math.random()*4-2;
+						var ySlightOffset = Math.random()*4-2;
+
+						var startingAngle = facingVector.toAngle();
+						var newAngle = startingAngle + firingAngleError * Math.PI/180 * (Math.random()*2 - 1);
+
+						var projVector = new Vector(0,0);
+						projVector.setAngle(newAngle);
+						projVector = projVector.normalize();
+						projectiles.push(new Projectile(x + xSlightOffset,y + ySlightOffset, projVector));
 					}
 				} else {
 					currentShotsFiredInBurstCount = 0;
@@ -129,16 +141,24 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 	//draws turret on canvas context passed to it
 	var draw = function(ctx) {
 		ctx.save();
-		ctx.translate(x,y);
 
+		//circle base
+		ctx.translate(x,y);
+		ctx.fillStyle = "black";
+		ctx.beginPath();
+		ctx.arc(0, 0, radius, 0, 2 * Math.PI, true);
+		ctx.fill();
+
+		//triangle top
 		var angle = facingVector.toAngle();
 		ctx.rotate(angle);
-
 		ctx.fillStyle = currentColor;
 		ctx.beginPath();
 		ctx.moveTo(2 * radius, 0);
 		ctx.lineTo(-1 * radius, -1 * radius);
+		ctx.lineTo(-1 * radius * 0.5, 0);
 		ctx.lineTo(-1 * radius, radius);
+		ctx.closePath();
 		ctx.fill();
 
 		ctx.restore();

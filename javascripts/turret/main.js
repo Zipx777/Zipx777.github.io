@@ -18,8 +18,7 @@ $(function() {
 });
 
 function initializeVariables() {
-	mouseX = 0;
-	mouseY = 0;
+
 
 	canvas = $("#turretCanvas");
 	ctx = canvas[0].getContext("2d");
@@ -30,16 +29,17 @@ function initializeVariables() {
 	var xPos = 0.5 * ctx.canvas.width;
 	var yPos = 0.5 * ctx.canvas.height;
 
-	var testVector = new Vector(1,-1);
+	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
+	turret = new Turret(xPos, yPos);
 
-	player = new Player(0,0);
-	turret = new Turret(xPos, yPos, 15);
-	turretTwo = new Turret(xPos + 100, yPos + 100);
+	//set initial mouse position to the player so the player doesn't immediately start traveling somewhere
+	mouseX = player.getX();
+	mouseY = player.getY();
 
 	turrets = [];
-	projectiles = [];
-
 	turrets.push(turret);
+
+	projectiles = [];
 }
 
 function setEventHandlers() {
@@ -48,7 +48,6 @@ function setEventHandlers() {
 }
 
 function turretAreaClick() {
-	var testVector = new Vector(1,1);
 	var newTurret = new Turret(Math.random() * ctx.canvas.width, Math.random() * ctx.canvas.height);
 	turrets.push(newTurret);
 }
