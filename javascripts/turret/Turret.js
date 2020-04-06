@@ -61,7 +61,11 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 	var update = function(playerX, playerY, projectiles) {
 		tickCount += 1;
 		var vectorToPlayer = new Vector(playerX - x, playerY - y);
-		playerDirection = vectorToPlayer.normalize();
+
+		//avoid divide-by-zero error if player is directly on top of turret
+		if (vectorToPlayer.length() > 0) {
+			playerDirection = vectorToPlayer.normalize();
+		}
 
 		var playerAngle = playerDirection.toAngle();
 		var turretAngle = facingVector.toAngle();
