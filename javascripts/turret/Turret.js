@@ -12,7 +12,7 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		playerDirection = new Vector(1,0),
 		targetInFrontAngle = 45,
 		delayBetweenShots = 5,
-		burstLength = 10,
+		burstLength = 7,
 		currentShotsFiredInBurstCount = 0,
 		firingDelay = 100,
 		tickCount = 0,
@@ -104,7 +104,8 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		//###########  UPDATE FIRING  ##############
 		//##########################################
 
-		if (targetInFront) {
+		//completes the entire burst after it starts, even if player moves out of turret's front
+		if (targetInFront || (currentShotsFiredInBurstCount > 0 && currentShotsFiredInBurstCount < burstLength)) {
 			currentColor = prefireColor;
 			if (tickCount - playerFirstSeenTick > firingDelay) {
 				if (currentShotsFiredInBurstCount < burstLength) {
