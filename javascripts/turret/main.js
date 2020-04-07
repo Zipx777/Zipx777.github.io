@@ -23,8 +23,12 @@ function initializeVariables() {
 	canvas = $("#turretCanvas");
 	ctx = canvas[0].getContext("2d");
 
+	var canvasWidth = canvas.width();
+	var canvasHeight = canvas.height();
+
 	//have to set height/width attributes to avoid weird canvas scaling issue
-	canvas.attr("width", "600").attr("height", "400");
+	//height and width set in the .css for #turretArea
+	canvas.attr("width", canvasWidth).attr("height", canvasHeight);
 
 	var xPos = 0.5 * ctx.canvas.width;
 	var yPos = 0.5 * ctx.canvas.height;
@@ -48,7 +52,8 @@ function setEventHandlers() {
 }
 
 function turretAreaClick() {
-	var newTurret = new Turret(Math.random() * ctx.canvas.width, Math.random() * ctx.canvas.height);
+	var borderMargin = 10;
+	var newTurret = new Turret(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
 	turrets.push(newTurret);
 }
 
@@ -78,13 +83,14 @@ function update() {
 		turrets[i].update(player.getX(), player.getY(), projectiles);
 	}
 
+	var activeProjectiles = [];
 	for (var i = 0; i < projectiles.length; i++) {
 		if (projectiles[i].isInBounds()) {
 			projectiles[i].update(mouseX, mouseY);
-		} else {
-			projectiles.splice(i,1);
+			activeProjectiles.push(projectiles[i]);
 		}
 	}
+	projectiles = activeProjectiles;
 }
 
 //draw player and turret
