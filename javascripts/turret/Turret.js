@@ -2,10 +2,9 @@
 var Turret = function(startX, startY, startRadius, startRotationSpeed, startFacingVector) {
 	var x = startX,
 		y = startY,
-		color = "green", //main color
+		color = "black", //main color
 		currentColor = color, //color currently being rendered
-		prefireColor = "orange",
-		firingColor = "red",
+		prefireColor = "red",
 		radius = startRadius || 12,
 		rotationSpeed = startRotationSpeed || 1,
 		facingVector = startFacingVector || new Vector(1,0),
@@ -114,7 +113,6 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 			currentColor = prefireColor;
 			if (tickCount - playerFirstSeenTick > firingDelay) {
 				if (currentShotsFiredInBurstCount < burstLength) {
-					currentColor = firingColor;
 					if (tickCount - lastShotFiredTick > delayBetweenShots) {
 						lastShotFiredTick = tickCount;
 						currentShotsFiredInBurstCount += 1;
@@ -148,7 +146,7 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 
 		//circle base
 		ctx.translate(x,y);
-		ctx.fillStyle = "black";
+		ctx.fillStyle = color;
 		ctx.beginPath();
 		ctx.arc(0, 0, radius, 0, 2 * Math.PI, true);
 		ctx.fill();
@@ -156,7 +154,27 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		//triangle top
 		var angle = facingVector.toAngle();
 		ctx.rotate(angle);
-		ctx.fillStyle = currentColor;
+		ctx.fillStyle = color;
+		ctx.beginPath();
+		ctx.moveTo(2 * radius, 0);
+		ctx.lineTo(-1 * radius, -1 * radius);
+		ctx.lineTo(-1 * radius * 0.5, 0);
+		ctx.lineTo(-1 * radius, radius);
+		ctx.closePath();
+		ctx.fill();
+
+		//prefire gradient
+		var grd = ctx.createLinearGradient(-0.5*radius, 0, radius, 0);
+		grd.addColorStop(1, prefireColor);
+		grd.addColorStop(0, color);
+		ctx.fillStyle = grd;
+
+		var prefirePercent = 0;
+		if (targetInFront || currentShotsFiredInBurstCount > 0) {
+			prefirePercent = Math.min(1, 1.5 * (tickCount - playerFirstSeenTick) / firingDelay);
+		}
+		ctx.globalAlpha = prefirePercent;
+
 		ctx.beginPath();
 		ctx.moveTo(2 * radius, 0);
 		ctx.lineTo(-1 * radius, -1 * radius);

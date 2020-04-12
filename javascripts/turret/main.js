@@ -1,6 +1,7 @@
 var canvas,
 	ctx,
 	player,
+	freeze,
 	turrets,
 	projectiles,
 	turret,
@@ -18,8 +19,6 @@ $(function() {
 });
 
 function initializeVariables() {
-
-
 	canvas = $("#turretCanvas");
 	ctx = canvas[0].getContext("2d");
 
@@ -35,6 +34,8 @@ function initializeVariables() {
 
 	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
 	turret = new Turret(xPos, yPos);
+
+	freeze = false;
 
 	//set initial mouse position to the player so the player doesn't immediately start traveling somewhere
 	mouseX = player.getX();
@@ -63,6 +64,12 @@ function turretAreaMouseMove(e) {
 	mouseY = e.pageY - canvasElementOffset.top;
 }
 
+function checkForCollision(proj) {
+	if (proj.checkForCollisionWithPlayer(player)) {
+		player.takeDamage();
+		freeze = true;
+	}
+}
 //***************
 //main game loop
 //***************
@@ -77,6 +84,10 @@ function animate() {
 
 //update player and turret states
 function update() {
+	if (freeze) {
+		return;
+	}
+	
 	player.update(mouseX, mouseY, ctx);
 
 	for (var i = 0; i < turrets.length; i++) {
@@ -88,6 +99,7 @@ function update() {
 		if (projectiles[i].isInBounds()) {
 			projectiles[i].update(mouseX, mouseY);
 			activeProjectiles.push(projectiles[i]);
+			checkForCollision(projectiles[i]);
 		}
 	}
 	projectiles = activeProjectiles;

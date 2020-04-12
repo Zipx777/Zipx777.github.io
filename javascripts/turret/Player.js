@@ -26,12 +26,22 @@ var Player = function(startX, startY) {
 		y = newY;
 	};
 
+	//return value of radius
+	var getRadius = function() {
+		return radius;
+	};
+
+	var takeDamage = function() {
+		color = "gray";
+	}
+
 	//update Player position
 	var update = function(targetX, targetY, ctx) {
 		var vectorTowardsMouse = new Vector(targetX - x, targetY - y);
 		if (vectorTowardsMouse.length() > speed) {
 			vectorTowardsMouse = vectorTowardsMouse.normalize().multiply(speed);
 		}
+
 		x += vectorTowardsMouse.getX();
 		y += vectorTowardsMouse.getY();
 
@@ -56,6 +66,8 @@ var Player = function(startX, startY) {
 		getY: getY,
 		setX: setX,
 		setY: setY,
+		getRadius: getRadius,
+		takeDamage: takeDamage,
 		update: update,
 		draw: draw
 	};
