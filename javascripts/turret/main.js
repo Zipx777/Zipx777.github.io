@@ -53,6 +53,10 @@ function setEventHandlers() {
 }
 
 function turretAreaClick() {
+	if (freeze) {
+		return;
+	}
+	
 	var borderMargin = 10;
 	var newTurret = new Turret(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
 	turrets.push(newTurret);
@@ -87,7 +91,7 @@ function update() {
 	if (freeze) {
 		return;
 	}
-	
+
 	player.update(mouseX, mouseY, ctx);
 
 	for (var i = 0; i < turrets.length; i++) {
