@@ -2,7 +2,7 @@
 var Projectile = function(startX, startY, startFacingVector, startSpeed) {
 	var x = startX || 0,
 		y = startY || 0,
-		speed = startSpeed || 5,
+		speed = startSpeed || 2,
 		color = "red",
 		radius = 5,
 		facingVector = startFacingVector || new Vector(1,0),

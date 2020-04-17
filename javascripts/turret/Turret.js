@@ -9,9 +9,9 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		rotationSpeed = startRotationSpeed || 1,
 		facingVector = startFacingVector || new Vector(1,0),
 		playerDirection = new Vector(1,0),
-		targetInFrontAngle = 45,
-		delayBetweenShots = 5,
-		burstLength = 7,
+		targetInFrontAngle = 60,
+		delayBetweenShots = 10,
+		burstLength = 5,
 		currentShotsFiredInBurstCount = 0,
 		firingDelay = 100,
 		tickCount = 0,
@@ -167,11 +167,19 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		var grd = ctx.createLinearGradient(-0.5*radius, 0, radius, 0);
 		grd.addColorStop(1, prefireColor);
 		grd.addColorStop(0, color);
-		ctx.fillStyle = grd;
+		//ctx.fillStyle = grd;
+		ctx.fillStyle = prefireColor;
 
 		var prefirePercent = 0;
 		if (targetInFront || currentShotsFiredInBurstCount > 0) {
-			prefirePercent = Math.min(1, 1.5 * (tickCount - playerFirstSeenTick) / firingDelay);
+			var sinceFirstSeen = tickCount - playerFirstSeenTick;
+
+			//controls when the color fades to prefire color. Added together needs to be less than 1
+			var initialGapPercent = 0.6;
+			var finalGapPercent = 0.2;
+
+			prefirePercent = Math.max(0, ((sinceFirstSeen / firingDelay) - initialGapPercent) * (1/(1-initialGapPercent)));
+			prefirePercent = Math.min(1, prefirePercent / (1 - initialGapPercent - finalGapPercent));
 		}
 		ctx.globalAlpha = prefirePercent;
 
