@@ -1,16 +1,16 @@
 //Turret class
-var Turret = function(startX, startY, startRadius, startRotationSpeed, startFacingVector) {
+var Turret_Homing = function(startX, startY, startRadius, startRotationSpeed, startFacingVector) {
 	var x = startX,
 		y = startY,
 		color = "black", //main color
 		currentColor = color, //color currently being rendered
-		prefireColor = "red",
+		prefireColor = "purple",
 		radius = startRadius || 12,
-		rotationSpeed = startRotationSpeed || 1,
+		rotationSpeed = startRotationSpeed || 2,
 		facingVector = startFacingVector || new Vector(1,0),
 		targetInFrontAngle = 60,
 		delayBetweenShots = 10,
-		burstLength = 5,
+		burstLength = 1,
 		currentShotsFiredInBurstCount = 0,
 		firingDelay = 100,
 		tickCount = 0,
@@ -118,7 +118,7 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 						var projVector = new Vector(0,0);
 						projVector.setAngle(newAngle);
 						projVector = projVector.normalize();
-						projectiles.push(new Projectile(x + xSlightOffset,y + ySlightOffset, projVector));
+						projectiles.push(new Projectile_Homing(x + xSlightOffset,y + ySlightOffset, projVector));
 					}
 				} else {
 					currentShotsFiredInBurstCount = 0;

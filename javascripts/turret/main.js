@@ -33,7 +33,7 @@ function initializeVariables() {
 	var yPos = 0.5 * ctx.canvas.height;
 
 	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
-	turret = new Turret(xPos, yPos);
+	turret = new Turret_Homing(xPos, yPos);
 
 	freeze = false;
 
@@ -56,9 +56,14 @@ function turretAreaClick() {
 	if (freeze) {
 		return;
 	}
-	
+
 	var borderMargin = 10;
-	var newTurret = new Turret(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
+	var coinFlip = Math.random() - 0.5;
+	if (coinFlip > 0) {
+		var newTurret = new Turret(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
+	} else {
+		var newTurret = new Turret_Homing(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
+	}
 	turrets.push(newTurret);
 }
 
@@ -101,7 +106,7 @@ function update() {
 	var activeProjectiles = [];
 	for (var i = 0; i < projectiles.length; i++) {
 		if (projectiles[i].isInBounds()) {
-			projectiles[i].update(mouseX, mouseY);
+			projectiles[i].update(player);
 			activeProjectiles.push(projectiles[i]);
 			checkForCollision(projectiles[i]);
 		}

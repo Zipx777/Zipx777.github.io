@@ -1,11 +1,14 @@
 //Projectile class
-var Projectile = function(startX, startY, startFacingVector, startSpeed) {
+var Projectile_Homing = function(startX, startY, startFacingVector, startSpeed) {
 	var x = startX || 0,
 		y = startY || 0,
-		speed = startSpeed || 2,
-		color = "red",
-		radius = 3,
+		speed = startSpeed || 3,
+		color = "purple",
+		radius = 4,
 		facingVector = startFacingVector || new Vector(1,0),
+		rotationSpeed = 2,
+		targetInFront = false,
+		targetInFrontAngle = 90,
 		inBounds = true;
 
 	//return value of x
@@ -65,7 +68,47 @@ var Projectile = function(startX, startY, startFacingVector, startSpeed) {
 	}
 
 	//update projectile position
-	var update = function() {
+	var update = function(player) {
+		var playerX = player.getX();
+		var playerY = player.getY();
+
+		var vectorToPlayer = new Vector(playerX - x, playerY - y);
+
+		//avoid divide-by-zero error if player is directly on top of turret
+		if (vectorToPlayer.length() > 0) {
+			playerDirection = vectorToPlayer.normalize();
+		}
+
+		var turretDotPlayer = facingVector.dot(vectorToPlayer);
+		var turretCrossPlayer = facingVector.cross(vectorToPlayer);
+		var signedAngleBetween = Math.atan2(turretCrossPlayer, turretDotPlayer);
+
+		//##########################################
+		//###########  UPDATE FACING  ##############
+		//##########################################
+
+		if (Math.abs(signedAngleBetween) * 180 / Math.PI < rotationSpeed) {
+			//snap to target if aim is less than <rotationSpeed> away to avoid flickering
+			facingVector = vectorToPlayer;
+			targetInFront = true;
+		} else {
+			if (Math.abs(signedAngleBetween) < (targetInFrontAngle * Math.PI / 180)) {
+				targetInFront = true;
+			} else {
+				targetInFront = false;
+			}
+		}
+
+		if (targetInFront) {
+			var angleChange = (signedAngleBetween / Math.abs(signedAngleBetween)) * rotationSpeed;
+
+			var newTurretAngle = facingVector.toAngle() + (angleChange * Math.PI / 180);
+
+			var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
+
+			facingVector = newFacingVector.normalize();
+		}
+
 		var velocity = facingVector.normalize().multiply(speed);
 		x = x + velocity.getX();
 		y = y + velocity.getY();
