@@ -4,7 +4,7 @@ var Projectile = function(startX, startY, startFacingVector, startSpeed) {
 		y = startY || 0,
 		speed = startSpeed || 2,
 		color = "red",
-		radius = 3,
+		radius = 4,
 		facingVector = startFacingVector || new Vector(1,0),
 		inBounds = true;
 
@@ -87,8 +87,9 @@ var Projectile = function(startX, startY, startFacingVector, startSpeed) {
 		ctx.beginPath();
 		ctx.moveTo(2 * radius, 0);
 		ctx.lineTo(-1 * radius, -1 * radius);
-		ctx.lineTo(-0.5 * radius, 0);
+		//ctx.lineTo(-0.5 * radius, 0);
 		ctx.lineTo(-1 * radius, radius)
+		ctx.closePath();
 		ctx.fill();
 
 		ctx.restore();

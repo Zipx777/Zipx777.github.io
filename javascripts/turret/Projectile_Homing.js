@@ -4,12 +4,13 @@ var Projectile_Homing = function(startX, startY, startFacingVector, startSpeed) 
 		y = startY || 0,
 		speed = startSpeed || 3,
 		color = "purple",
-		radius = 4,
+		radius = 5,
 		facingVector = startFacingVector || new Vector(1,0),
+		inBounds = true,
+		//homing-specific variables
 		rotationSpeed = 2,
 		targetInFront = false,
-		targetInFrontAngle = 90,
-		inBounds = true;
+		targetInFrontAngle = 60;
 
 	//return value of x
 	var getX = function() {

@@ -13,6 +13,10 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		burstLength = 5,
 		currentShotsFiredInBurstCount = 0,
 		firingDelay = 100,
+		prefireColorPercent = 0, //used to set gradient for prefire tell
+		//controls when the color fades to prefire color in the firing delay. Added together needs to be less than 1
+		startPrefireGapPercent = 0.4,
+		endPrefireGapPercent = 0.2,
 		tickCount = 0,
 		lastShotFiredTick = 0,
 		playerFirstSeenTick = 0,
@@ -72,13 +76,13 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		if (Math.abs(signedAngleBetween) * 180 / Math.PI < rotationSpeed) {
 			//snap to target if aim is less than <rotationSpeed> away to avoid flickering
 			facingVector = vectorToPlayer;
-			if (!targetInFront) {
+			if (!targetInFront && prefireColorPercent == 0) {
 				playerFirstSeenTick = tickCount;
 			}
 			targetInFront = true;
 		} else {
 			if (Math.abs(signedAngleBetween) < (targetInFrontAngle * Math.PI / 180)) {
-				if (!targetInFront) {
+				if (!targetInFront && prefireColorPercent == 0) {
 					playerFirstSeenTick = tickCount;
 				}
 				targetInFront = true;
@@ -100,7 +104,7 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		//##########################################
 
 		//completes the entire burst after it starts, even if player moves out of turret's front
-		if (targetInFront || (currentShotsFiredInBurstCount > 0 && currentShotsFiredInBurstCount < burstLength)) {
+		if (prefireColorPercent > 0 || (currentShotsFiredInBurstCount > 0 && currentShotsFiredInBurstCount < burstLength)) {
 			currentColor = prefireColor;
 			if (tickCount - playerFirstSeenTick > firingDelay) {
 				if (currentShotsFiredInBurstCount < burstLength) {
@@ -108,17 +112,19 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 						lastShotFiredTick = tickCount;
 						currentShotsFiredInBurstCount += 1;
 
-						//offset positions slightly to avoid visual weirdness from exact path follows
-						var xSlightOffset = Math.random()*4-2;
-						var ySlightOffset = Math.random()*4-2;
+						var turretAngle = facingVector.toAngle();
+						var newAngle = turretAngle + firingAngleError * Math.PI/180 * (Math.random()*2 - 1);
 
-						var startingAngle = facingVector.toAngle();
-						var newAngle = startingAngle + firingAngleError * Math.PI/180 * (Math.random()*2 - 1);
+						//shift projectile to the end of the barrel
+						var turretBarrelMarker = facingVector.normalize().multiply(radius);
+						var projX = x + turretBarrelMarker.getX();
+						var projY = y + turretBarrelMarker.getY();
 
 						var projVector = new Vector(0,0);
 						projVector.setAngle(newAngle);
 						projVector = projVector.normalize();
-						projectiles.push(new Projectile(x + xSlightOffset,y + ySlightOffset, projVector));
+
+						projectiles.push(new Projectile(projX, projY, projVector));
 					}
 				} else {
 					currentShotsFiredInBurstCount = 0;
@@ -128,6 +134,14 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		} else {
 			currentColor = color;
 			currentShotsFiredInBurstCount = 0;
+		}
+
+		//update prefire color percent
+		if (targetInFront || currentShotsFiredInBurstCount > 0 || prefireColorPercent > 0) {
+			var sinceFirstSeen = tickCount - playerFirstSeenTick;
+
+			prefireColorPercent = Math.max(0, ((sinceFirstSeen / firingDelay) - startPrefireGapPercent) * (1/(1-startPrefireGapPercent)));
+			prefireColorPercent = Math.min(1, prefireColorPercent / (1 - startPrefireGapPercent - endPrefireGapPercent));
 		}
 	}
 
@@ -149,35 +163,23 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		ctx.beginPath();
 		ctx.moveTo(2 * radius, 0);
 		ctx.lineTo(-1 * radius, -1 * radius);
-		ctx.lineTo(-1 * radius * 0.5, 0);
+		//ctx.lineTo(-1 * radius * 0.5, 0);
 		ctx.lineTo(-1 * radius, radius);
 		ctx.closePath();
 		ctx.fill();
 
 		//prefire gradient
-		var grd = ctx.createLinearGradient(-0.5*radius, 0, radius, 0);
-		grd.addColorStop(1, prefireColor);
-		grd.addColorStop(0, color);
+		//var grd = ctx.createLinearGradient(-0.5*radius, 0, radius, 0);
+		//grd.addColorStop(1, prefireColor);
+		//grd.addColorStop(0, color);
 		//ctx.fillStyle = grd;
+
 		ctx.fillStyle = prefireColor;
-
-		var prefirePercent = 0;
-		if (targetInFront || currentShotsFiredInBurstCount > 0) {
-			var sinceFirstSeen = tickCount - playerFirstSeenTick;
-
-			//controls when the color fades to prefire color. Added together needs to be less than 1
-			var initialGapPercent = 0.6;
-			var finalGapPercent = 0.2;
-
-			prefirePercent = Math.max(0, ((sinceFirstSeen / firingDelay) - initialGapPercent) * (1/(1-initialGapPercent)));
-			prefirePercent = Math.min(1, prefirePercent / (1 - initialGapPercent - finalGapPercent));
-		}
-		ctx.globalAlpha = prefirePercent;
-
+		ctx.globalAlpha = prefireColorPercent;
 		ctx.beginPath();
 		ctx.moveTo(2 * radius, 0);
 		ctx.lineTo(-1 * radius, -1 * radius);
-		ctx.lineTo(-1 * radius * 0.5, 0);
+		//ctx.lineTo(-1 * radius * 0.5, 0);
 		ctx.lineTo(-1 * radius, radius);
 		ctx.closePath();
 		ctx.fill();

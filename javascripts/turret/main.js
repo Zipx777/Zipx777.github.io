@@ -33,7 +33,9 @@ function initializeVariables() {
 	var yPos = 0.5 * ctx.canvas.height;
 
 	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
-	turret = new Turret_Homing(xPos, yPos);
+
+	turret = new Turret(xPos, yPos);
+	//turret = new Turret_Homing(xPos, yPos);
 
 	freeze = false;
 
@@ -76,7 +78,7 @@ function turretAreaMouseMove(e) {
 function checkForCollision(proj) {
 	if (proj.checkForCollisionWithPlayer(player)) {
 		player.takeDamage();
-		freeze = true;
+		//freeze = true;
 	}
 }
 //***************
