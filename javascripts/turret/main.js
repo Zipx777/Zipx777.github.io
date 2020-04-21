@@ -34,8 +34,8 @@ function initializeVariables() {
 
 	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
 
-	turret = new Turret(xPos, yPos);
-	//turret = new Turret_Homing(xPos, yPos);
+	//turret = new Turret(xPos, yPos);
+	turret = new Turret_Homing(xPos, yPos);
 
 	freeze = false;
 

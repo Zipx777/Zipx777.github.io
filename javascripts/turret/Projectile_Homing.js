@@ -80,9 +80,9 @@ var Projectile_Homing = function(startX, startY, startFacingVector, startSpeed) 
 			playerDirection = vectorToPlayer.normalize();
 		}
 
-		var turretDotPlayer = facingVector.dot(vectorToPlayer);
-		var turretCrossPlayer = facingVector.cross(vectorToPlayer);
-		var signedAngleBetween = Math.atan2(turretCrossPlayer, turretDotPlayer);
+		var projDotPlayer = facingVector.dot(vectorToPlayer);
+		var projCrossPlayer = facingVector.cross(vectorToPlayer);
+		var signedAngleBetween = Math.atan2(projCrossPlayer, projDotPlayer);
 
 		//##########################################
 		//###########  UPDATE FACING  ##############
@@ -101,8 +101,10 @@ var Projectile_Homing = function(startX, startY, startFacingVector, startSpeed) 
 		}
 
 		if (targetInFront) {
-			var angleChange = (signedAngleBetween / Math.abs(signedAngleBetween)) * rotationSpeed;
-
+			var angleChange = rotationSpeed;
+			if (signedAngleBetween < 0) {
+				angleChange *= -1;
+			}
 			var newTurretAngle = facingVector.toAngle() + (angleChange * Math.PI / 180);
 
 			var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
@@ -111,6 +113,7 @@ var Projectile_Homing = function(startX, startY, startFacingVector, startSpeed) 
 		}
 
 		var velocity = facingVector.normalize().multiply(speed);
+
 		x = x + velocity.getX();
 		y = y + velocity.getY();
 

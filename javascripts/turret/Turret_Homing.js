@@ -21,7 +21,7 @@ var Turret_Homing = function(startX, startY, startRadius, startRotationSpeed, st
 		lastShotFiredTick = 0,
 		playerFirstSeenTick = 0,
 		targetInFront = false,
-		firingAngleError = 2;
+		firingAngleError = 0;
 
 	//return value of x
 	var getX = function() {
@@ -114,7 +114,7 @@ var Turret_Homing = function(startX, startY, startRadius, startRotationSpeed, st
 
 						var turretAngle = facingVector.toAngle();
 						var newAngle = turretAngle + firingAngleError * Math.PI/180 * (Math.random()*2 - 1);
-
+						//alert(newAngle);
 						//shift projectile to the end of the barrel
 						var turretBarrelMarker = facingVector.normalize().multiply(radius);
 						var projX = x + turretBarrelMarker.getX();

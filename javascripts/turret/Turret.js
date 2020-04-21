@@ -21,7 +21,7 @@ var Turret = function(startX, startY, startRadius, startRotationSpeed, startFaci
 		lastShotFiredTick = 0,
 		playerFirstSeenTick = 0,
 		targetInFront = false,
-		firingAngleError = 2;
+		firingAngleError = 0;
 
 	//return value of x
 	var getX = function() {
