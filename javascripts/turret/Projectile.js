@@ -1,60 +1,64 @@
 //Projectile class
-var Projectile = function(startX, startY, startFacingVector, startSpeed) {
-	var x = startX || 0,
-		y = startY || 0,
-		speed = startSpeed || 2,
-		color = "red",
-		radius = 4,
-		facingVector = startFacingVector || new Vector(1,0),
-		inBounds = true;
-
+class Projectile {
+	constructor(startX, startY, startFacingVector) {
+		this.x = startX || 0,
+		this.y = startY || 0,
+		this.speed = 2,
+		this.color = "red",
+		this.radius = 4,
+		this.facingVector = startFacingVector || new Vector(1,0),
+		this.inBounds = true;
+		//homing-specific variables, 0 rotationSpeed for no homing
+		this.rotationSpeed = 0,
+		this.targetInFrontAngle = 60;
+	}
 	//return value of x
-	var getX = function() {
-		return x;
-	};
+	getX() {
+		return this.x;
+	}
 
 	//return value of y
-	var getY = function() {
-		return y;
+	getY() {
+		return this.y;
 	}
 
 	//return speed value
-	var getSpeed = function() {
-		return speed;
+	getSpeed() {
+		return this.speed;
 	}
 
 	//return facingVector
-	var getFacingVector = function() {
-		return facingVector;
+	getFacingVector() {
+		return this.facingVector;
 	}
 
 	//set new value for x
-	var setX = function(newX) {
-		x = newX;
+	setX(newX) {
+		this.x = newX;
 	}
 
 	//set new value for y
-	var setY = function(newY) {
-		y = newY;
+	setY(newY) {
+		this.y = newY;
 	}
 
 	//set speed value
-	var setSpeed = function(newSpeed) {
-		speed = newSpeed;
+	setSpeed(newSpeed) {
+		this.speed = newSpeed;
 	}
 
 	//set facingVector
-	var setFacingVector = function(newFacingVector) {
-		facingVector = newFacingVector;
+	setFacingVector(newFacingVector) {
+		this.facingVector = newFacingVector;
 	}
 
-	var isInBounds = function() {
-		return inBounds;
+	isInBounds() {
+		return this.inBounds;
 	}
 
-	var checkForCollisionWithPlayer = function(player) {
-		var xDistBetween = x - player.getX();
-		var yDistBetween = y - player.getY();
+	checkForCollisionWithPlayer(player) {
+		var xDistBetween = this.x - player.getX();
+		var yDistBetween = this.y - player.getY();
 		var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
 		var combinedRadiiSquared = Math.pow(0.9 * player.getRadius(), 2);
 		if (distBetweenSquared <= combinedRadiiSquared) {
@@ -65,49 +69,75 @@ var Projectile = function(startX, startY, startFacingVector, startSpeed) {
 	}
 
 	//update projectile position
-	var update = function() {
-		var velocity = facingVector.normalize().multiply(speed);
-		x = x + velocity.getX();
-		y = y + velocity.getY();
+	update() {
+		var playerX = player.getX();
+		var playerY = player.getY();
 
-		if (x < 0 || x > ctx.canvas.width || y < 0 || y > ctx.canvas.height) {
-			inBounds = false;
+		var vectorToPlayer = new Vector(playerX - this.x, playerY - this.y);
+
+		var projDotPlayer = this.facingVector.dot(vectorToPlayer);
+		var projCrossPlayer = this.facingVector.cross(vectorToPlayer);
+		var signedAngleBetween = Math.atan2(projCrossPlayer, projDotPlayer);
+
+		//##########################################
+		//###########  UPDATE FACING  ##############
+		//##########################################
+
+		if (Math.abs(signedAngleBetween) * 180 / Math.PI < this.rotationSpeed) {
+			//snap to target if aim is less than <rotationSpeed> away to avoid flickering
+			this.facingVector = vectorToPlayer;
+			this.targetInFront = true;
+		} else {
+			if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
+				this.targetInFront = true;
+			} else {
+				this.targetInFront = false;
+			}
+		}
+
+		if (this.targetInFront) {
+			var angleChange = this.rotationSpeed;
+			if (signedAngleBetween < 0) {
+				angleChange *= -1;
+			}
+			var newTurretAngle = this.facingVector.toAngle() + (angleChange * Math.PI / 180);
+
+			var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
+
+			this.facingVector = newFacingVector.normalize();
+		}
+
+		//##########################################
+		//##########  UPDATE POSITION  #############
+		//##########################################
+
+		var velocity = this.facingVector.normalize().multiply(this.speed);
+
+		this.x = this.x + velocity.getX();
+		this.y = this.y + velocity.getY();
+
+		if (this.x < 0 || this.x > ctx.canvas.width || this.y < 0 || this.y > ctx.canvas.height) {
+			this.inBounds = false;
 		}
 	}
 
 	//draws projectile on canvas context passed to it
-	var draw = function(ctx) {
+	draw(ctx) {
 		ctx.save();
-		ctx.translate(x,y);
+		ctx.translate(this.x,this.y);
 
-		var angle = facingVector.toAngle();
+		var angle = this.facingVector.toAngle();
 		ctx.rotate(angle);
 
-		ctx.fillStyle = color;
+		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.moveTo(2 * radius, 0);
-		ctx.lineTo(-1 * radius, -1 * radius);
+		ctx.moveTo(2 * this.radius, 0);
+		ctx.lineTo(-1 * this.radius, -1 * this.radius);
 		//ctx.lineTo(-0.5 * radius, 0);
-		ctx.lineTo(-1 * radius, radius)
+		ctx.lineTo(-1 * this.radius, this.radius)
 		ctx.closePath();
 		ctx.fill();
 
 		ctx.restore();
 	}
-
-	// Define which variables and methods can be accessed
-	return {
-		getX: getX,
-		getY: getY,
-		getSpeed: getSpeed,
-		getFacingVector: getFacingVector,
-		setX: setX,
-		setY: setY,
-		setSpeed: setSpeed,
-		setFacingVector: setFacingVector,
-		isInBounds: isInBounds,
-		checkForCollisionWithPlayer: checkForCollisionWithPlayer,
-		update: update,
-		draw: draw
-	};
-};
+}

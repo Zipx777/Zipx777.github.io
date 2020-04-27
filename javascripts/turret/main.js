@@ -34,8 +34,8 @@ function initializeVariables() {
 
 	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
 
-	//turret = new Turret(xPos, yPos);
-	turret = new Turret_Homing(xPos, yPos);
+	turretone = new Turret(xPos - 50, yPos);
+	turrettwo = new Turret_Homing(xPos + 50, yPos);
 
 	freeze = false;
 
@@ -44,7 +44,8 @@ function initializeVariables() {
 	mouseY = player.getY();
 
 	turrets = [];
-	turrets.push(turret);
+	turrets.push(turretone);
+	turrets.push(turrettwo);
 
 	projectiles = [];
 }

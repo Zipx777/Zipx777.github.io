@@ -1,74 +1,63 @@
 //Player class
-var Player = function(startX, startY) {
-	var x = startX,
-		y = startY,
-		speed = 5,
-		color = "blue",
-		radius = 10;
-
+class Player {
+	constructor(startX, startY) {
+		this.x = startX;
+		this.y = startY;
+		this.speed = 5;
+		this.color = "blue";
+		this.radius = 10;
+	}
 	//return value of x
-	var getX = function() {
-		return x;
-	};
+	getX() {
+		return this.x;
+	}
 
 	//return value of y
-	var getY = function() {
-		return y;
-	};
+	getY() {
+		return this.y;
+	}
 
 	//set new value for x
-	var setX = function(newX) {
-		x = newX;
-	};
+	setX(newX) {
+		this.x = newX;
+	}
 
 	//set new value for y
-	var setY = function(newY) {
-		y = newY;
-	};
+	setY(newY) {
+		this.y = newY;
+	}
 
 	//return value of radius
-	var getRadius = function() {
-		return radius;
-	};
+	getRadius() {
+		return this.radius;
+	}
 
-	var takeDamage = function() {
-		color = "gray";
+	takeDamage() {
+		this.color = "gray";
 	}
 
 	//update Player position
-	var update = function(targetX, targetY, ctx) {
-		var vectorTowardsMouse = new Vector(targetX - x, targetY - y);
-		if (vectorTowardsMouse.length() > speed) {
-			vectorTowardsMouse = vectorTowardsMouse.normalize().multiply(speed);
+	update(targetX, targetY, ctx) {
+		var vectorTowardsMouse = new Vector(targetX - this.x, targetY - this.y);
+		if (vectorTowardsMouse.length() > this.speed) {
+			vectorTowardsMouse = vectorTowardsMouse.normalize().multiply(this.speed);
 		}
 
-		x += vectorTowardsMouse.getX();
-		y += vectorTowardsMouse.getY();
+		this.x += vectorTowardsMouse.getX();
+		this.y += vectorTowardsMouse.getY();
 
 		//clamp position to within the canvas bounds
-		x = Math.max(x, 0);
-		y = Math.max(y, 0);
-		x = Math.min(x, ctx.canvas.width);
-		y = Math.min(y, ctx.canvas.height);
+		this.x = Math.max(this.x, 0);
+		this.y = Math.max(this.y, 0);
+		this.x = Math.min(this.x, ctx.canvas.width);
+		this.y = Math.min(this.y, ctx.canvas.height);
 	}
 
 	//draws player on canvas context passed to it
-	var draw = function(ctx) {
-		ctx.fillStyle = color;
+	draw(ctx) {
+		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.arc(x, y, radius, 0, 2 * Math.PI, true);
+		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
 		ctx.fill();
-	};
-
-	// Define which variables and methods can be accessed
-	return {
-		getX: getX,
-		getY: getY,
-		setX: setX,
-		setY: setY,
-		getRadius: getRadius,
-		takeDamage: takeDamage,
-		update: update,
-		draw: draw
-	};
-};
+	}
+}
