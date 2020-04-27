@@ -2,12 +2,15 @@
 class Projectile_Homing extends Projectile {
 	constructor(startX, startY, startFacingVector) {
 		super(startX, startY, startFacingVector);
-		this.speed = 3,
-		this.color = "purple",
-		this.radius = 5,
+
+		this.speed = 3;
+		this.color = "purple";
+		this.radius = 5;
 		//homing-specific variables
-		this.rotationSpeed = 2,
-		this.targetInFrontAngle = 60;
+		this.maxRotationSpeed = 3;
+		this.currentRotationSpeed = 0;
+		this.rotationAcceleration = 0.3;
+		this.targetInFrontAngle = 100;
 	}
 
 	//draws projectile on canvas context passed to it

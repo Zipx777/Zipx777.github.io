@@ -10,6 +10,9 @@ class Projectile {
 		this.inBounds = true;
 		//homing-specific variables, 0 rotationSpeed for no homing
 		this.rotationSpeed = 0,
+		this.maxRotationSpeed = 0;
+		this.currentRotationSpeed = 0;
+		this.rotationAcceleration = 0.00;
 		this.targetInFrontAngle = 60;
 	}
 	//return value of x
@@ -83,9 +86,9 @@ class Projectile {
 		//###########  UPDATE FACING  ##############
 		//##########################################
 
-		if (Math.abs(signedAngleBetween) * 180 / Math.PI < this.rotationSpeed) {
+		if (Math.abs(signedAngleBetween) * 180 / Math.PI < this.currentRotationSpeed) {
 			//snap to target if aim is less than <rotationSpeed> away to avoid flickering
-			this.facingVector = vectorToPlayer;
+			//this.facingVector = vectorToPlayer;
 			this.targetInFront = true;
 		} else {
 			if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
@@ -95,17 +98,25 @@ class Projectile {
 			}
 		}
 
+
 		if (this.targetInFront) {
-			var angleChange = this.rotationSpeed;
+			this.currentRotationSpeed *= 0.9;
 			if (signedAngleBetween < 0) {
-				angleChange *= -1;
+				this.currentRotationSpeed -= this.rotationAcceleration;
+				this.currentRotationSpeed = Math.max(this.maxRotationSpeed * -1, this.currentRotationSpeed);
+			} else {
+				this.currentRotationSpeed += this.rotationAcceleration;
+				this.currentRotationSpeed = Math.min(this.maxRotationSpeed, this.currentRotationSpeed);
 			}
-			var newTurretAngle = this.facingVector.toAngle() + (angleChange * Math.PI / 180);
-
-			var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
-
-			this.facingVector = newFacingVector.normalize();
+		} else {
+			this.currentRotationSpeed *= 0.97;
 		}
+
+		var newTurretAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * Math.PI / 180);
+
+		var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
+
+		this.facingVector = newFacingVector.normalize();
 
 		//##########################################
 		//##########  UPDATE POSITION  #############
