@@ -8,12 +8,11 @@ class Projectile {
 		this.radius = 4,
 		this.facingVector = startFacingVector || new Vector(1,0),
 		this.inBounds = true;
-		//homing-specific variables, 0 rotationSpeed for no homing
-		this.rotationSpeed = 0,
+		//homing-specific variables, 0 maxRotationSpeed for no homing
 		this.maxRotationSpeed = 0;
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.00;
-		this.targetInFrontAngle = 60;
+		this.targetInFrontAngle = 0;
 	}
 	//return value of x
 	getX() {
@@ -86,21 +85,18 @@ class Projectile {
 		//###########  UPDATE FACING  ##############
 		//##########################################
 
-		if (Math.abs(signedAngleBetween) * 180 / Math.PI < this.currentRotationSpeed) {
-			//snap to target if aim is less than <rotationSpeed> away to avoid flickering
-			//this.facingVector = vectorToPlayer;
+		if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
+			if (Math.abs(signedAngleBetween) * 180 / Math.PI < Math.abs(this.currentRotationSpeed)) {
+				//snap to target if aim is less than <rotationSpeed> away to avoid flickering
+				//this.facingVector = vectorToPlayer;
+			}
 			this.targetInFront = true;
 		} else {
-			if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
-				this.targetInFront = true;
-			} else {
-				this.targetInFront = false;
-			}
+			this.targetInFront = false;
 		}
 
-
 		if (this.targetInFront) {
-			this.currentRotationSpeed *= 0.9;
+			this.currentRotationSpeed *= 0.95;
 			if (signedAngleBetween < 0) {
 				this.currentRotationSpeed -= this.rotationAcceleration;
 				this.currentRotationSpeed = Math.max(this.maxRotationSpeed * -1, this.currentRotationSpeed);

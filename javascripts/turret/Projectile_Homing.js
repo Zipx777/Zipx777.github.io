@@ -10,7 +10,7 @@ class Projectile_Homing extends Projectile {
 		this.maxRotationSpeed = 3;
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.3;
-		this.targetInFrontAngle = 100;
+		this.targetInFrontAngle = 60;
 	}
 
 	//draws projectile on canvas context passed to it

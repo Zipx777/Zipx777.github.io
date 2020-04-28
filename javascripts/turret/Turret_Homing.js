@@ -11,6 +11,11 @@ class Turret_Homing extends Turret {
 		this.burstLength = 1;
 		this.firingDelay = 100;
 		this.startPrefireGapPercent = 0.6;
+
+		this.maxRotationSpeed = 2;
+		this.currentRotationSpeed = 0;
+		this.rotationAcceleration = 0.2;
+		this.rotationDecceleration = 0.5;
 	}
 
 	//draws turret on canvas context passed to it

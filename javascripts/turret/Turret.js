@@ -8,9 +8,15 @@ class Turret {
 		this.prefireColor = "red";
 		this.projectileType = Projectile;
 		this.radius = startRadius || 12;
-		this.rotationSpeed = startRotationSpeed || 1;
-		this.facingVector = startFacingVector || new Vector(1,0);
+
+		this.maxRotationSpeed = startRotationSpeed || 1;
+		this.currentRotationSpeed = 0;
+		this.rotationAcceleration = 0.01;
+		this.rotationDecceleration = 0.05;
+
 		this.targetInFrontAngle = 60;
+
+		this.facingVector = startFacingVector || new Vector(1,0);
 		this.delayBetweenShots = 10;
 		this.burstLength = 5;
 		this.currentShotsFiredInBurstCount = 0;
@@ -75,32 +81,46 @@ class Turret {
 		//##########################################
 		//###########  UPDATE FACING  ##############
 		//##########################################
-
-		if (Math.abs(signedAngleBetween) * 180 / Math.PI < this.rotationSpeed) {
-			//snap to target if aim is less than <rotationSpeed> away to avoid flickering
-			this.facingVector = vectorToPlayer;
+		//this.currentRotationSpeed *= 0.9;
+		//this seemed to kill the rotation speed too much
+		if (signedAngleBetween < 0) {
+			if (this.currentRotationSpeed > 0) { //decelerate faster to avoid wobbling
+				this.currentRotationSpeed -= this.rotationDecceleration;
+			} else {
+				this.currentRotationSpeed -= this.rotationAcceleration;
+			}
+			this.currentRotationSpeed = Math.max(this.maxRotationSpeed * -1, this.currentRotationSpeed);
+		} else {
+			if (this.currentRotationSpeed < 0) { //decelerate faster to avoid wobbling
+				this.currentRotationSpeed += this.rotationDecceleration;
+			} else {
+				this.currentRotationSpeed += this.rotationAcceleration;
+			}
+			this.currentRotationSpeed = Math.min(this.maxRotationSpeed, this.currentRotationSpeed);
+		}
+		if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
+			if (Math.abs(signedAngleBetween) < (Math.abs(this.currentRotationSpeed)) * Math.PI / 180) {
+				if (Math.abs(this.currentRotationSpeed) < this.rotationDecceleration) {
+					//snap to target if aim is less than <rotationSpeed> away to avoid flickering
+					this.facingVector = vectorToPlayer;
+					this.currentRotationSpeed = 0;
+				}
+			}
 			if (!this.targetInFront && this.prefireColorPercent == 0) {
 				this.playerFirstSeenTick = this.tickCount;
 			}
 			this.targetInFront = true;
 		} else {
-			if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
-				if (!this.targetInFront && this.prefireColorPercent == 0) {
-					this.playerFirstSeenTick = this.tickCount;
-				}
-				this.targetInFront = true;
-			} else {
-				this.targetInFront = false;
-			}
-
-			var angleChange = (signedAngleBetween / Math.abs(signedAngleBetween)) * this.rotationSpeed;
-
-			var newTurretAngle = this.facingVector.toAngle() + (angleChange * Math.PI / 180);
-
-			var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
-
-			this.facingVector = newFacingVector.normalize();
+			this.targetInFront = false;
 		}
+
+
+
+		var newTurretAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * Math.PI / 180);
+
+		var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
+
+		this.facingVector = newFacingVector.normalize();
 
 		//##########################################
 		//###########  UPDATE FIRING  ##############
