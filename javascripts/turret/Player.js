@@ -6,6 +6,7 @@ class Player {
 		this.speed = 5;
 		this.color = "blue";
 		this.radius = 10;
+		this.hitboxRadius = 5;
 	}
 	//return value of x
 	getX() {
@@ -30,6 +31,10 @@ class Player {
 	//return value of radius
 	getRadius() {
 		return this.radius;
+	}
+
+	getHitboxRadius() {
+		return this.hitboxRadius;
 	}
 
 	takeDamage() {

@@ -8,7 +8,7 @@ class Turret {
 		this.prefireColor = "red";
 		this.projectileType = Projectile;
 		this.radius = startRadius || 12;
-
+		this.hitboxRadius = this.radius;
 		this.maxRotationSpeed = startRotationSpeed || 1;
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.01;
@@ -41,6 +41,14 @@ class Turret {
 	getY() {
 		return this.y;
 	};
+
+	getRadius() {
+		return this.radius;
+	};
+
+	getHitboxRadius() {
+		return this.hitboxRadius;
+	}
 
 	getFacingVector() {
 		return this.facingVector;

@@ -1,13 +1,19 @@
 var canvas,
 	ctx,
+	tickCount,
 	player,
 	freeze,
 	turrets,
 	projectiles,
 	turret,
 	turretTwo,
+	turretTypes,
+	turretSpawnDelay,
+	turretSpawnDelayAccel,
+	turretLastSpawnedTick,
 	mouseX,
-	mouseY;
+	mouseY,
+	score;
 
 //document ready function
 $(function() {
@@ -32,10 +38,20 @@ function initializeVariables() {
 	var xPos = 0.5 * ctx.canvas.width;
 	var yPos = 0.5 * ctx.canvas.height;
 
+	tickCount = 0;
+	turretLastSpawnedTick = 0;
+
 	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
 
 	turretone = new Turret(xPos - 50, yPos);
 	turrettwo = new Turret_Homing(xPos + 50, yPos);
+
+	turretTypes = [];
+	turretTypes.push(Turret);
+	turretTypes.push(Turret_Homing);
+
+	turretSpawnDelay = 120;
+	turretSpawnDelayAccel = 0.99;
 
 	freeze = false;
 
@@ -48,26 +64,13 @@ function initializeVariables() {
 	turrets.push(turrettwo);
 
 	projectiles = [];
+
+	score = 0;
 }
 
 function setEventHandlers() {
 	$("#turretArea").click(turretAreaClick);
 	$("#turretArea").mousemove(turretAreaMouseMove);
-}
-
-function turretAreaClick() {
-	if (freeze) {
-		return;
-	}
-
-	var borderMargin = 10;
-	var coinFlip = Math.random() - 0.5;
-	if (coinFlip > 0) {
-		var newTurret = new Turret(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
-	} else {
-		var newTurret = new Turret_Homing(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
-	}
-	turrets.push(newTurret);
 }
 
 function turretAreaMouseMove(e) {
@@ -77,11 +80,44 @@ function turretAreaMouseMove(e) {
 }
 
 function checkForCollision(proj) {
+	var collisionHappened = false;
 	if (proj.checkForCollisionWithPlayer(player)) {
 		player.takeDamage();
-		//freeze = true;
+		freeze = true;
+		collisionHappened = true;
 	}
+
+	var tempTurrets = [];
+	for (var i = 0; i < turrets.length; i++) {
+		if (proj.checkForCollisionWithPlayer(turrets[i])) { //using player function for collision with turrets, need to generalize this
+			collisionHappened = true;
+			score++;
+		} else {
+			tempTurrets.push(turrets[i]);
+		}
+	}
+	turrets = tempTurrets;
+
+	return collisionHappened;
 }
+
+function spawnNewRandomTurret() {
+	if (freeze) {
+		return;
+	}
+
+	var borderMargin = 10;
+	var randTurretType = turretTypes[Math.floor(Math.random() * turretTypes.length)];
+	var newTurret = new randTurretType(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
+	turrets.push(newTurret);
+
+	turretLastSpawnedTick = tickCount;
+}
+
+function turretAreaClick() {
+	//spawnNewRandomTurret();
+}
+
 //***************
 //main game loop
 //***************
@@ -89,7 +125,9 @@ function animate() {
 
 	update();
 
-	draw();
+	if (!freeze) {
+		draw();
+	}
 
 	window.requestAnimFrame(animate);
 }
@@ -110,11 +148,23 @@ function update() {
 	for (var i = 0; i < projectiles.length; i++) {
 		if (projectiles[i].isInBounds()) {
 			projectiles[i].update(player);
-			activeProjectiles.push(projectiles[i]);
-			checkForCollision(projectiles[i]);
+
+			if (checkForCollision(projectiles[i])) {
+
+			} else {
+					activeProjectiles.push(projectiles[i]);
+			}
 		}
 	}
 	projectiles = activeProjectiles;
+
+	if (tickCount - turretLastSpawnedTick > turretSpawnDelay) {
+		spawnNewRandomTurret();
+		turretSpawnDelay *= turretSpawnDelayAccel;
+	}
+
+	$("#scoreValue").text(score);
+	tickCount++;
 }
 
 //draw player and turret

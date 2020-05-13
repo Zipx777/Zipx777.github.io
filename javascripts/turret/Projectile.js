@@ -1,12 +1,13 @@
 //Projectile class
 class Projectile {
 	constructor(startX, startY, startFacingVector) {
-		this.x = startX || 0,
-		this.y = startY || 0,
-		this.speed = 2,
-		this.color = "red",
-		this.radius = 4,
-		this.facingVector = startFacingVector || new Vector(1,0),
+		this.x = startX || 0;
+		this.y = startY || 0;
+		this.speed = 2;
+		this.color = "red";
+		this.radius = 4;
+		this.hitboxRadius = 4;
+		this.facingVector = startFacingVector || new Vector(1,0);
 		this.inBounds = true;
 		//homing-specific variables, 0 maxRotationSpeed for no homing
 		this.maxRotationSpeed = 0;
@@ -62,7 +63,7 @@ class Projectile {
 		var xDistBetween = this.x - player.getX();
 		var yDistBetween = this.y - player.getY();
 		var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
-		var combinedRadiiSquared = Math.pow(0.9 * player.getRadius(), 2);
+		var combinedRadiiSquared = Math.pow(player.getHitboxRadius(), 2) + Math.pow(this.hitboxRadius, 2);
 		if (distBetweenSquared <= combinedRadiiSquared) {
 			return true;
 		} else {
