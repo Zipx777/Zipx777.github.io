@@ -25,6 +25,14 @@ class Projectile {
 		return this.y;
 	}
 
+	getRadius() {
+		return this.radius;
+	}
+	
+	getColor() {
+		return this.color;
+	}
+
 	//return speed value
 	getSpeed() {
 		return this.speed;

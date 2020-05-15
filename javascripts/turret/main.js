@@ -5,6 +5,7 @@ var canvas,
 	freeze,
 	turrets,
 	projectiles,
+	effects,
 	turret,
 	turretTwo,
 	turretTypes,
@@ -65,6 +66,8 @@ function initializeVariables() {
 
 	projectiles = [];
 
+	effects = [];
+
 	score = 0;
 }
 
@@ -91,12 +94,23 @@ function checkForCollision(proj) {
 	for (var i = 0; i < turrets.length; i++) {
 		if (proj.checkForCollisionWithPlayer(turrets[i])) { //using player function for collision with turrets, need to generalize this
 			collisionHappened = true;
+			var newEffect = new Effect(turrets[i].getX(), turrets[i].getY());
+			newEffect.setColor(proj.getColor());
+			newEffect.setRadius(turrets[i].getRadius());
+			newEffect.duration = 50;
+			effects.push(newEffect);
 			score++;
 		} else {
 			tempTurrets.push(turrets[i]);
 		}
 	}
 	turrets = tempTurrets;
+
+	for (var i = 0; i < effects.length; i++) {
+		if (proj.checkForCollisionWithPlayer(effects[i])) { //using player function for collision with turrets, need to generalize this
+			collisionHappened = true;
+		}
+	}
 
 	return collisionHappened;
 }
@@ -150,13 +164,32 @@ function update() {
 			projectiles[i].update(player);
 
 			if (checkForCollision(projectiles[i])) {
-
+					var newEffect = new Effect(projectiles[i].getX(), projectiles[i].getY());
+					newEffect.setColor(projectiles[i].getColor());
+					newEffect.setRadius(projectiles[i].getRadius());
+					effects.push(newEffect);
 			} else {
 					activeProjectiles.push(projectiles[i]);
 			}
+		} else {
+			var newEffect = new Effect(projectiles[i].getX(), projectiles[i].getY());
+			newEffect.setColor(projectiles[i].getColor());
+			newEffect.setRadius(projectiles[i].getRadius());
+			effects.push(newEffect);
 		}
 	}
 	projectiles = activeProjectiles;
+
+	var activeEffects = [];
+	for (var i = 0; i < effects.length; i++) {
+		if (effects[i].getFinished()) {
+
+		} else {
+			activeEffects.push(effects[i]);
+			effects[i].update();
+		}
+	}
+	effects = activeEffects;
 
 	if (tickCount - turretLastSpawnedTick > turretSpawnDelay) {
 		spawnNewRandomTurret();
@@ -183,5 +216,9 @@ function draw() {
 	//draw the projectiles
 	$.each(projectiles, function(i,proj) {
 		proj.draw(ctx);
+	});
+
+	$.each(effects, function(i,eff) {
+		eff.draw(ctx);
 	});
 }
