@@ -1,7 +1,7 @@
 //Turret_Homing class
 class Turret_Homing extends Turret {
-	constructor(startX, startY, startRadius, startRotationSpeed, startFacingVector) {
-		super(startX, startY, startRadius, startRotationSpeed, startFacingVector);
+	constructor(startX, startY, startFacingVector) {
+		super(startX, startY, startFacingVector);
 
 		this.prefireColor = "purple";
 		this.color = this.prefireColor;

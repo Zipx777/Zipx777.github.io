@@ -1,6 +1,6 @@
 //Effect class
 class Effect {
-	constructor(startX, startY, color, startFacingVector) {
+	constructor(startX, startY, color) {
 		this.x = startX || 0;
 		this.y = startY || 0;
 		this.color = color || "pink";
@@ -9,7 +9,6 @@ class Effect {
 		this.startRadius = this.radius;
 		this.maxRadiusPercent = 0.2;
 		this.maxRadiusMagnitude = 1.5;
-		this.facingVector = startFacingVector || new Vector(1,0);
 		this.tickCount = 0;
 		this.duration = 20;
 		this.finished = false;
@@ -27,11 +26,6 @@ class Effect {
 
 	getHitboxRadius() {
 		return this.radius * this.hitboxRadiusPercent;
-	}
-
-	//return facingVector
-	getFacingVector() {
-		return this.facingVector;
 	}
 
 	//return finished
@@ -64,11 +58,6 @@ class Effect {
 
 	setDuration(newDuration) {
 		this.duration = newDuration;
-	}
-
-	//set facingVector
-	setFacingVector(newFacingVector) {
-		this.facingVector = newFacingVector;
 	}
 
 	setDoesDamage(newDoesDamage) {

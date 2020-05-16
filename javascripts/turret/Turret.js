@@ -1,6 +1,6 @@
 //Turret class
 class Turret {
-	constructor(startX, startY, startRadius, startRotationSpeed, startFacingVector) {
+	constructor(startX, startY, startFacingVector) {
 		this.x = startX;
 		this.y = startY;
 		this.baseColor = "black"; //main color
@@ -8,18 +8,18 @@ class Turret {
 		this.prefireColor = "red";
 		this.color = this.prefireColor;
 		this.projectileType = Projectile;
-		this.radius = startRadius || 12;
+		this.radius = 12;
 		this.hitboxRadiusPercent = 1;
 
 		//rotation
-		this.maxRotationSpeed = startRotationSpeed || 1;
+		this.maxRotationSpeed = 1;
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.01;
 		this.rotationDecceleration = 0.05;
 
 		//facing
 		this.targetInFrontAngle = 60;
-		this.facingVector = startFacingVector || new Vector(1,0);
+		this.facingVector = startFacingVector || new Vector(2*Math.random() - 1, 2*Math.random() - 1);
 
 		//firing
 		this.delayBetweenShots = 10;

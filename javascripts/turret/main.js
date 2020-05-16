@@ -44,8 +44,8 @@ function initializeVariables() {
 
 	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
 
-	turretone = new Turret(xPos - 50, yPos);
-	turrettwo = new Turret_Homing(xPos + 50, yPos);
+	turretone = new Turret(xPos - 50, yPos, new Vector(1,0));
+	turrettwo = new Turret_Homing(xPos + 50, yPos, new Vector(1,0));
 
 	turretTypes = [];
 	turretTypes.push(Turret);
@@ -73,7 +73,7 @@ function initializeVariables() {
 
 function setEventHandlers() {
 	$("#turretArea").click(turretAreaClick);
-	$("#turretArea").mousemove(turretAreaMouseMove);
+	$("body").mousemove(turretAreaMouseMove);
 }
 
 function turretAreaMouseMove(e) {
@@ -155,9 +155,7 @@ function animate() {
 
 	update();
 
-	if (!freeze) {
-		draw();
-	}
+	draw();
 
 	window.requestAnimFrame(animate);
 }
