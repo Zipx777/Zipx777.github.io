@@ -5,14 +5,15 @@ class Effect {
 		this.y = startY || 0;
 		this.color = color || "pink";
 		this.radius = 5;
+		this.hitboxRadiusPercent = 1;
 		this.startRadius = this.radius;
-		this.hitboxRadius = this.radius;
 		this.maxRadiusPercent = 0.2;
 		this.maxRadiusMagnitude = 1.5;
 		this.facingVector = startFacingVector || new Vector(1,0);
 		this.tickCount = 0;
 		this.duration = 20;
 		this.finished = false;
+		this.doesDamage = false;
 	}
 	//return value of x
 	getX() {
@@ -25,9 +26,9 @@ class Effect {
 	}
 
 	getHitboxRadius() {
-		return this.hitboxRadius;
+		return this.radius * this.hitboxRadiusPercent;
 	}
-	
+
 	//return facingVector
 	getFacingVector() {
 		return this.facingVector;
@@ -36,6 +37,10 @@ class Effect {
 	//return finished
 	getFinished() {
 		return this.finished;
+	}
+
+	getDoesDamage() {
+		return this.doesDamage;
 	}
 
 	//set new value for x
@@ -57,9 +62,17 @@ class Effect {
 		this.startRadius = newRadius;
 	}
 
+	setDuration(newDuration) {
+		this.duration = newDuration;
+	}
+
 	//set facingVector
 	setFacingVector(newFacingVector) {
 		this.facingVector = newFacingVector;
+	}
+
+	setDoesDamage(newDoesDamage) {
+		this.doesDamage = newDoesDamage;
 	}
 
 	//update projectile position

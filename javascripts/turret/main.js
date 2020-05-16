@@ -82,23 +82,38 @@ function turretAreaMouseMove(e) {
 	mouseY = e.pageY - canvasElementOffset.top;
 }
 
-function checkForCollision(proj) {
+function playerTookDamage() {
+	player.takeDamage();
+	freeze = true;
+}
+
+function collisionCheck(target1, target2) {
+	var xDistBetween = target1.getX() - target2.getX();
+	var yDistBetween = target1.getY() - target2.getY();
+	var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
+	var combinedRadiiSquared = Math.pow(target1.getHitboxRadius(), 2) + Math.pow(target2.getHitboxRadius(), 2);
+	if (distBetweenSquared <= combinedRadiiSquared) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function checkForCollisions(proj) {
 	var collisionHappened = false;
-	if (proj.checkForCollisionWithPlayer(player)) {
-		player.takeDamage();
-		freeze = true;
+
+	//check vs player
+	if (collisionCheck(proj, player)) {
 		collisionHappened = true;
+		playerTookDamage();
 	}
 
+	//check vs turrets
 	var tempTurrets = [];
 	for (var i = 0; i < turrets.length; i++) {
-		if (proj.checkForCollisionWithPlayer(turrets[i])) { //using player function for collision with turrets, need to generalize this
+		if (collisionCheck(proj, turrets[i])) {
 			collisionHappened = true;
-			var newEffect = new Effect(turrets[i].getX(), turrets[i].getY());
-			newEffect.setColor(proj.getColor());
-			newEffect.setRadius(turrets[i].getRadius());
-			newEffect.duration = 50;
-			effects.push(newEffect);
+			turrets[i].explode();
 			score++;
 		} else {
 			tempTurrets.push(turrets[i]);
@@ -106,9 +121,12 @@ function checkForCollision(proj) {
 	}
 	turrets = tempTurrets;
 
+	//check vs effects
 	for (var i = 0; i < effects.length; i++) {
-		if (proj.checkForCollisionWithPlayer(effects[i])) { //using player function for collision with turrets, need to generalize this
-			collisionHappened = true;
+		if (effects[i].getDoesDamage()) {
+			if (collisionCheck(proj, effects[i])) {
+				collisionHappened = true;
+			}
 		}
 	}
 
@@ -116,13 +134,11 @@ function checkForCollision(proj) {
 }
 
 function spawnNewRandomTurret() {
-	if (freeze) {
-		return;
-	}
-
 	var borderMargin = 10;
 	var randTurretType = turretTypes[Math.floor(Math.random() * turretTypes.length)];
-	var newTurret = new randTurretType(Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin, Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin);
+	var randX = Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin;
+	var randY = Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin;
+	var newTurret = new randTurretType(randX, randY);
 	turrets.push(newTurret);
 
 	turretLastSpawnedTick = tickCount;
@@ -152,34 +168,32 @@ function update() {
 		return;
 	}
 
+	//update player
 	player.update(mouseX, mouseY, ctx);
 
+	//update turrets
 	for (var i = 0; i < turrets.length; i++) {
 		turrets[i].update(player.getX(), player.getY(), projectiles);
 	}
 
+	//update projectiles
 	var activeProjectiles = [];
 	for (var i = 0; i < projectiles.length; i++) {
 		if (projectiles[i].isInBounds()) {
 			projectiles[i].update(player);
 
-			if (checkForCollision(projectiles[i])) {
-					var newEffect = new Effect(projectiles[i].getX(), projectiles[i].getY());
-					newEffect.setColor(projectiles[i].getColor());
-					newEffect.setRadius(projectiles[i].getRadius());
-					effects.push(newEffect);
+			if (checkForCollisions(projectiles[i])) {
+					projectiles[i].explode();
 			} else {
 					activeProjectiles.push(projectiles[i]);
 			}
 		} else {
-			var newEffect = new Effect(projectiles[i].getX(), projectiles[i].getY());
-			newEffect.setColor(projectiles[i].getColor());
-			newEffect.setRadius(projectiles[i].getRadius());
-			effects.push(newEffect);
+			projectiles[i].explode();
 		}
 	}
 	projectiles = activeProjectiles;
 
+	//update effects
 	var activeEffects = [];
 	for (var i = 0; i < effects.length; i++) {
 		if (effects[i].getFinished()) {
@@ -191,11 +205,13 @@ function update() {
 	}
 	effects = activeEffects;
 
+	//see if it's time for a new turret
 	if (tickCount - turretLastSpawnedTick > turretSpawnDelay) {
 		spawnNewRandomTurret();
 		turretSpawnDelay *= turretSpawnDelayAccel;
 	}
 
+	//update score
 	$("#scoreValue").text(score);
 	tickCount++;
 }
@@ -218,7 +234,18 @@ function draw() {
 		proj.draw(ctx);
 	});
 
+	//draw the effects
+	//make sure damaging effects are on top
+	var damagingEffects = [];
 	$.each(effects, function(i,eff) {
+		if (eff.getDoesDamage()) {
+			damagingEffects.push(eff);
+		} else {
+			eff.draw(ctx);
+		}
+	});
+
+	$.each(damagingEffects, function(i,eff) {
 		eff.draw(ctx);
 	});
 }

@@ -9,15 +9,19 @@ class Turret {
 		this.color = this.prefireColor;
 		this.projectileType = Projectile;
 		this.radius = startRadius || 12;
-		this.hitboxRadius = this.radius;
+		this.hitboxRadiusPercent = 1;
+
+		//rotation
 		this.maxRotationSpeed = startRotationSpeed || 1;
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.01;
 		this.rotationDecceleration = 0.05;
 
+		//facing
 		this.targetInFrontAngle = 60;
-
 		this.facingVector = startFacingVector || new Vector(1,0);
+
+		//firing
 		this.delayBetweenShots = 10;
 		this.burstLength = 5;
 		this.currentShotsFiredInBurstCount = 0;
@@ -52,7 +56,7 @@ class Turret {
 	};
 
 	getHitboxRadius() {
-		return this.hitboxRadius;
+		return this.radius * this.hitboxRadiusPercent;
 	}
 
 	getFacingVector() {
@@ -179,6 +183,15 @@ class Turret {
 			this.prefireColorPercent = Math.max(0, ((sinceFirstSeen / this.firingDelay) - this.startPrefireGapPercent) * (1/(1-this.startPrefireGapPercent)));
 			this.prefireColorPercent = Math.min(1, this.prefireColorPercent / (1 - this.startPrefireGapPercent - this.endPrefireGapPercent));
 		}
+	}
+
+	explode() {
+		var turretExplosion = new Effect(this.getX(), this.getY());
+		turretExplosion.setColor(this.getColor());
+		turretExplosion.setRadius(this.getRadius());
+		turretExplosion.setDuration(50);
+		turretExplosion.setDoesDamage(true);
+		effects.push(turretExplosion);
 	}
 
 	//draws turret on canvas context passed to it

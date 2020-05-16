@@ -6,7 +6,7 @@ class Projectile {
 		this.speed = 2;
 		this.color = "red";
 		this.radius = 4;
-		this.hitboxRadius = 4;
+		this.hitboxRadiusPercent = 1;
 		this.facingVector = startFacingVector || new Vector(1,0);
 		this.inBounds = true;
 		//homing-specific variables, 0 maxRotationSpeed for no homing
@@ -28,7 +28,11 @@ class Projectile {
 	getRadius() {
 		return this.radius;
 	}
-	
+
+	getHitboxRadius() {
+			return this.radius * this.hitboxRadiusPercent;
+	}
+
 	getColor() {
 		return this.color;
 	}
@@ -65,18 +69,6 @@ class Projectile {
 
 	isInBounds() {
 		return this.inBounds;
-	}
-
-	checkForCollisionWithPlayer(player) {
-		var xDistBetween = this.x - player.getX();
-		var yDistBetween = this.y - player.getY();
-		var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
-		var combinedRadiiSquared = Math.pow(player.getHitboxRadius(), 2) + Math.pow(this.hitboxRadius, 2);
-		if (distBetweenSquared <= combinedRadiiSquared) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	//update projectile position
@@ -135,6 +127,13 @@ class Projectile {
 		if (this.x < 0 || this.x > ctx.canvas.width || this.y < 0 || this.y > ctx.canvas.height) {
 			this.inBounds = false;
 		}
+	}
+
+	explode() {
+		var projExplosion = new Effect(this.getX(), this.getY());
+		projExplosion.setColor(this.getColor());
+		projExplosion.setRadius(this.getRadius());
+		effects.push(projExplosion);
 	}
 
 	//draws projectile on canvas context passed to it
