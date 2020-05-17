@@ -14,6 +14,15 @@ class Projectile {
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.00;
 		this.targetInFrontAngle = 0;
+
+		this.doomed = false;
+		this.doomedStart = 0;
+		this.doomedDuration = 0;
+
+		this.explosionSFXFilePath = "";
+		this.explosionSFXVolume = 0;
+
+		this.alive = true;
 	}
 	//return value of x
 	getX() {
@@ -69,6 +78,10 @@ class Projectile {
 
 	isInBounds() {
 		return this.inBounds;
+	}
+
+	isAlive() {
+		return this.alive;
 	}
 
 	//update projectile position
@@ -127,6 +140,19 @@ class Projectile {
 		if (this.x < 0 || this.x > ctx.canvas.width || this.y < 0 || this.y > ctx.canvas.height) {
 			this.inBounds = false;
 		}
+
+		if (this.alive && this.doomed) {
+			if (this.tickCount > this.doomedStart + this.doomedDuration) {
+					this.explode();
+			}
+		}
+	}
+
+	takeDamage() {
+		if (!this.doomed) {
+			this.doomed = true;
+			this.doomedStart = this.tickCount;
+		}
 	}
 
 	explode() {
@@ -134,6 +160,14 @@ class Projectile {
 		projExplosion.setColor(this.getColor());
 		projExplosion.setRadius(this.getRadius());
 		effects.push(projExplosion);
+
+		if (this.explosionSFXVolume > 0) {
+			var expSFX = new Audio(this.explosionSFXFilePath);
+			expSFX.volume = this.explosionSFXVolume;
+			expSFX.play();
+		}
+
+		this.alive = false;
 	}
 
 	//draws projectile on canvas context passed to it

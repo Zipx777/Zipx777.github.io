@@ -35,6 +35,18 @@ class Turret {
 		this.playerFirstSeenTick = 0;
 		this.targetInFront = false,
 		this.firingAngleError = 0;
+
+		this.doomed = false;
+		this.doomedStart = 0;
+		this.doomedDuration = 8;
+
+		this.firingSFXFilePath = "sounds/turrets/turretFiring.wav";
+		this.firingSFXVolume = 1;
+
+		this.explosionSFXFilePath = "sounds/turrets/turretExplosion.mp3";
+		this.explosionSFXVolume = 1;
+
+		this.alive = true;
 	}
 
 	//return value of x
@@ -79,6 +91,10 @@ class Turret {
 
 	setFacingVector(newFacingVector) {
 		this.facingVector = newFacingVector;
+	}
+
+	isAlive() {
+		return this.alive;
 	}
 
 	//update Turret rotation/facing/firing
@@ -131,8 +147,6 @@ class Turret {
 			this.targetInFront = false;
 		}
 
-
-
 		var newTurretAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * Math.PI / 180);
 
 		var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
@@ -165,6 +179,12 @@ class Turret {
 						projVector = projVector.normalize();
 
 						projectiles.push(new this.projectileType(projX, projY, projVector));
+
+						if (this.firingSFXVolume > 0) {
+							var firingSFX = new Audio(this.firingSFXFilePath);
+							firingSFX.volume = this.firingSFXVolume;
+							firingSFX.play();
+						}
 					}
 				} else {
 					this.currentShotsFiredInBurstCount = 0;
@@ -183,6 +203,19 @@ class Turret {
 			this.prefireColorPercent = Math.max(0, ((sinceFirstSeen / this.firingDelay) - this.startPrefireGapPercent) * (1/(1-this.startPrefireGapPercent)));
 			this.prefireColorPercent = Math.min(1, this.prefireColorPercent / (1 - this.startPrefireGapPercent - this.endPrefireGapPercent));
 		}
+
+		if (this.alive && this.doomed) {
+			if (this.tickCount > this.doomedStart + this.doomedDuration) {
+					this.explode();
+			}
+		}
+	}
+
+	takeDamage() {
+		if (!this.doomed) {
+			this.doomed = true;
+			this.doomedStart = this.tickCount;
+		}
 	}
 
 	explode() {
@@ -192,6 +225,14 @@ class Turret {
 		turretExplosion.setDuration(50);
 		turretExplosion.setDoesDamage(true);
 		effects.push(turretExplosion);
+
+		if (this.explosionSFXVolume > 0) {
+			var expSFX = new Audio(this.explosionSFXFilePath);
+			expSFX.volume = this.explosionSFXVolume;
+			expSFX.play();
+		}
+
+		this.alive = false;
 	}
 
 	//draws turret on canvas context passed to it

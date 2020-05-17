@@ -14,6 +14,7 @@ var canvas,
 	turretLastSpawnedTick,
 	mouseX,
 	mouseY,
+	sounds,
 	score;
 
 //document ready function
@@ -68,6 +69,10 @@ function initializeVariables() {
 
 	effects = [];
 
+	sounds = [];
+	//var expSFX = new Audio("sounds/turrets/explosion.mp3");
+	//sounds.push(expSFX);
+
 	score = 0;
 }
 
@@ -113,13 +118,13 @@ function checkForCollisions(proj) {
 	for (var i = 0; i < turrets.length; i++) {
 		if (collisionCheck(proj, turrets[i])) {
 			collisionHappened = true;
-			turrets[i].explode();
-			score++;
+			turrets[i].takeDamage();
+			//score++;
 		} else {
 			tempTurrets.push(turrets[i]);
 		}
 	}
-	turrets = tempTurrets;
+	//turrets = tempTurrets;
 
 	//check vs effects
 	for (var i = 0; i < effects.length; i++) {
@@ -144,8 +149,41 @@ function spawnNewRandomTurret() {
 	turretLastSpawnedTick = tickCount;
 }
 
+function cleanUpDeadObjects() {
+
+	//clean up turrets and update score for dead ones
+	var activeTurrets = [];
+	for (var i = 0; i < turrets.length; i++) {
+		if (turrets[i].isAlive()) {
+			activeTurrets.push(turrets[i]);
+		} else {
+			score++;
+		}
+	}
+	turrets = activeTurrets;
+
+	//clea up projectiles
+	var activeProjectiles = [];
+	for (var i = 0; i < projectiles.length; i++) {
+		if (projectiles[i].isAlive()) {
+			activeProjectiles.push(projectiles[i]);
+		}
+	}
+	projectiles = activeProjectiles;
+
+	//clean up effects
+	var activeEffects = [];
+	for (var i = 0; i < effects.length; i++) {
+		if (effects[i].isAlive()) {
+			activeEffects.push(effects[i]);
+		}
+	}
+	effects = activeEffects;
+}
+
 function turretAreaClick() {
-	//spawnNewRandomTurret();
+	//var expSFX = new Audio("sounds/turrets/explosion.mp3");
+	//expSFX.play();
 }
 
 //***************
@@ -192,16 +230,9 @@ function update() {
 	projectiles = activeProjectiles;
 
 	//update effects
-	var activeEffects = [];
 	for (var i = 0; i < effects.length; i++) {
-		if (effects[i].getFinished()) {
-
-		} else {
-			activeEffects.push(effects[i]);
-			effects[i].update();
-		}
+		effects[i].update();
 	}
-	effects = activeEffects;
 
 	//see if it's time for a new turret
 	if (tickCount - turretLastSpawnedTick > turretSpawnDelay) {
@@ -212,6 +243,8 @@ function update() {
 	//update score
 	$("#scoreValue").text(score);
 	tickCount++;
+
+	cleanUpDeadObjects();
 }
 
 //draw player and turret

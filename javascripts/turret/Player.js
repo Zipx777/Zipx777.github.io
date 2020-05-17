@@ -7,6 +7,9 @@ class Player {
 		this.color = "blue";
 		this.radius = 10;
 		this.hitboxRadiusPercent = 0.5;
+
+		this.explosionSFXFilePath = "sounds/turrets/playerDeath.wav";
+		this.explosionSFXVolume = 1;
 	}
 	//return value of x
 	getX() {
@@ -39,6 +42,12 @@ class Player {
 
 	takeDamage() {
 		this.color = "gray";
+
+		if (this.explosionSFXVolume > 0) {
+			var expSFX = new Audio(this.explosionSFXFilePath);
+			expSFX.volume = this.explosionSFXVolume;
+			expSFX.play();
+		}
 	}
 
 	//update Player position

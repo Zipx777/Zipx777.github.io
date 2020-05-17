@@ -11,8 +11,9 @@ class Effect {
 		this.maxRadiusMagnitude = 1.5;
 		this.tickCount = 0;
 		this.duration = 20;
-		this.finished = false;
 		this.doesDamage = false;
+
+		this.alive = true;
 	}
 	//return value of x
 	getX() {
@@ -26,11 +27,6 @@ class Effect {
 
 	getHitboxRadius() {
 		return this.radius * this.hitboxRadiusPercent;
-	}
-
-	//return finished
-	getFinished() {
-		return this.finished;
 	}
 
 	getDoesDamage() {
@@ -64,11 +60,15 @@ class Effect {
 		this.doesDamage = newDoesDamage;
 	}
 
+	isAlive() {
+		return this.alive;
+	}
+
 	//update projectile position
 	update() {
 		this.tickCount++;
 		if (this.tickCount >= this.duration) {
-			this.finished = true;
+			this.alive = false;
 		}
 
 		var newRadius = this.radius;
