@@ -10,6 +10,7 @@ var canvas,
 	turretTwo,
 	turretTypes,
 	turretSpawnDelay,
+	minTurretSpawnDelay,
 	turretSpawnDelayAccel,
 	turretLastSpawnedTick,
 	mouseX,
@@ -47,13 +48,16 @@ function initializeVariables() {
 
 	turretone = new Turret(xPos - 50, yPos, new Vector(1,0));
 	turrettwo = new Turret_Homing(xPos + 50, yPos, new Vector(1,0));
+	turretthree = new Turret_Shotgun(xPos + 150, yPos, new Vector(1,0));
 
 	turretTypes = [];
 	turretTypes.push(Turret);
 	turretTypes.push(Turret_Homing);
+	turretTypes.push(Turret_Shotgun);
 
 	turretSpawnDelay = 120;
 	turretSpawnDelayAccel = 0.99;
+	minTurretSpawnDelay = 15;
 
 	freeze = false;
 
@@ -62,8 +66,9 @@ function initializeVariables() {
 	mouseY = player.getY();
 
 	turrets = [];
-	turrets.push(turretone);
-	turrets.push(turrettwo);
+	//turrets.push(turretone);
+	//turrets.push(turrettwo);
+	turrets.push(turretthree);
 
 	projectiles = [];
 
@@ -114,17 +119,12 @@ function checkForCollisions(proj) {
 	}
 
 	//check vs turrets
-	var tempTurrets = [];
 	for (var i = 0; i < turrets.length; i++) {
 		if (collisionCheck(proj, turrets[i])) {
 			collisionHappened = true;
 			turrets[i].takeDamage();
-			//score++;
-		} else {
-			tempTurrets.push(turrets[i]);
 		}
 	}
-	//turrets = tempTurrets;
 
 	//check vs effects
 	for (var i = 0; i < effects.length; i++) {
@@ -138,12 +138,28 @@ function checkForCollisions(proj) {
 	return collisionHappened;
 }
 
+function checkForTurretOverlap(newTurret) {
+	for (var i = 0; i < turrets.length; i++) {
+		if (collisionCheck(turrets[i], newTurret)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function spawnNewRandomTurret() {
 	var borderMargin = 10;
 	var randTurretType = turretTypes[Math.floor(Math.random() * turretTypes.length)];
-	var randX = Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin;
-	var randY = Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin;
-	var newTurret = new randTurretType(randX, randY);
+	var newTurret = new randTurretType(0, 0);
+	var spawnAttempts = 0;
+	do {
+		var randX = Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin;
+		var randY = Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin;
+		newTurret.setX(randX);
+		newTurret.setY(randY);
+		spawnAttempts++;
+	}
+	while (checkForTurretOverlap(newTurret) && spawnAttempts < 10);
 	turrets.push(newTurret);
 
 	turretLastSpawnedTick = tickCount;
@@ -237,7 +253,7 @@ function update() {
 	//see if it's time for a new turret
 	if (tickCount - turretLastSpawnedTick > turretSpawnDelay) {
 		spawnNewRandomTurret();
-		turretSpawnDelay *= turretSpawnDelayAccel;
+		turretSpawnDelay = Math.max(turretSpawnDelay * turretSpawnDelayAccel, minTurretSpawnDelay);
 	}
 
 	//update score

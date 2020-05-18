@@ -1,16 +1,11 @@
-//Projectile_Homing class
-class Projectile_Homing extends Projectile {
+//Projectile_Shotgun class
+class Projectile_Shotgun extends Projectile {
 	constructor(startX, startY, startFacingVector) {
 		super(startX, startY, startFacingVector);
 
-		this.speed = 3;
-		this.color = "purple";
-		this.radius = 5;
-		//homing-specific variables
-		this.maxRotationSpeed = 3;
-		this.currentRotationSpeed = 0;
-		this.rotationAcceleration = 0.3;
-		this.targetInFrontAngle = 60;
+		this.speed = 6;
+		this.color = "orange";
+		this.radius = 2.5;
 	}
 
 	//draws projectile on canvas context passed to it
@@ -23,10 +18,11 @@ class Projectile_Homing extends Projectile {
 
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.moveTo(2 * this.radius, 0);
+		ctx.moveTo(this.radius, this.radius);
+		ctx.lineTo(this.radius, -1 * this.radius);
 		ctx.lineTo(-1 * this.radius, -1 * this.radius);
-		ctx.lineTo(-0.5 * this.radius, 0);
-		ctx.lineTo(-1 * this.radius, this.radius)
+		ctx.lineTo(-1 * this.radius, this.radius);
+		ctx.closePath();
 		ctx.fill();
 
 		ctx.restore();

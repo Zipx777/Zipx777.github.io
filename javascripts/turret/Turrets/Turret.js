@@ -16,6 +16,8 @@ class Turret {
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.01;
 		this.rotationDecceleration = 0.05;
+		this.canRotateWhilePrefiring = true;
+		this.canRotateWhileFiring = false;
 
 		//facing
 		this.targetInFrontAngle = 60;
@@ -25,6 +27,7 @@ class Turret {
 		this.delayBetweenShots = 10;
 		this.burstLength = 5;
 		this.currentShotsFiredInBurstCount = 0;
+		this.projectilesPerShot = 1;
 		this.firingDelay = 100;
 		this.prefireColorPercent = 0; //used to set gradient for prefire tell
 		//controls when the color fades to prefire color in the firing delay. Added together needs to be less than 1
@@ -35,6 +38,8 @@ class Turret {
 		this.playerFirstSeenTick = 0;
 		this.targetInFront = false,
 		this.firingAngleError = 0;
+		this.projectileMaxInitialXOffset = 0; //bound for offset perpindicular to firing angle
+		this.projectileMaxInitialYOffset = 0;
 
 		this.doomed = false;
 		this.doomedStart = 0;
@@ -97,6 +102,52 @@ class Turret {
 		return this.alive;
 	}
 
+	fireProjectile(projectiles) {
+		var turretAngle = this.facingVector.toAngle();
+		var newAngle = turretAngle + this.firingAngleError * Math.PI/180 * (Math.random()*2 - 1);
+
+		//shift projectile to the end of the barrel
+		var turretBarrelMarker = this.facingVector.normalize().multiply(this.radius);
+
+		var horizontalOffsetVector = new Vector(0,0);
+		if (this.projectileMaxInitialXOffset > 0) {
+			var coinFlip = 2*Math.random() - 1;
+			if (coinFlip > 0) {
+				horizontalOffsetVector.setX(turretBarrelMarker.getY());
+				horizontalOffsetVector.setY(-1 * turretBarrelMarker.getX());
+			} else {
+				horizontalOffsetVector.setX(-1 * turretBarrelMarker.getY());
+				horizontalOffsetVector.setY(turretBarrelMarker.getX());
+			}
+			var xScalar = this.projectileMaxInitialXOffset * Math.random();
+			if (xScalar == 0) {
+				sScalar = 1;
+			}
+			horizontalOffsetVector = horizontalOffsetVector.normalize().multiply(xScalar);
+		}
+
+		var verticalOffsetVector = new Vector(0,0);
+		if (this.projectileMaxInitialYOffset > 0) {
+			verticalOffsetVector.setX(turretBarrelMarker.getX());
+			verticalOffsetVector.setY(turretBarrelMarker.getY());
+
+			var yScalar = this.projectileMaxInitialYOffset * Math.random();
+			if (yScalar == 0) {
+				yScalar = 1;
+			}
+			verticalOffsetVector = verticalOffsetVector.normalize().multiply(yScalar);
+		}
+
+		var projX = this.x + turretBarrelMarker.getX() + horizontalOffsetVector.getX() + verticalOffsetVector.getX();
+		var projY = this.y + turretBarrelMarker.getY() + horizontalOffsetVector.getY() + verticalOffsetVector.getY();
+
+		var projVector = new Vector(0,0);
+		projVector.setAngle(newAngle);
+		projVector = projVector.normalize();
+
+		projectiles.push(new this.projectileType(projX, projY, projVector));
+	}
+
 	//update Turret rotation/facing/firing
 	update(playerX, playerY, projectiles) {
 		this.tickCount += 1;
@@ -131,28 +182,36 @@ class Turret {
 			}
 			this.currentRotationSpeed = Math.min(this.maxRotationSpeed, this.currentRotationSpeed);
 		}
-		if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
-			if (Math.abs(signedAngleBetween) < (Math.abs(this.currentRotationSpeed)) * Math.PI / 180) {
-				if (Math.abs(this.currentRotationSpeed) < this.rotationDecceleration) {
-					//snap to target if aim is less than <rotationSpeed> away to avoid flickering
-					this.facingVector = vectorToPlayer;
-					this.currentRotationSpeed = 0;
+
+		if (this.canRotateWhilePrefiring || this.prefireColorPercent <= 0 || this.currentShotsFiredInBurstCount > 0) {
+			if (this.canRotateWhileFiring || this.currentShotsFiredInBurstCount <= 0) {
+				if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
+					if (Math.abs(signedAngleBetween) < (Math.abs(this.currentRotationSpeed)) * Math.PI / 180) {
+						if (Math.abs(this.currentRotationSpeed) < this.rotationDecceleration) {
+							//snap to target if aim is less than <rotationSpeed> away to avoid flickering
+							this.facingVector = vectorToPlayer;
+							this.currentRotationSpeed = 0;
+						}
+					}
+					if (!this.targetInFront && this.prefireColorPercent == 0) {
+						this.playerFirstSeenTick = this.tickCount;
+					}
+					this.targetInFront = true;
+				} else {
+					this.targetInFront = false;
 				}
+
+				var newTurretAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * Math.PI / 180);
+
+				var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
+
+				this.facingVector = newFacingVector.normalize();
+			} else {
+				this.currentRotationSpeed = 0;
 			}
-			if (!this.targetInFront && this.prefireColorPercent == 0) {
-				this.playerFirstSeenTick = this.tickCount;
-			}
-			this.targetInFront = true;
 		} else {
-			this.targetInFront = false;
+			this.currentRotationSpeed = 0; //not including this result in flicks where acceleration builds up while turret is paused, could be cool as a feature
 		}
-
-		var newTurretAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * Math.PI / 180);
-
-		var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
-
-		this.facingVector = newFacingVector.normalize();
-
 		//##########################################
 		//###########  UPDATE FIRING  ##############
 		//##########################################
@@ -166,24 +225,13 @@ class Turret {
 						this.lastShotFiredTick = this.tickCount;
 						this.currentShotsFiredInBurstCount += 1;
 
-						var turretAngle = this.facingVector.toAngle();
-						var newAngle = turretAngle + this.firingAngleError * Math.PI/180 * (Math.random()*2 - 1);
-
-						//shift projectile to the end of the barrel
-						var turretBarrelMarker = this.facingVector.normalize().multiply(this.radius);
-						var projX = this.x + turretBarrelMarker.getX();
-						var projY = this.y + turretBarrelMarker.getY();
-
-						var projVector = new Vector(0,0);
-						projVector.setAngle(newAngle);
-						projVector = projVector.normalize();
-
-						projectiles.push(new this.projectileType(projX, projY, projVector));
-
-						if (this.firingSFXVolume > 0) {
-							var firingSFX = new Audio(this.firingSFXFilePath);
-							firingSFX.volume = this.firingSFXVolume;
-							firingSFX.play();
+						for (var i = 0; i < this.projectilesPerShot; i++) {
+							this.fireProjectile(projectiles);
+							if (this.firingSFXVolume > 0) {
+								var firingSFX = new Audio(this.firingSFXFilePath);
+								firingSFX.volume = this.firingSFXVolume;
+								firingSFX.play();
+							}
 						}
 					}
 				} else {

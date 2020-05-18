@@ -6,7 +6,6 @@ class Turret_Homing extends Turret {
 		this.prefireColor = "purple";
 		this.color = this.prefireColor;
 		this.projectileType = Projectile_Homing;
-		this.rotationSpeed = 2;
 		this.targetInFrontAngle = 60;
 		this.delayBetweenShots = 10;
 		this.burstLength = 1;
@@ -17,6 +16,7 @@ class Turret_Homing extends Turret {
 		this.currentRotationSpeed = 0;
 		this.rotationAcceleration = 0.2;
 		this.rotationDecceleration = 0.5;
+		this.canRotateWhileFiring = true;
 	}
 
 	//draws turret on canvas context passed to it
