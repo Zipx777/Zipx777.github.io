@@ -17,6 +17,9 @@ class Turret_Homing extends Turret {
 		this.rotationAcceleration = 0.2;
 		this.rotationDecceleration = 0.5;
 		this.canRotateWhileFiring = true;
+
+		this.firingSFX = new Audio("sounds/turrets/deepPluck.wav");
+		this.firingSFXVolume = 0.2;
 	}
 
 	//draws turret on canvas context passed to it

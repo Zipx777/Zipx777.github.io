@@ -1,13 +1,13 @@
-//Turret_Shotgun class
-class Turret_Shotgun extends Turret {
+//Turret_Railgun class
+class Turret_Railgun extends Turret {
 	constructor(startX, startY, startFacingVector) {
 		super(startX, startY, startFacingVector);
 
 		this.radius = 15;
 
-		this.prefireColor = "orange";
+		this.prefireColor = "teal";
 		this.color = this.prefireColor;
-		this.projectileType = Projectile_Shotgun;
+		this.projectileType = Projectile_Railgun;
 
 		this.maxRotationSpeed = 1;
 		this.rotationAcceleration = 0.05;
@@ -25,9 +25,6 @@ class Turret_Shotgun extends Turret {
 
 		this.canRotateWhilePrefiring = false;
 		this.canRotateWhileFiring = false;
-
-		this.firingSFX = new Audio("sounds/turrets/dodo.wav");
-		this.firingSFXVolume = 1;
 	}
 
 	//draws turret on canvas context passed to it

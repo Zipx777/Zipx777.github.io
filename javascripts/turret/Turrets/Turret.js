@@ -45,11 +45,13 @@ class Turret {
 		this.doomedStart = 0;
 		this.doomedDuration = 8;
 
-		this.firingSFXFilePath = "sounds/turrets/turretFiring.wav";
-		this.firingSFXVolume = 1;
+		this.firingSFX = new Audio("sounds/turrets/snare.mp3");
+		this.firingSFXVolume = 0.1;
+		this.tickLastFiringSoundEvent = 0;
+		this.ticksBetweenFiringSoundEvents = 10;
 
-		this.explosionSFXFilePath = "sounds/turrets/turretExplosion.mp3";
-		this.explosionSFXVolume = 1;
+		this.explosionSFX = new Audio("sounds/turrets/turretExplosion.mp3");
+		this.explosionSFXVolume = 0.4;
 
 		this.alive = true;
 	}
@@ -227,10 +229,14 @@ class Turret {
 
 						for (var i = 0; i < this.projectilesPerShot; i++) {
 							this.fireProjectile(projectiles);
-							if (this.firingSFXVolume > 0) {
-								var firingSFX = new Audio(this.firingSFXFilePath);
-								firingSFX.volume = this.firingSFXVolume;
-								firingSFX.play();
+							if (this.firingSFXVolume > 0 && this.tickCount >= this.tickLastFiringSoundEvent + this.ticksBetweenFiringSoundEvents) {
+								//this.firingSFX = new Audio(this.firingSFXFilePath);
+								this.firingSFX.pause();
+								this.firingSFX.currentTime = 0.0;
+								this.firingSFX.volume = this.firingSFXVolume;
+								this.firingSFX.play();
+
+								this.tickLastFiringSoundEvent = this.tickCount;
 							}
 						}
 					}
@@ -275,9 +281,8 @@ class Turret {
 		effects.push(turretExplosion);
 
 		if (this.explosionSFXVolume > 0) {
-			var expSFX = new Audio(this.explosionSFXFilePath);
-			expSFX.volume = this.explosionSFXVolume;
-			expSFX.play();
+			this.explosionSFX.volume = this.explosionSFXVolume;
+			this.explosionSFX.play();
 		}
 
 		this.alive = false;

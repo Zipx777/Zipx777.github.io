@@ -66,9 +66,9 @@ function initializeVariables() {
 	mouseY = player.getY();
 
 	turrets = [];
-	//turrets.push(turretone);
+	turrets.push(turretone);
 	//turrets.push(turrettwo);
-	turrets.push(turretthree);
+	//turrets.push(turretthree);
 
 	projectiles = [];
 
