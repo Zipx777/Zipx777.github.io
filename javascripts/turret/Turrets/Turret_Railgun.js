@@ -4,9 +4,8 @@ class Turret_Railgun extends Turret {
 		super(startX, startY, startFacingVector);
 
 		this.radius = 15;
+		this.color = "teal";
 
-		this.prefireColor = "teal";
-		this.color = this.prefireColor;
 		this.projectileType = Projectile_Railgun;
 
 		this.maxRotationSpeed = 1;
@@ -59,7 +58,7 @@ class Turret_Railgun extends Turret {
 		//prefire color fade in
 		ctx.translate(this.x, this.y);
 		ctx.rotate(angle);
-		ctx.fillStyle = this.prefireColor;
+		ctx.fillStyle = this.color;
 		ctx.globalAlpha = this.prefireColorPercent;
 		ctx.beginPath();
 		ctx.moveTo(barrelLengthMultiplier * smallerRadius, smallerRadius * edgeMarginMultiplier);

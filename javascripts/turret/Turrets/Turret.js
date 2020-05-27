@@ -4,9 +4,9 @@ class Turret {
 		this.x = startX;
 		this.y = startY;
 		this.baseColor = "black"; //main color
-		this.currentColor = this.color; //color currently being rendered
-		this.prefireColor = "red";
-		this.color = this.prefireColor;
+		this.currentColor = this.baseColor; //color currently being rendered
+		this.color = "red"; //color used for pre-fire
+		
 		this.projectileType = Projectile;
 		this.radius = 12;
 		this.hitboxRadiusPercent = 1;
@@ -220,7 +220,7 @@ class Turret {
 
 		//completes the entire burst after it starts, even if player moves out of turret's front
 		if (this.prefireColorPercent > 0 || (this.currentShotsFiredInBurstCount > 0 && this.currentShotsFiredInBurstCount < this.burstLength)) {
-			this.currentColor = this.prefireColor;
+			this.currentColor = this.color;
 			if (this.tickCount - this.playerFirstSeenTick > this.firingDelay) {
 				if (this.currentShotsFiredInBurstCount < this.burstLength) {
 					if (this.tickCount - this.lastShotFiredTick > this.delayBetweenShots) {
@@ -317,7 +317,7 @@ class Turret {
 		//grd.addColorStop(0, color);
 		//ctx.fillStyle = grd;
 
-		ctx.fillStyle = this.prefireColor;
+		ctx.fillStyle = this.color;
 		ctx.globalAlpha = this.prefireColorPercent;
 		ctx.beginPath();
 		ctx.moveTo(2 * this.radius, 0);

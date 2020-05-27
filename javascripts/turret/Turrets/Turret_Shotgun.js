@@ -5,8 +5,7 @@ class Turret_Shotgun extends Turret {
 
 		this.radius = 15;
 
-		this.prefireColor = "orange";
-		this.color = this.prefireColor;
+		this.color = "orange";
 		this.projectileType = Projectile_Shotgun;
 
 		this.maxRotationSpeed = 1;
@@ -62,7 +61,7 @@ class Turret_Shotgun extends Turret {
 		//prefire color fade in
 		ctx.translate(this.x, this.y);
 		ctx.rotate(angle);
-		ctx.fillStyle = this.prefireColor;
+		ctx.fillStyle = this.color;
 		ctx.globalAlpha = this.prefireColorPercent;
 		ctx.beginPath();
 		ctx.moveTo(barrelLengthMultiplier * smallerRadius, smallerRadius * edgeMarginMultiplier);

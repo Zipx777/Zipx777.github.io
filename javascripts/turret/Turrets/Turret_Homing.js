@@ -3,8 +3,7 @@ class Turret_Homing extends Turret {
 	constructor(startX, startY, startFacingVector) {
 		super(startX, startY, startFacingVector);
 
-		this.prefireColor = "purple";
-		this.color = this.prefireColor;
+		this.color = "purple";
 		this.projectileType = Projectile_Homing;
 		this.targetInFrontAngle = 60;
 		this.delayBetweenShots = 10;
@@ -51,7 +50,7 @@ class Turret_Homing extends Turret {
 		//grd.addColorStop(0, color);
 		//ctx.fillStyle = grd;
 
-		ctx.fillStyle = this.prefireColor;
+		ctx.fillStyle = this.color;
 		ctx.globalAlpha = this.prefireColorPercent;
 		ctx.beginPath();
 		ctx.moveTo(2 * this.radius, 0);
