@@ -31,8 +31,8 @@ exampleRules.set("Hypno Strobe", hypnoStrobeArr);
 
 //Square explosion
 var squareExplosionArr = [
-	[5,5],
-	[1,6]
+	[2,4],
+	[1,2]
 ];
 exampleRules.set("Square Explosion", squareExplosionArr);
 
