@@ -15,14 +15,21 @@ var savedBoardState;
 
 var simulationRunning;
 
+var simSpeedSliderVal;
+var simSpeedSliderMaxVal;
+var tickCount;
+var lastUpdateTick;
+
 //document ready function
 $(function() {
 	initializeVariables();
 
+	initializeSlider();
+
 	initializeBoard();
 
 	initializeSelectOptions();
-	
+
 	initializeEventHandlers();
 });
 
@@ -33,11 +40,11 @@ function initializeVariables() {
 
 	tileWidth = 10;
 	tileHeight = 10;
-	
+
 	boardState = [];
 	futureBoardState = [];
 	savedBoardState = []
-	
+
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		boardState[i] = [];
 		futureBoardState[i] = [];
@@ -48,8 +55,23 @@ function initializeVariables() {
 			savedBoardState[i][j] = 0;
 		}
 	}
-	
+
 	simulationRunning = false;
+	simSpeedSliderMaxVal = 100;
+	simSpeedSliderVal = simSpeedSliderMaxVal;
+	tickCount = 0;
+	lastUpdateTick = 0;
+}
+
+//setup slider
+function initializeSlider() {
+	$("#slider").slider({
+		value: simSpeedSliderMaxVal,
+		min: 1,
+		max: simSpeedSliderMaxVal,
+		step: 1,
+		slide: sliderMoved
+	});
 }
 
 //set up tiles in the board area
@@ -76,17 +98,24 @@ function initializeSelectOptions() {
 		$("#dead_min").append(newOption.clone());
 		$("#dead_max").append(newOption.clone());
 	}
-	
+
 	$("#alive_min option[value=2]").attr("selected", true);
 	$("#alive_max option[value=3]").attr("selected", true);
 	$("#dead_min option[value=3]").attr("selected", true);
 	$("#dead_max option[value=3]").attr("selected", true);
-	
+
 	examplePatterns.forEach(function(val, key) {
 		var newOption = $("<option></option>");
 		newOption.attr("value", key);
 		newOption.text(key);
-		$("#exampleSelect").append(newOption);
+		$("#examplePatternSelect").append(newOption);
+	});
+
+	exampleRules.forEach(function(val, key) {
+		var newOption = $("<option></option>");
+		newOption.attr("value", key);
+		newOption.text(key);
+		$("#exampleRulesSelect").append(newOption);
 	});
 }
 
@@ -97,9 +126,15 @@ function initializeEventHandlers() {
 	$("#stepButton").mousedown(stepClick);
 	$("#clearButton").mousedown(clearClick);
 	$("#resetButton").mousedown(resetClick);
-	$("#exampleCreateButton").mousedown(exampleCreateClick);
-	
+	$("#examplePatternCreateButton").mousedown(examplePatternCreateClick);
+	$("#exampleRulesSetButton").mousedown(exampleRulesSetClick);
+
 	$("#testOutputButton").mousedown(outputLivingTiles);
+}
+
+function sliderMoved(event, ui) {
+	var newVal = ui.value;
+	simSpeedSliderVal = newVal;
 }
 
 //player clicks on a tile
@@ -160,14 +195,14 @@ function singleSimulationStep() {
 	var deadMin = $("#dead_min").find(":selected").val();
 	var deadMax = $("#dead_max").find(":selected").val();
 
-	var totalAlive = 0;	
-	
+	var totalAlive = 0;
+
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		for (var j = 0; j < boardWidth/tileWidth; j++) {
 			var neighborCount = countNeighbors(i, j);
 			if (tileIsAlive(i,j)) {
 				totalAlive++;
-				
+
 				if (neighborCount < aliveMin || neighborCount > aliveMax) {
 					futureBoardState[i][j] = 0;
 				} else {
@@ -180,15 +215,15 @@ function singleSimulationStep() {
 					futureBoardState[i][j] = 1;
 				}
 			}
-			
+
 			if (boardState[i][j] != futureBoardState[i][j]) {
 				updateTile(i,j,futureBoardState[i][j]);
 			}
 		}
 	}
-	
+
 	copyArray(boardState, futureBoardState);
-	
+
 	if (totalAlive == 0) {
 		stopSimulation();
 	}
@@ -230,23 +265,6 @@ function updateTile(i, j, state) {
 	}
 }
 
-//update visual state of board to match actual state
-//DEPRECATED: currently unused, due to optimizations
-function updateBoard() {
-	for (var i = 0; i < boardHeight/tileHeight; i++) {
-		for (var j = 0; j < boardWidth/tileWidth; j++) {
-			var tile = $("#" + i + "_" + j);
-			tile.removeClass("alive");
-			tile.removeClass("dead");
-			if (boardState[i][j] == 0) {
-				tile.addClass("dead");
-			} else if (boardState[i][j] == 1) {
-				tile.addClass("alive");
-			}
-		}
-	}
-}
-
 //clear board to empty state
 function clearClick() {
 	clearBoard();
@@ -277,25 +295,46 @@ function resetClick() {
 	}
 }
 
-function exampleCreateClick() {
-	var pattern = $("#exampleSelect").find(":selected").val();
+function examplePatternCreateClick() {
+	var pattern = $("#examplePatternSelect").find(":selected").val();
 	var patternPoints = examplePatterns.get(pattern);
-	
+
 	clearBoard();
 	stopSimulation();
-	
+
 	for (var i = 0; i < patternPoints.length; i++) {
 		updateTile(patternPoints[i][0], patternPoints[i][1], 1);
 	}
-	
+
 	getBoardState();
 	copyArray(savedBoardState, boardState);
+}
+
+function exampleRulesSetClick() {
+	stopSimulation();
+
+	var rules = $("#exampleRulesSelect").find(":selected").val();
+	var ruleValues = exampleRules.get(rules);
+
+	$("#alive_min option:selected").removeAttr("selected");
+	$("#alive_max option:selected").removeAttr("selected");
+	$("#dead_min option:selected").removeAttr("selected");
+	$("#dead_max option:selected").removeAttr("selected");
+
+	$("#alive_min option[value=" + ruleValues[0][0] + "]").prop("selected", "selected");
+	$("#alive_max option[value=" + ruleValues[0][1] + "]").prop("selected", "selected").change();
+	$("#dead_min option[value=" + ruleValues[1][0] + "]").prop("selected", "selected").change();
+	$("#dead_max option[value=" + ruleValues[1][1] + "]").prop("selected", "selected").change();
 }
 
 //start simulation that will repeat itself
 function runSimulation() {
 	if (simulationRunning) {
-		singleSimulationStep();
+		if (tickCount - lastUpdateTick >= simSpeedSliderMaxVal - simSpeedSliderVal) {
+			singleSimulationStep();
+			lastUpdateTick = tickCount
+		}
+		tickCount++;
 		window.requestAnimFrame(runSimulation);
 	}
 }
@@ -318,11 +357,10 @@ function outputLivingTiles() {
 				livingTiles += "[" + i + "," + j + "],";
 				livingTiles += "\n";
 			}
-		}		
+		}
 	}
 	alert(livingTiles);
 }
-
 
 //pause the simulation, or if there are 0 alive tiles stop it
 function stopSimulation() {
