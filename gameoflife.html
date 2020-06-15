@@ -63,15 +63,31 @@
 				<div id="slider"></div>
 			</div>
       <p>Rules:</p>
-			<p>
-			1. A living square goes dormant unless it has between
-			<select id="alive_min"></select> and
-			<select id="alive_max"></select> living neighbors
-			<br />
-			2. A dormant square becomes alive if it has between
-			<select id="dead_min"></select> and
-			<select id="dead_max"></select> living neighbors
-			</p>
+			<p>1. A living square stays alive if it has this many neighbors:</p>
+      <div class="ruleNumSelect" id="aliveToDeadNumSelect">
+        <div class="off">1</div>
+        <div class="on">2</div>
+        <div class="on">3</div>
+        <div class="off">4</div>
+        <div class="off">5</div>
+        <div class="off">6</div>
+        <div class="off">7</div>
+        <div class="off">8</div>
+      </div>
+      <br />
+			<p>2. A dormant square becomes alive if it has this many neighbors:</p>
+      <div class="ruleNumSelect" id="deadToAliveNumSelect">
+        <div class="off">1</div>
+        <div class="off">2</div>
+        <div class="on">3</div>
+        <div class="off">4</div>
+        <div class="off">5</div>
+        <div class="off">6</div>
+        <div class="off">7</div>
+        <div class="off">8</div>
+      </div>
+      <br />
+      <br />
 			<p>Example patterns: (note: only really works with default rules)<br />
         <select id="examplePatternSelect"></select><button id="examplePatternCreateButton">Create</button></p>
       <p>Example rules: <br />

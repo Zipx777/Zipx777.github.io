@@ -61,3 +61,35 @@
   background-color: green;
   border: 1px solid black;
 }
+
+.ruleNumSelect div {
+  width: 50px;
+  float: left;
+
+  margin-right: 5px;
+  border: 1px solid black;
+
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+
+  /*make text un-highlightable*/
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.ruleNumSelect div:hover {
+  cursor: pointer;
+}
+
+div .on {
+  background-color: lightgreen;
+}
+
+div .off {
+  background-color: salmon;
+}

@@ -122,6 +122,7 @@ function initializeSelectOptions() {
 //set up functions to handle events like clicks
 function initializeEventHandlers() {
 	$(".tile").mousedown(tileClick);
+	$(".ruleNumSelect div").mousedown(ruleNumClick);
 	$("#startStopButton").mousedown(startStopClick);
 	$("#stepButton").mousedown(stepClick);
 	$("#clearButton").mousedown(clearClick);
@@ -146,9 +147,44 @@ function tileClick() {
 	}
 }
 
+function ruleNumClick() {
+	if (simulationRunning) {
+		stopSimulation();
+	}
+	toggleRuleNumState($(this));
+	getAliveNums();
+}
+
+//turn rule nums on and off
+function toggleRuleNumState(ruleNum) {
+	if (ruleNum.hasClass("off")) {
+		ruleNum.removeClass("off");
+		ruleNum.addClass("on");
+	} else if (ruleNum.hasClass("on")) {
+		ruleNum.removeClass("on");
+		ruleNum.addClass("off");
+	}
+}
+
+function getAliveNums() {
+	var aliveNumsArr = [];
+	$.each($("#aliveToDeadNumSelect .on"), function(key, val) {
+		aliveNumsArr.push(parseInt(val.textContent, 10));
+	});
+	return aliveNumsArr;
+}
+
+function getDeadNums() {
+	var deadNumsArr = [];
+	$.each($("#deadToAliveNumSelect .on"), function(key, val) {
+		deadNumsArr.push(parseInt(val.textContent, 10));
+	});
+	return deadNumsArr;
+}
+
 //if tile is alive, set it to dead, and vice versa
 function toggleTileState(tile) {
-	if (tile.hasClass("dead") == true) {
+	if (tile.hasClass("dead")) {
 		tile.removeClass("dead");
 		tile.addClass("alive");
 	} else if (tile.hasClass("alive")) {
@@ -195,6 +231,9 @@ function singleSimulationStep() {
 	var deadMin = $("#dead_min").find(":selected").val();
 	var deadMax = $("#dead_max").find(":selected").val();
 
+	var aliveNums = getAliveNums();
+	var deadNums = getDeadNums();
+
 	var totalAlive = 0;
 
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
@@ -203,16 +242,16 @@ function singleSimulationStep() {
 			if (tileIsAlive(i,j)) {
 				totalAlive++;
 
-				if (neighborCount < aliveMin || neighborCount > aliveMax) {
-					futureBoardState[i][j] = 0;
-				} else {
+				if (aliveNums.includes(neighborCount)) {
 					futureBoardState[i][j] = 1;
+				} else {
+					futureBoardState[i][j] = 0;
 				}
 			} else {
-				if (neighborCount < deadMin || neighborCount > deadMax) {
-					futureBoardState[i][j] = 0;
-				} else {
+				if (deadNums.includes(neighborCount)) {
 					futureBoardState[i][j] = 1;
+				} else {
+					futureBoardState[i][j] = 0;
 				}
 			}
 
@@ -311,20 +350,48 @@ function examplePatternCreateClick() {
 }
 
 function exampleRulesSetClick() {
-	stopSimulation();
+	if (simulationRunning){
+		stopSimulation();
+	}
 
 	var rules = $("#exampleRulesSelect").find(":selected").val();
 	var ruleValues = exampleRules.get(rules);
 
-	$("#alive_min option:selected").removeAttr("selected");
-	$("#alive_max option:selected").removeAttr("selected");
-	$("#dead_min option:selected").removeAttr("selected");
-	$("#dead_max option:selected").removeAttr("selected");
+	$("#aliveToDeadNumSelect div").each(function(index) {
+		if ($(this).hasClass("on")) {
+			$(this).removeClass("on");
+			$(this).addClass("off");
+		}
+		if (ruleValues[0].includes(index + 1)) {
+			if ($(this).hasClass("off")) {
+				$(this).removeClass("off");
+				$(this).addClass("on");
+			}
+		}
+	});
 
-	$("#alive_min option[value=" + ruleValues[0][0] + "]").prop("selected", "selected");
-	$("#alive_max option[value=" + ruleValues[0][1] + "]").prop("selected", "selected").change();
-	$("#dead_min option[value=" + ruleValues[1][0] + "]").prop("selected", "selected").change();
-	$("#dead_max option[value=" + ruleValues[1][1] + "]").prop("selected", "selected").change();
+	$("#deadToAliveNumSelect div").each(function(index) {
+		if ($(this).hasClass("on")) {
+			$(this).removeClass("on");
+			$(this).addClass("off");
+		}
+		if (ruleValues[1].includes(index + 1)) {
+			if ($(this).hasClass("off")) {
+				$(this).removeClass("off");
+				$(this).addClass("on");
+			}
+		}
+	});
+
+	//$("#alive_min option:selected").removeAttr("selected");
+	//$("#alive_max option:selected").removeAttr("selected");
+	//$("#dead_min option:selected").removeAttr("selected");
+	//$("#dead_max option:selected").removeAttr("selected");
+
+	//$("#alive_min option[value=" + ruleValues[0][0] + "]").prop("selected", "selected");
+	//$("#alive_max option[value=" + ruleValues[0][1] + "]").prop("selected", "selected").change();
+	//$("#dead_min option[value=" + ruleValues[1][0] + "]").prop("selected", "selected").change();
+	//$("#dead_max option[value=" + ruleValues[1][1] + "]").prop("selected", "selected").change();
 }
 
 //start simulation that will repeat itself
@@ -364,7 +431,7 @@ function outputLivingTiles() {
 
 //pause the simulation, or if there are 0 alive tiles stop it
 function stopSimulation() {
-	simulationRunning = false;
+
 	var aliveTiles = 0;
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		for (var j = 0; j < boardWidth/tileWidth; j++) {
@@ -373,13 +440,14 @@ function stopSimulation() {
 			}
 		}
 	}
-	if (aliveTiles > 0) {
+	if (simulationRunning && aliveTiles > 0) {
 		//pause the simulation
 		$("#startStopButton").text("Resume");
 	} else {
 		//stop the simulation
 		$("#startStopButton").text("Start");
 	}
+	simulationRunning = false;
 }
 
 //copy contents of array2 into array 1
