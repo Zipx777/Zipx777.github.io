@@ -42,3 +42,17 @@ var growingSplotchesArr = [
 	[1]
 ];
 exampleRules.set("Growing Splotches", growingSplotchesArr);
+
+//Decaying blob in the middle
+var decayingBlobArr = [
+	[5,6,7,8],
+	[0,1,5]
+];
+exampleRules.set("Decay", decayingBlobArr);
+
+//Decaying strobing blob
+var decayingStrobingBlobArr = [
+	[3,4],
+	[0,1,7]
+];
+exampleRules.set("Strobe Decay", decayingStrobingBlobArr);
