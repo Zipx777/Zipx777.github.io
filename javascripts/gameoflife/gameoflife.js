@@ -226,21 +226,16 @@ function stepClick() {
 }
 
 function singleSimulationStep() {
-	var aliveMin = $("#alive_min").find(":selected").val();
-	var aliveMax = $("#alive_max").find(":selected").val();
-	var deadMin = $("#dead_min").find(":selected").val();
-	var deadMax = $("#dead_max").find(":selected").val();
-
 	var aliveNums = getAliveNums();
 	var deadNums = getDeadNums();
 
-	var totalAlive = 0;
+	var changeHappened = false;
 
 	for (var i = 0; i < boardHeight/tileHeight; i++) {
 		for (var j = 0; j < boardWidth/tileWidth; j++) {
 			var neighborCount = countNeighbors(i, j);
 			if (tileIsAlive(i,j)) {
-				totalAlive++;
+				//totalAlive++;
 
 				if (aliveNums.includes(neighborCount)) {
 					futureBoardState[i][j] = 1;
@@ -257,13 +252,14 @@ function singleSimulationStep() {
 
 			if (boardState[i][j] != futureBoardState[i][j]) {
 				updateTile(i,j,futureBoardState[i][j]);
+				changeHappened = true;
 			}
 		}
 	}
 
 	copyArray(boardState, futureBoardState);
 
-	if (totalAlive == 0) {
+	if (changeHappened == false) {
 		stopSimulation();
 	}
 }
@@ -362,7 +358,7 @@ function exampleRulesSetClick() {
 			$(this).removeClass("on");
 			$(this).addClass("off");
 		}
-		if (ruleValues[0].includes(index + 1)) {
+		if (ruleValues[0].includes(index)) {
 			if ($(this).hasClass("off")) {
 				$(this).removeClass("off");
 				$(this).addClass("on");
@@ -375,7 +371,7 @@ function exampleRulesSetClick() {
 			$(this).removeClass("on");
 			$(this).addClass("off");
 		}
-		if (ruleValues[1].includes(index + 1)) {
+		if (ruleValues[1].includes(index)) {
 			if ($(this).hasClass("off")) {
 				$(this).removeClass("off");
 				$(this).addClass("on");
