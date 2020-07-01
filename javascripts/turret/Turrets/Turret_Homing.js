@@ -4,6 +4,7 @@ class Turret_Homing extends Turret {
 		super(startX, startY, startFacingVector);
 
 		this.color = "purple";
+		this.radius = 12;
 		this.projectileType = Projectile_Homing;
 		this.targetInFrontAngle = 60;
 		this.delayBetweenShots = 10;
@@ -38,9 +39,9 @@ class Turret_Homing extends Turret {
 		ctx.fillStyle = this.baseColor;
 		ctx.beginPath();
 		ctx.moveTo(2 * this.radius, 0);
-		ctx.lineTo(-1 * this.radius, -1 * this.radius);
+		ctx.lineTo(-1 * this.radius, -1.1 * this.radius);
 		ctx.lineTo(-1 * this.radius * 0.5, 0);
-		ctx.lineTo(-1 * this.radius, this.radius);
+		ctx.lineTo(-1 * this.radius, 1.1 * this.radius);
 		ctx.closePath();
 		ctx.fill();
 
@@ -54,9 +55,9 @@ class Turret_Homing extends Turret {
 		ctx.globalAlpha = this.prefireColorPercent;
 		ctx.beginPath();
 		ctx.moveTo(2 * this.radius, 0);
-		ctx.lineTo(-1 * this.radius, -1 * this.radius);
+		ctx.lineTo(-1 * this.radius, -1.1 * this.radius);
 		ctx.lineTo(-1 * this.radius * 0.5, 0);
-		ctx.lineTo(-1 * this.radius, this.radius);
+		ctx.lineTo(-1 * this.radius, 1.1 * this.radius);
 		ctx.closePath();
 		ctx.fill();
 

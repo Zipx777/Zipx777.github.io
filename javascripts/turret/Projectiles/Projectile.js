@@ -5,7 +5,7 @@ class Projectile {
 		this.y = startY || 0;
 		this.speed = 2;
 		this.color = "red";
-		this.radius = 4;
+		this.radius = 6;
 		this.hitboxRadiusPercent = 1;
 		this.facingVector = startFacingVector || new Vector(1,0);
 		this.inBounds = true;
@@ -181,9 +181,10 @@ class Projectile {
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
 		ctx.moveTo(2 * this.radius, 0);
-		ctx.lineTo(-1 * this.radius, -1 * this.radius);
-		//ctx.lineTo(-0.5 * radius, 0);
-		ctx.lineTo(-1 * this.radius, this.radius)
+		ctx.lineTo(-0.4 * this.radius, 0.6 * this.radius);
+		ctx.lineTo(-0.8 * this.radius, 0.6 * this.radius * 0.5);
+		ctx.lineTo(-0.8 * this.radius, -0.6 * this.radius * 0.5);
+		ctx.lineTo(-0.4 * this.radius, -0.6 * this.radius);
 		ctx.closePath();
 		ctx.fill();
 

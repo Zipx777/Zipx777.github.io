@@ -70,10 +70,7 @@ class Turret_Shotgun extends Turret {
 		ctx.arc(0, 0, smallerRadius * edgeMarginMultiplier, Math.PI / 2, -3 * Math.PI / 2, true);
 		ctx.closePath();
 		ctx.fill();
-		ctx.beginPath();
 
-		ctx.closePath();
-		ctx.fill();
 		ctx.restore();
 	};
 };

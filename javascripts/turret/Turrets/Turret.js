@@ -6,9 +6,9 @@ class Turret {
 		this.baseColor = "black"; //main color
 		this.currentColor = this.baseColor; //color currently being rendered
 		this.color = "red"; //color used for pre-fire
-		
+
 		this.projectileType = Projectile;
-		this.radius = 12;
+		this.radius = 14;
 		this.hitboxRadiusPercent = 1;
 
 		//rotation
@@ -299,15 +299,17 @@ class Turret {
 		ctx.arc(0, 0, this.radius, 0, 2 * Math.PI, true);
 		ctx.fill();
 
+		var turretTopWidth = 0.6;
+		var turretTopDepth = 0.2;
+
 		//triangle top
 		var angle = this.facingVector.toAngle();
 		ctx.rotate(angle);
 		ctx.fillStyle = this.baseColor;
 		ctx.beginPath();
 		ctx.moveTo(2 * this.radius, 0);
-		ctx.lineTo(-1 * this.radius, -1 * this.radius);
-		//ctx.lineTo(-1 * radius * 0.5, 0);
-		ctx.lineTo(-1 * this.radius, this.radius);
+		ctx.lineTo(-1 * turretTopDepth * this.radius, turretTopWidth * this.radius);
+		ctx.lineTo(-1 * turretTopDepth * this.radius, -1 * turretTopWidth * this.radius);
 		ctx.closePath();
 		ctx.fill();
 
@@ -321,9 +323,10 @@ class Turret {
 		ctx.globalAlpha = this.prefireColorPercent;
 		ctx.beginPath();
 		ctx.moveTo(2 * this.radius, 0);
-		ctx.lineTo(-1 * this.radius, -1 * this.radius);
-		//ctx.lineTo(-1 * radius * 0.5, 0);
-		ctx.lineTo(-1 * this.radius, this.radius);
+		ctx.lineTo(-1 * turretTopDepth * this.radius, turretTopWidth * this.radius);
+		ctx.lineTo(-3 * turretTopDepth * this.radius, turretTopWidth * this.radius * 0.5);
+		ctx.lineTo(-3 * turretTopDepth * this.radius, -1 * turretTopWidth * this.radius * 0.5);
+		ctx.lineTo(-1 * turretTopDepth * this.radius, -1 * turretTopWidth * this.radius);
 		ctx.closePath();
 		ctx.fill();
 
