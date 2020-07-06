@@ -44,6 +44,7 @@ class Turret {
 		this.doomed = false;
 		this.doomedStart = 0;
 		this.doomedDuration = 8;
+		this.alive = true;
 
 		this.firingSFX = new Audio("sounds/turrets/snare.mp3");
 		this.firingSFXVolume = 0.1;
@@ -53,7 +54,7 @@ class Turret {
 		this.explosionSFX = new Audio("sounds/turrets/turretExplosion.mp3");
 		this.explosionSFXVolume = 0.4;
 
-		this.alive = true;
+		this.spawnEffect = new SpawnEffect();
 	}
 
 	//return value of x
@@ -86,6 +87,10 @@ class Turret {
 		return this.vectorToPlayer;
 	}
 
+	getSpawnEffect() {
+		return this.spawnEffect;
+	}
+
 	//set new value for x
 	setX(newX) {
 		this.x = newX;
@@ -100,6 +105,10 @@ class Turret {
 		this.facingVector = newFacingVector;
 	}
 
+	setSpawnEffect(effect) {
+		this.spawnEffect = effect;
+	}
+	
 	isAlive() {
 		return this.alive;
 	}

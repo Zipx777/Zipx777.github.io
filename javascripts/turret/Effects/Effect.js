@@ -13,6 +13,8 @@ class Effect {
 		this.duration = 20;
 		this.doesDamage = false;
 
+		this.turretToSpawn = null;
+
 		this.alive = true;
 	}
 	//return value of x
@@ -31,6 +33,10 @@ class Effect {
 
 	getDoesDamage() {
 		return this.doesDamage;
+	}
+
+	getTurretToSpawn() {
+		return this.turretToSpawn;
 	}
 
 	//set new value for x
@@ -58,6 +64,10 @@ class Effect {
 
 	setDoesDamage(newDoesDamage) {
 		this.doesDamage = newDoesDamage;
+	}
+
+	setTurretToSpawn(turret) {
+		this.turretToSpawn = turret;
 	}
 
 	isAlive() {

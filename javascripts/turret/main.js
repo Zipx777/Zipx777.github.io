@@ -147,20 +147,31 @@ function checkForTurretOverlap(newTurret) {
 	return false;
 }
 
+//trigger a new turret to spawn somewhere
 function spawnNewRandomTurret() {
 	var borderMargin = 10;
 	var randTurretType = turretTypes[Math.floor(Math.random() * turretTypes.length)];
 	var newTurret = new randTurretType(0, 0);
 	var spawnAttempts = 0;
+	var randX = 0;
+	var randY = 0;
 	do {
-		var randX = Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin;
-		var randY = Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin;
+		//quick brute force attempt to not spawn turrets overlapping
+		randX = Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin;
+		randY = Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin;
 		newTurret.setX(randX);
 		newTurret.setY(randY);
 		spawnAttempts++;
 	}
 	while (checkForTurretOverlap(newTurret) && spawnAttempts < 10);
-	turrets.push(newTurret);
+	//turrets.push(newTurret);
+	var turretSpawnEffect = newTurret.getSpawnEffect();
+	turretSpawnEffect.turretToSpawn = newTurret;
+	turretSpawnEffect.setX(randX);
+	turretSpawnEffect.setY(randY);
+	turretSpawnEffect.setRadius(newTurret.getRadius());
+	//turretSpawnEffect.setColor(newTurret.getColor())
+	effects.push(turretSpawnEffect);
 
 	turretLastSpawnedTick = tickCount;
 }
@@ -178,7 +189,7 @@ function cleanUpDeadObjects() {
 	}
 	turrets = activeTurrets;
 
-	//clea up projectiles
+	//clean up projectiles
 	var activeProjectiles = [];
 	for (var i = 0; i < projectiles.length; i++) {
 		if (projectiles[i].isAlive()) {
@@ -192,6 +203,10 @@ function cleanUpDeadObjects() {
 	for (var i = 0; i < effects.length; i++) {
 		if (effects[i].isAlive()) {
 			activeEffects.push(effects[i]);
+		} else {
+			if (effects[i].getTurretToSpawn() != null) {
+				turrets.push(effects[i].getTurretToSpawn());
+			}
 		}
 	}
 	effects = activeEffects;
@@ -226,6 +241,16 @@ function update() {
 	//update turrets
 	for (var i = 0; i < turrets.length; i++) {
 		turrets[i].update(player.getX(), player.getY(), projectiles);
+		if (collisionCheck(player, turrets[i])) {
+			turrets[i].explode();
+			playerTookDamage();
+		}
+	}
+
+	//see if it's time for a new turret
+	if (tickCount - turretLastSpawnedTick > turretSpawnDelay) {
+		spawnNewRandomTurret();
+		turretSpawnDelay = Math.max(turretSpawnDelay * turretSpawnDelayAccel, minTurretSpawnDelay);
 	}
 
 	//update projectiles
@@ -250,17 +275,11 @@ function update() {
 		effects[i].update();
 	}
 
-	//see if it's time for a new turret
-	if (tickCount - turretLastSpawnedTick > turretSpawnDelay) {
-		spawnNewRandomTurret();
-		turretSpawnDelay = Math.max(turretSpawnDelay * turretSpawnDelayAccel, minTurretSpawnDelay);
-	}
+	cleanUpDeadObjects();
 
 	//update score
 	$("#scoreValue").text(score);
 	tickCount++;
-
-	cleanUpDeadObjects();
 }
 
 //draw player and turret
