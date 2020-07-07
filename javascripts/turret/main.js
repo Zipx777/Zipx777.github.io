@@ -15,6 +15,7 @@ var canvas,
 	turretLastSpawnedTick,
 	mouseX,
 	mouseY,
+	wasdKeys,
 	sounds,
 	score;
 
@@ -65,6 +66,8 @@ function initializeVariables() {
 	mouseX = player.getX();
 	mouseY = player.getY();
 
+	wasdKeys = new Keys("wasd");
+
 	turrets = [];
 	turrets.push(turretone);
 	//turrets.push(turrettwo);
@@ -84,12 +87,35 @@ function initializeVariables() {
 function setEventHandlers() {
 	$("#turretArea").click(turretAreaClick);
 	$("body").mousemove(turretAreaMouseMove);
+	$("#wasdButton").click(wasdButtonClick);
+	$("#mouseButton").click(mouseButtonClick);
+
+	$(document).keydown(keyDownHandler);
+	$(document).keyup(keyUpHandler);
 }
 
 function turretAreaMouseMove(e) {
 	var canvasElementOffset = $("#turretCanvas").offset();
 	mouseX = e.pageX - canvasElementOffset.left;
 	mouseY = e.pageY - canvasElementOffset.top;
+}
+
+//handler when a key is pressed
+function keyDownHandler(e) {
+	wasdKeys.onKeyDown(e);
+}
+
+//handler for when a key is released
+function keyUpHandler(e) {
+	wasdKeys.onKeyUp(e);
+}
+
+function mouseButtonClick() {
+	player.setControlMode(1);
+}
+
+function wasdButtonClick() {
+	player.setControlMode(2);
 }
 
 function playerTookDamage() {
@@ -236,7 +262,7 @@ function update() {
 	}
 
 	//update player
-	player.update(mouseX, mouseY, ctx);
+	player.update(mouseX, mouseY, wasdKeys, ctx);
 
 	//update turrets
 	for (var i = 0; i < turrets.length; i++) {
