@@ -1,0 +1,168 @@
+﻿<!doctype html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://apis.google.com/js/api.js"
+      async
+      defer
+      crossOrigin="anonymous"
+      onload="this.onload=function(){};"
+      onreadstatechange="if (this.readState === 'complete') this.onload()"
+    ></script>
+    <script type="text/javascript">
+        var spData = null;
+
+        var SPREADSHEET_ID = '12Uq1sJJHqwWENwH0oAX3dH_8-p4Ob9UaSyBWEUgm6Xo';
+        var CLIENT_ID = '956712739985-ej446h7btgicuidk916c554gi51jsn1q.apps.googleusercontent.com';
+        var API_KEY = 'AIzaSyBSd5qdavjJKaSlUVcjVv7YEDO68shG7KE';
+        var SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
+
+        function doData(json) {
+            spData = json.feed.entry;
+        }
+
+        function drawCell(tr, val) {
+            var td = $("<td/>");
+            tr.append(td);
+            td.append(val);
+            return td;
+        }
+        function drawRow(table, rowData) {
+            if (rowData == null) return null;
+            if (rowData.length == 0) return null;
+            var tr = $("<tr/>");
+            table.append(tr);
+            for (var c = 0; c < rowData.length; c++) {
+                drawCell(tr, rowData[c]);
+            }
+            return tr;
+        }
+
+        function drawTable(parent) {
+            var table = $("<table/>");
+            parent.append(table);
+            return table;
+        }
+
+        function readData(parent) {
+            var data = spData;
+            var table = drawTable(parent);
+            var rowData = [];
+
+            for (var r = 0; r < data.length; r++) {
+                var cell = data[r]["gs$cell"];
+                var val = cell["$t"];
+                if (cell.col == 1) {
+                    drawRow(table, rowData);
+                    rowData = [];
+                }
+                rowData.push(val);
+            }
+            drawRow(table, rowData);
+        }
+
+        function submitDataButtonClick() {
+          var valueArr = [1,2,3];
+          var params = {
+            spreadsheetId: SPREADSHEET_ID,
+
+            range: 'Sheet1',
+
+            valueInputOption: 'RAW',
+
+            insertDataOption: 'INSERT_ROWS',
+          };
+
+          var valueRangeBody = {
+            'majorDimension': 'ROWS',
+            'values': valueArr
+          };
+
+          let request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
+          request.then(function (response) {
+            console.log(response.result);
+          }, function(reason) {
+            console.error('error: ' + reason.result.error.message);
+          })
+        }
+
+        function initGapi() {
+          gapi.load('client:auth2', initClient);
+        }
+
+        function initClient() {
+          gapi.client.init({
+            'apiKey': API_KEY,
+            'clientId': CLIENT_ID,
+            'scope': SCOPE,
+            'discoveryDocs': ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+          });
+        }
+
+        function setEventHandlers() {
+        	$("#submitDataButton").click(submitDataButtonClick);
+        }
+
+        $(document).ready(function () {
+            readData($("#data"));
+            initGapi();
+            setEventHandlers();
+        });
+
+    </script>
+    <script src="https://spreadsheets.google.com/feeds/cells/12Uq1sJJHqwWENwH0oAX3dH_8-p4Ob9UaSyBWEUgm6Xo/1/public/values?alt=json-in-script&callback=doData"></script>
+    <style type="text/css">
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: thin solid black;
+            padding: 3px;
+        }
+
+        tr.head th, tr.head td {
+            background-color: #EDEDED;
+            border-bottom: 4px double black;
+        }
+
+        span.linetitle {
+            font-weight: bold;
+        }
+
+        div.lineclass {
+            font-style: italic;
+        }
+
+        .title, .result {
+            width: 80%;
+        }
+
+        .notes {
+            width: 15%;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        body {
+            margin: 12px;
+            font-size: 12px;
+        }
+    </style>
+    <style type="text/css" media="print">
+        form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Parse Google Spreadsheet with JavaScript</h1>
+    <div id="data"></div>
+    <button id="submitDataButton">Submit</button>
+</body>
+</html>
