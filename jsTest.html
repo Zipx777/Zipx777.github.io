@@ -101,13 +101,16 @@
           });
         }
 
+        function initGapiClick() {
+          initGapi();
+        }
         function setEventHandlers() {
         	$("#submitDataButton").click(submitDataButtonClick);
+          $("#initGapiButton").click(initGapiClick);
         }
 
         $(document).ready(function () {
             readData($("#data"));
-            initGapi();
             setEventHandlers();
         });
 
@@ -163,6 +166,7 @@
 <body>
     <h1>Parse Google Spreadsheet with JavaScript</h1>
     <div id="data"></div>
+    <button id="initGapiButton">Init Gapi</button>
     <button id="submitDataButton">Submit</button>
 </body>
 </html>
