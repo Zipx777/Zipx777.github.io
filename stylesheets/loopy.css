@@ -1,0 +1,62 @@
+#loopyBoard {
+	height: 626px;
+	width: 626px;
+	background-color: white;
+	border: 20px solid black;
+}
+
+.tile {
+	height: 78px;
+	width: 78px;
+	background-color: black;
+	float: left;
+	font-size: 48px;
+	text-align: center;
+	color: floralwhite;
+
+	/*make text un-highlightable*/
+	user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.horizontal-line {
+	height: 10px;
+	width: 78px;
+	background-color: gray;
+	float: left;
+}
+
+.vertical-line {
+	height: 78px;
+	width: 10px;
+	background-color: gray;
+	float: left;
+}
+
+.connector-square {
+	height: 10px;
+	width: 10px;
+	background-color: black;
+	float: left;
+}
+
+.line-dormant {
+	background-color: DarkSlateGray;
+}
+
+.line-on {
+	background-color: white;
+}
+
+.line-off {
+	background-color: Gray;
+	background-image: radial-gradient(DarkSlateGray 10%, black 30%);
+}
+
+.tile-error {
+	color: red;
+}
