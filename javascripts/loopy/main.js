@@ -118,6 +118,8 @@ function initializeBoard() {
 	}
 
 	initiateLoopCreation();
+
+	testGenerateGrid();
 }
 
 //link events to their event handler functions
