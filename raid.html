@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Zipx777.GitHub.io : website">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/raid.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+	<script src="javascripts/shared/requestAnimationFrame.js"></script>
+	<script src="javascripts/shared/Vector.js"></script>
+  <script src="javascripts/shared/Keys.js"></script>
+  <script src="javascripts/raid/Player.js"></script>
+  <script src="javascripts/raid/Boss.js"></script>
+  <script src="javascripts/raid/Effects/Effect.js"></script>
+  <script src="javascripts/raid/Skills/Projectile.js"></script>
+  <script src="javascripts/raid/Skills/Skill.js"></script>
+  <script src="javascripts/raid/Skills/Status.js"></script>
+
+  <script src="javascripts/raid/Skills/AutoAttack/Skill_AutoAttack.js"></script>
+  <script src="javascripts/raid/Skills/AutoAttack/Projectile_AutoAttack.js"></script>
+
+  <script src="javascripts/raid/Skills/Windfury/Skill_Windfury.js"></script>
+  <script src="javascripts/raid/Skills/Windfury/Projectile_Windfury.js"></script>
+
+  <script src="javascripts/raid/Skills/StormStrike/Skill_StormStrike.js"></script>
+  <script src="javascripts/raid/Skills/StormStrike/Projectile_StormStrike.js"></script>
+
+  <script src="javascripts/raid/Skills/LavaLash/Skill_LavaLash.js"></script>
+  <script src="javascripts/raid/Skills/LavaLash/Projectile_LavaLash.js"></script>
+
+  <script src="javascripts/raid/Skills/LightningBolt/Skill_LightningBolt.js"></script>
+  <script src="javascripts/raid/Skills/LightningBolt/Projectile_LightningBolt.js"></script>
+
+  <script src="javascripts/raid/Skills/FrostShock/Skill_FrostShock.js"></script>
+  <script src="javascripts/raid/Skills/FrostShock/Projectile_FrostShock.js"></script>
+
+  <script src="javascripts/raid/Skills/FlameShock/Skill_FlameShock.js"></script>
+  <script src="javascripts/raid/Skills/FlameShock/Projectile_FlameShock.js"></script>
+  <script src="javascripts/raid/Skills/FlameShock/Status_FlameShock.js"></script>
+
+  <script src="javascripts/raid/Skills/CrashLightning/Skill_CrashLightning.js"></script>
+  <script src="javascripts/raid/Skills/CrashLightning/Projectile_CrashLightning.js"></script>
+
+  <script src="javascripts/raid/Attacks/CircleAttack.js"></script>
+  <script src="javascripts/raid/AttackPatterns/AttackPattern.js"></script>
+  <script src="javascripts/raid/AttackPatterns/Pattern_PlayerTargetedCircles.js"></script>
+  <script src="javascripts/raid/AttackPatterns/Pattern_RandomCircles.js"></script>
+  <script src="javascripts/raid/BossAttackSequences/BossAttackSequence.js"></script>
+  <script src="javascripts/raid/main.js"></script>
+
+    <title>Zipx777.GitHub.io</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Zipx777">View on GitHub</a>
+
+          <h1 id="project_title">Zipx777's homepage</h1>
+          <h2 id="project_tagline">fun stuff arriving slowly</h2>
+
+        </header>
+
+		<div id="outerNavbar">
+			<div id="innerNavbar">
+				<a href="index.html"><div class="navbarOption">TicTacToe</div></a>
+				<a href="turret.html"><div class="navbarOption">Turret</div></a>
+				<a href="bumpers.html"><div class="navbarOption">Bumpers</div></a>
+				<a href="circles.html"><div class="navbarOption">Circles</div></a>
+				<a href="gameoflife.html"><div class="navbarOption">Game of Life</div></a>
+				<a href="patterns.html"><div class="navbarOption">Patterns</div></a>
+			</div>
+		</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Raid</h3>
+		<p>Dodge attacks and do the dps.</p>
+
+		<div id="raidArea">
+			<canvas id="raidCanvas"></canvas>
+		</div>
+    <div id="raidAreaFooter">
+      <div id="gcdDisplay"></div>
+      <div class="skillButton" id="qSkill"></div>
+      <div class="skillButton" id="eSkill"></div>
+      <div class="skillButton" id="oneSkill"></div>
+      <div class="skillButton" id="twoSkill"></div>
+      <div class="skillButton" id="threeSkill"></div>
+      <div class="skillButton" id="fourSkill"></div>
+    </div>
+    <div id="controlSelect">
+      <div>
+        <button id="mouseButton">Mouse</button>
+        <button id="wasdButton">WASD</button>
+      </div>
+    </div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+
+
+  </body>
+</html>

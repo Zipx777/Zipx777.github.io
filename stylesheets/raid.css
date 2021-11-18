@@ -1,0 +1,66 @@
+/*Turret*/
+
+#raidArea {
+	border: 20px solid black;
+	height: 400px;
+	width: 600px;
+}
+
+#raidCanvas {
+	background-color: white;
+	height: 100%;
+	width: 100%;
+}
+
+/*area below the board, contains turnDisplay and resetButton*/
+#raidAreaFooter {
+	margin: auto;
+	height: 100%;
+	width: 600px;
+}
+
+#controlSelect {
+	clear: left;
+}
+
+.skillButton {
+	height: 50px;
+	line-height: 45px;
+	width: 50px;
+	float: left;
+	text-align: center;
+	vertical-align: middle;
+	border: 2px solid blue;
+	background-color: green;
+}
+
+#gcdDisplay {
+	height: 50px;
+	line-height: 45px;
+	width: 50px;
+	float: left;
+	text-align: center;
+	vertical-align: middle;
+	border: 2px solid black;
+}
+
+.skillOnCooldown {
+	background-color: black;
+	opacity: 0.8;
+}
+
+.skillSelected {
+	border: 2px solid yellow;
+}
+
+.skillCasting {
+	border: 2px solid aqua;
+}
+
+.skillProcced {
+	background-color: aqua;
+}
+
+.skillOutOfRange {
+	background-color: red;
+}
