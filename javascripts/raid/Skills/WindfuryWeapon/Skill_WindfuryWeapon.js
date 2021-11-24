@@ -1,14 +1,14 @@
-//Skill_Windfury class
-class Skill_Windfury extends Skill {
+//Skill_WindfuryWeapon class
+class Skill_WindfuryWeapon extends Skill {
 	constructor(skillId) {
 		super(skillId);
-		this.name = "Windfury";
+		this.name = "Windfury Weapon";
 		this.cooldown = 0;
 		this.numProj = 2;
 		this.color = "blue";
 		this.isMelee = true;
 
-		this.projectile = Projectile_Windfury;
+		this.projectile = Projectile_WindfuryWeapon;
 	}
 
 	//return true if skill successfully activates
@@ -33,6 +33,10 @@ class Skill_Windfury extends Skill {
 				newProj = new this.projectile(player.getX(), player.getY(), spawnFacingVector);
 				newProj.skillOrigin = this.name;
 				newProj.isMelee = this.isMelee;
+				var doomwindsStatus = player.getStatus("Status_Doomwinds");
+				if (doomwindsStatus) {
+					newProj.damage = newProj.damage * doomwindsStatus.doomwindsWindfuryDamageMultiplier;
+				}
 				projectiles.push(newProj);
 			}
 			return true;

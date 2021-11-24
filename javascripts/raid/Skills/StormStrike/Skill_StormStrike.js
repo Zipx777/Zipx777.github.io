@@ -3,7 +3,9 @@ class Skill_StormStrike extends Skill {
 	constructor(skillId) {
 		super(skillId);
 		this.name = "Storm Strike";
+		this.baseCooldown = 450; //remember cooldown for after Ascendance ends
 		this.cooldown = 450;
+		this.baseRange = 100;
 		this.range = 100;
 		this.numProj = 2;
 		this.color = "blue";
@@ -31,6 +33,11 @@ class Skill_StormStrike extends Skill {
 				newProj.skillOrigin = this.name;
 				newProj.isMelee = this.isMelee;
 
+				var ascendanceStatus = player.getStatus("Status_Ascendance");
+				if (ascendanceStatus) {
+					newProj.damage = newProj.damage * ascendanceStatus.stormstrikeDamageMultiplier;
+				}
+
 				if (player.stormbringerBuff) {
 					newProj.damage = newProj.damage * 1.25;
 				}
@@ -42,5 +49,16 @@ class Skill_StormStrike extends Skill {
 			return true;
 		}
 		return false;
+	}
+
+	extraUpdateLogic(player) {
+		this.cooldown = this.baseCooldown * player.hasteMultiplier;
+		this.range = this.baseRange;
+		var ascendanceStatus = player.getStatus("Status_Ascendance");
+		if (ascendanceStatus) {
+			this.cooldown = this.cooldown * ascendanceStatus.stormstrikeCooldownMultiplier;
+			this.range = ascendanceStatus.meleeRange;
+		}
+		this.cooldownTracker = Math.min(this.cooldownTracker, this.cooldown);
 	}
 }

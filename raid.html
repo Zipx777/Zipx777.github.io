@@ -20,12 +20,13 @@
   <script src="javascripts/raid/Skills/Projectile.js"></script>
   <script src="javascripts/raid/Skills/Skill.js"></script>
   <script src="javascripts/raid/Skills/Status.js"></script>
+  <script src="javascripts/raid/Skills/Totem.js"></script>
 
   <script src="javascripts/raid/Skills/AutoAttack/Skill_AutoAttack.js"></script>
   <script src="javascripts/raid/Skills/AutoAttack/Projectile_AutoAttack.js"></script>
 
-  <script src="javascripts/raid/Skills/Windfury/Skill_Windfury.js"></script>
-  <script src="javascripts/raid/Skills/Windfury/Projectile_Windfury.js"></script>
+  <script src="javascripts/raid/Skills/WindfuryWeapon/Skill_WindfuryWeapon.js"></script>
+  <script src="javascripts/raid/Skills/WindfuryWeapon/Projectile_WindfuryWeapon.js"></script>
 
   <script src="javascripts/raid/Skills/StormStrike/Skill_StormStrike.js"></script>
   <script src="javascripts/raid/Skills/StormStrike/Projectile_StormStrike.js"></script>
@@ -45,6 +46,25 @@
 
   <script src="javascripts/raid/Skills/CrashLightning/Skill_CrashLightning.js"></script>
   <script src="javascripts/raid/Skills/CrashLightning/Projectile_CrashLightning.js"></script>
+
+  <script src="javascripts/raid/Skills/WindfuryTotem/Skill_WindfuryTotem.js"></script>
+  <script src="javascripts/raid/Skills/WindfuryTotem/Totem_WindfuryTotem.js"></script>
+  <script src="javascripts/raid/Skills/WindfuryTotem/Status_WindfuryTotem.js"></script>
+  <script src="javascripts/raid/Skills/WindfuryTotem/Status_Doomwinds.js"></script>
+
+  <script src="javascripts/raid/Skills/Ascendance/Skill_Ascendance.js"></script>
+  <script src="javascripts/raid/Skills/Ascendance/Status_Ascendance.js"></script>
+
+  <script src="javascripts/raid/Skills/SpiritWalk/Skill_SpiritWalk.js"></script>
+  <script src="javascripts/raid/Skills/SpiritWalk/Status_SpiritWalk.js"></script>
+
+  <script src="javascripts/raid/Skills/GhostWolf/Skill_GhostWolf.js"></script>
+  <script src="javascripts/raid/Skills/GhostWolf/Status_GhostWolf.js"></script>
+
+  <script src="javascripts/raid/Skills/Bloodlust/Skill_Bloodlust.js"></script>
+  <script src="javascripts/raid/Skills/Bloodlust/Status_Bloodlust.js"></script>
+
+  <script src="javascripts/raid/Skills/HealingSurge/Skill_HealingSurge.js"></script>
 
   <script src="javascripts/raid/Attacks/CircleAttack.js"></script>
   <script src="javascripts/raid/AttackPatterns/AttackPattern.js"></script>
@@ -89,14 +109,21 @@
 		<div id="raidArea">
 			<canvas id="raidCanvas"></canvas>
 		</div>
-    <div id="raidAreaFooter">
-      <div id="gcdDisplay"></div>
-      <div class="skillButton" id="qSkill"></div>
-      <div class="skillButton" id="eSkill"></div>
-      <div class="skillButton" id="oneSkill"></div>
-      <div class="skillButton" id="twoSkill"></div>
-      <div class="skillButton" id="threeSkill"></div>
-      <div class="skillButton" id="fourSkill"></div>
+    <div id="hotbar">
+      <div class="skillButton" id="qSkill">Q</div>
+      <div class="skillButton" id="eSkill">E</div>
+      <div class="skillButton" id="oneSkill">1</div>
+      <div class="skillButton" id="twoSkill">2</div>
+      <div class="skillButton" id="threeSkill">3</div>
+      <div class="skillButton" id="fourSkill">4</div>
+    </div>
+    <div id="hotbar">
+      <div class="skillButton" id="fiveSkill">5</div>
+      <div class="skillButton" id="vSkill">V</div>
+      <div class="skillButton" id="zSkill">Z</div>
+      <div class="skillButton" id="cSkill">C</div>
+      <!--<div class="skillButton" id="gSkill">G</div>-->
+      <div class="skillButton" id="xSkill">X</div>
     </div>
     <div id="controlSelect">
       <div>

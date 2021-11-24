@@ -13,7 +13,8 @@
 }
 
 /*area below the board, contains turnDisplay and resetButton*/
-#raidAreaFooter {
+#hotbar {
+	clear: left;
 	margin: auto;
 	height: 100%;
 	width: 600px;
@@ -46,6 +47,7 @@
 
 .skillOnCooldown {
 	background-color: black;
+	color: white;
 	opacity: 0.8;
 }
 

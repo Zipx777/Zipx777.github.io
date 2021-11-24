@@ -6,6 +6,8 @@ class Status {
 		this.damageTickDelay = 60;
 		this.damagePerTick = 0;
 		this.duration = 600;
+		this.toggles = false;
+		this.procChance = 1;
 		this.tickCount = 0; //can be set to negative to handle refresh overcharge buffer
 		this.refreshBuffer = 180;//up to 3sec of an existing status will be saved when a new one refreshes it
 		this.finished = false;
@@ -18,7 +20,7 @@ class Status {
 	//another instance of this status was applied, refresh duration with some buffer
 	refresh() {
 		this.tickCount -= this.duration;
-		while (this.tickCount < -1 * this.refreshBuffer) {
+		while (this.tickCount < (-1 * this.refreshBuffer)) {
 			this.tickCount += this.damageTickDelay;
 		}
 	}
@@ -31,7 +33,7 @@ class Status {
 	update() {
 		this.tickCount++;
 		this.handleStatus();
-		if (this.tickCount > this.duration) {
+		if (this.tickCount > this.duration && this.duration > 0) {
 			this.finished = true;
 		}
 	}

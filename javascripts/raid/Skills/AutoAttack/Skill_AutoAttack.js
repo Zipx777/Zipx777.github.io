@@ -4,8 +4,10 @@ class Skill_AutoAttack extends Skill {
 		super(name, skillId, cooldown);
 		this.name = "Auto Attack";
 		this.autoActivate = true;
+		this.baseCooldown = 130;
 		this.cooldown = 130;
 		this.isMelee = true;
+		this.baseRange = 100;
 		this.range = 100;
 
 		this.numProj = 2;
@@ -18,10 +20,17 @@ class Skill_AutoAttack extends Skill {
 			console.log(this.name + " activated");
 			this.onCooldown = true;
 			this.cooldownTracker = this.cooldown;
+			var projectilesToFire = this.numProj;
+			var windfuryTotemStatus = player.getStatus("Status_WindfuryTotem");
+			if (windfuryTotemStatus != null) {
+				if (Math.random() <= windfuryTotemStatus.procChance) {
+					projectilesToFire += windfuryTotemStatus.extraProjectilesOnProc;
+				}
+			}
 			var vectorToBoss = new Vector(boss.getX() - player.getX(), boss.getY() - player.getY());
 			var newProj;
 			var spawnFacingVector
-			for (var i = 0; i < this.numProj; i++) {
+			for (var i = 0; i < projectilesToFire; i++) {
 				spawnFacingVector = new Vector(1,1);
 				spawnFacingVector.setAngle(vectorToBoss.toAngle());
 				var tempAngle = spawnFacingVector.toAngle();
@@ -39,6 +48,7 @@ class Skill_AutoAttack extends Skill {
 	}
 
 	update(player, boss) {
+		this.extraUpdateLogic(player);
 		var xDistBetween = player.getX() - boss.getX();
 		var yDistBetween = player.getY() - boss.getY();
 		var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
@@ -55,5 +65,15 @@ class Skill_AutoAttack extends Skill {
 		} else {
 			this.inRange = false;
 		}
+	}
+
+	extraUpdateLogic(player) {
+		this.range = this.baseRange;
+		var ascendanceStatus = player.getStatus("Status_Ascendance");
+		if (ascendanceStatus) {
+			this.range = ascendanceStatus.meleeRange;
+		}
+		this.cooldown = this.baseCooldown * player.hasteMultiplier;
+		this.cooldownTracker = Math.min(this.cooldownTracker, this.cooldown);
 	}
 }

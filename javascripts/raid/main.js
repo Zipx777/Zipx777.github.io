@@ -12,6 +12,7 @@ var canvas,
 	castingTimer,
 	projectiles,
 	effects,
+	baseGcdCooldown,
 	gcdCooldown,
 	gcdTracker,
 	boss,
@@ -53,29 +54,48 @@ function initializeVariables() {
 		49: "oneSkill",
 		50: "twoSkill",
 		51: "threeSkill",
-		52: "fourSkill"
+		52: "fourSkill",
+		86: "vSkill",
+		90: "zSkill",
+		53: "fiveSkill",
+		67: "cSkill",
+		71: "gSkill",
+		88: "xSkill"
 	};
 
 	skills = [
-		new Skill_AutoAttack(),
 		new Skill_StormStrike("eSkill"),
 		new Skill_LavaLash("qSkill"),
 		new Skill_LightningBolt("oneSkill"),
 		new Skill_FrostShock("twoSkill"),
 		new Skill_FlameShock("threeSkill"),
 		new Skill_CrashLightning("fourSkill"),
-		new Skill_Windfury()
+		new Skill_WindfuryTotem("vSkill"),
+		new Skill_Ascendance("zSkill"),
+		new Skill_GhostWolf("fiveSkill"),
+		new Skill_SpiritWalk("cSkill"),
+		new Skill_HealingSurge("gSkill"),
+		new Skill_Bloodlust("xSkill"),
+		new Skill_AutoAttack(),
+		new Skill_WindfuryWeapon()
 	];
 
 	skillButtons = {
-		"eSkill": skills[1],
-		"qSkill": skills[2],
-		"oneSkill": skills[3],
-		"twoSkill": skills[4],
-		"threeSkill": skills[5],
-		"fourSkill": skills[6]
+		"eSkill": skills[0],
+		"qSkill": skills[1],
+		"oneSkill": skills[2],
+		"twoSkill": skills[3],
+		"threeSkill": skills[4],
+		"fourSkill": skills[5],
+		"vSkill": skills[6],
+		"zSkill": skills[7],
+		"fiveSkill": skills[8],
+		"cSkill": skills[9],
+		"gSkill": skills[10],
+		"xSkill": skills[11]
 	};
 
+	baseGcdCooldown = 90;
 	gcdCooldown = 90;
 	gcdTracker = 0;
 
@@ -120,6 +140,9 @@ function pressSkillButton(skillId) {
 		if (skillToActivate.readyToActivate() && !(player.isMoving && skillToActivate.castTime > 0) && !skillToCast) {
 			castingTimer = skillToActivate.castTime;
 			skillToCast = skillToActivate;
+			if (skillToActivate.playerStatusToApply != Status_GhostWolf && skillToActivate.name != "Spirit Walk") {
+				player.removeStatus("Status_GhostWolf");
+			}
 			if (skillToCast.name == "Lightning Bolt") {
 				player.snapshotMaelstromStacks = Math.min(5, player.maelstromStacks);
 			}
@@ -128,12 +151,14 @@ function pressSkillButton(skillId) {
 			skillSelectedID = null;
 			skillSelectBufferTracker = 0;
 			$(".skillSelected").removeClass("skillSelected");
+			console.log("1");
 		}
 	}
 }
 
 function setSelectedSkill(skillID) {
 	$(".skillSelected").removeClass("skillSelected");
+	console.log("2");
 	$("#" + skillID).addClass("skillSelected");
 }
 
@@ -146,7 +171,7 @@ function stopCasting() {
 //handler when a key is pressed
 function keyDownHandler(e) {
 	wasdKeys.onKeyDown(e);
-	//console.log(e.which);
+	console.log(e.which);
 	var keycode = e.which;
 	//e = 69, q = 81
 
@@ -234,18 +259,24 @@ function checkProjForCollisions(proj) {
 				}
 			}
 
-			//windfury
+			//windfury weapon
 			var windfuryChance = 0.2;
-			if (Math.random() <= windfuryChance) {
-				var tempSkillReference = null;
-				for (var i = 0; i < skills.length; i++) {
-					if (skills[i].name == "Windfury") {
-						tempSkillReference = skills[i];
-					}
-				}
-
-				tempSkillReference.activate(ctx, player, boss, projectiles);
+			var doomwindsStatus = player.getStatus("Status_Doomwinds");
+			if (doomwindsStatus) {
+				windfuryChance = doomwindsStatus.doomwindsWindfuryChance;
 			}
+			if (proj.skillOrigin != "Windfury Weapon") {
+				if (Math.random() <= windfuryChance) {
+					var tempSkillReference = null;
+					for (var i = 0; i < skills.length; i++) {
+						if (skills[i].name == "Windfury Weapon") {
+							tempSkillReference = skills[i];
+						}
+					}
+					tempSkillReference.activate(ctx, player, boss, projectiles);
+				}
+			}
+
 
 			//maelstrom
 			var maelstromChance = 0.2;
@@ -261,15 +292,13 @@ function checkProjForCollisions(proj) {
 
 //update player and object states
 function update() {
-	if (freeze) {
-		return;
-	}
-
 	player.update(mouseX, mouseY, wasdKeys, ctx);
 	boss.update(player.getX(), player.getY(), ctx);
 
+	this.gcdCooldown = this.baseGcdCooldown * player.hasteMultiplier;
+
 	if (player.isMoving) {
-		if (skillToCast) {
+		if (skillToCast && castingTimer > 0) {
 			gcdTracker = 0; //reset the GCD if a cast was interrupted
 			stopCasting();
 		}
@@ -277,6 +306,13 @@ function update() {
 
 	if ((skillToCast && !(skillToCast.name == "Lightning Bolt")) || !skillToCast) {
 		player.snapshotMaelstromStacks = Math.min(5, player.maelstromStacks);
+	}
+
+
+
+	if (gcdTracker > 0) {
+		gcdTracker = Math.min(gcdTracker - 1, gcdCooldown);
+		$("#gcdDisplay").text(gcdTracker);
 	}
 
 	$.each(skills, function(i,skill) {
@@ -288,9 +324,24 @@ function update() {
 		}
 	});
 
-	if (gcdTracker > 0) {
-		gcdTracker--;
-		$("#gcdDisplay").text(gcdTracker);
+	if (skillToCast) {
+		if (castingTimer <= 0) {
+			var skillActivated = skillToCast.activate(ctx, player, boss, projectiles);
+			if (skillActivated) {
+				if (skillToCast.shock) {
+					$.each(skills, function(i,skill) {
+						if (skill.shock && skill.name != skillToCast.name) {
+							skill.cooldownActivated();
+						}
+					});
+				}
+				stopCasting();
+			}
+		} else {
+			castingTimer--;
+			$(".skillCasting").removeClass("skillCasting");
+			skillToCast.skillButtonElement.addClass("skillCasting");
+		}
 	}
 
 	if (skillSelectedID) {
@@ -300,24 +351,7 @@ function update() {
 			skillSelectedID = null;
 			skillSelectBufferTracker = 0;
 			$(".skillSelected").removeClass("skillSelected");
-		}
-	}
-
-	if (skillToCast) {
-		if (castingTimer <= 0) {
-			skillToCast.activate(ctx, player, boss, projectiles);
-			if (skillToCast.shock) {
-				$.each(skills, function(i,skill) {
-					if (skill.shock && skill.name != skillToCast.name) {
-						skill.cooldownActivated();
-					}
-				});
-			}
-			stopCasting();
-		} else {
-			castingTimer--;
-			$(".skillCasting").removeClass("skillCasting");
-			skillToCast.skillButtonElement.addClass("skillCasting");
+			console.log("3");
 		}
 	}
 

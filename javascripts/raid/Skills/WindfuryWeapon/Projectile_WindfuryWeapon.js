@@ -1,5 +1,5 @@
-//Projectile_Windfury class
-class Projectile_Windfury extends Projectile {
+//Projectile_WindfuryWeapon class
+class Projectile_WindfuryWeapon extends Projectile {
 	constructor(startX, startY, startFacingVector) {
 		super(startX, startY, startFacingVector);
 		this.damage = 5;
