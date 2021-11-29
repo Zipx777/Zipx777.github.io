@@ -91,16 +91,19 @@ class Boss {
 	}
 
 	takeDamage(damageSourceName, damageValue, damageColor) {
+		var damageVariability = 0.2;
+		var randomVariance = ((Math.random() * 2) - 1) * damageVariability;
+		var adjustedDamageValue = damageValue * (1 + randomVariance);
 		if (this.isAlive()) {
 			this.fightStarted = true;
-			this.currentHealth = Math.max(0, this.currentHealth - damageValue);
+			this.currentHealth = Math.max(0, this.currentHealth - adjustedDamageValue);
 			if (!this.damageReport[damageSourceName]) {
-				this.damageReport[damageSourceName] = damageValue;
+				this.damageReport[damageSourceName] = adjustedDamageValue;
 			} else {
-				this.damageReport[damageSourceName] += damageValue;
+				this.damageReport[damageSourceName] += adjustedDamageValue;
 			}
-			console.log("Damage from " + damageSourceName + ": " + damageValue);
-			var newDamageText = new DamageText(damageSourceName, this.x, this.y - this.radius, damageValue, damageColor);
+			console.log("Damage from " + damageSourceName + ": " + adjustedDamageValue);
+			var newDamageText = new DamageText(damageSourceName, this.x, this.y - this.radius, adjustedDamageValue, damageColor);
 			if (damageSourceName == "Status_FlameShock" || damageSourceName == "Windfury Weapon" || damageSourceName == "Auto Attack") {
 				newDamageText.isSmall = true;
 			}

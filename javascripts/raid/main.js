@@ -264,7 +264,7 @@ function populateResultsReport() {
 			var skillNameElement = $(document.createElement("td"));
 			skillNameElement.text(nextKey);
 			var skillDamageElement = $(document.createElement("td"));
-			skillDamageElement.text(nextDamage);
+			skillDamageElement.text(Math.floor(nextDamage));
 			var skillDamageBarContainerElement = $(document.createElement("td"));
 			var skillDamageBarElement = $(document.createElement("div"));
 			skillDamageBarElement.addClass("damageBreakdownBar");

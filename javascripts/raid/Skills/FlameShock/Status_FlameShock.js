@@ -5,7 +5,7 @@ class Status_FlameShock extends Status {
 		this.name = "Status_FlameShock";
 		this.duration = 1080;
 		this.damageTickDelay = 60;
-		this.damagePerTick = 10;
+		this.damagePerTick = 30;
 	}
 
 	handleStatus() {

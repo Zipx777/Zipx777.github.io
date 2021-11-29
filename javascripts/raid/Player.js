@@ -10,6 +10,7 @@ class Player {
 		this.radius = 15;
 		this.hitboxRadiusPercent = 0.5;
 		this.isMoving = false;
+		this.tookDamageThisFrame = false;
 
 		this.maxHealth = 500;
 		this.currentHealth = this.maxHealth;
@@ -116,6 +117,7 @@ class Player {
 	takeDamage(damageAmount) {
 		if (this.isAlive()) {
 			this.currentHealth -= damageAmount;
+			this.tookDamageThisFrame = true;
 		}
 	}
 
@@ -125,6 +127,7 @@ class Player {
 
 	//update Player position and skills
 	update(targetX, targetY, keys, ctx) {
+		this.tookDamageThisFrame = false;
 		this.currentMana = Math.min(this.currentMana + this.manaRegenPerTick, this.maxMana);
 
 		this.hasteMultiplier = this.baseHasteMultiplier;
@@ -239,11 +242,14 @@ class Player {
 		//player
 		ctx.beginPath();
 		ctx.fillStyle = this.color;
+		if (this.tookDamageThisFrame) {
+			ctx.fillStyle = "red";
+		}
 		var tempRadius = this.radius;
 		if (this.getStatus("Status_GhostWolf")) {
 			tempRadius = tempRadius / 2;
 		} else if (this.getStatus("Status_Ascendance")) {
-			tempRadius = tempRadius * 1.5;
+			tempRadius = tempRadius * 1.3;
 		}
 		ctx.arc(this.x, this.y, tempRadius, 0, 2 * Math.PI, true);
 		ctx.fill();
@@ -289,8 +295,9 @@ class Player {
 		//bloodlust
 		if (this.getStatus("Status_Bloodlust")) {
 			ctx.beginPath();
-			ctx.strokeStyle = "red";
-			ctx.arc(this.x, this.y, (this.radius) * 1.5, 0, 2 * Math.PI, true);
+			ctx.strokeStyle = "purple";
+			ctx.lineWidth = 2;
+			ctx.arc(this.x, this.y, (this.radius) * 1.6, 0, 2 * Math.PI, true);
 			ctx.stroke();
 		}
 
