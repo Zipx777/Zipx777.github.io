@@ -85,7 +85,9 @@ class Projectile {
 
 	//have to do this instead of directly referencing stored variable to avoid an error
 	getNewStatusToApply() {
-		return new this.statusToApply();
+		var newStatus = new this.statusToApply();
+		newStatus.color = this.color;
+		return newStatus;
 	}
 
 	isInBounds() {

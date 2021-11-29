@@ -11,6 +11,9 @@ class Player {
 		this.hitboxRadiusPercent = 0.5;
 		this.isMoving = false;
 
+		this.maxHealth = 500;
+		this.currentHealth = this.maxHealth;
+
 		this.maxMana = 100;
 		this.currentMana = 100;
 		this.manaRegenPerTick = 0.01;
@@ -101,6 +104,25 @@ class Player {
 		this.totems.push(newTotem);
 	}
 
+	addMaelstromStack() {
+		this.maelstromStacks = Math.min(10, this.maelstromStacks + 1);
+	}
+
+	setStartingHealth(value) {
+		this.maxHealth = value;
+		this.currentHealth = this.maxHealth;
+	}
+
+	takeDamage(damageAmount) {
+		if (this.isAlive()) {
+			this.currentHealth -= damageAmount;
+		}
+	}
+
+	isAlive() {
+		return this.currentHealth > 0;
+	}
+
 	//update Player position and skills
 	update(targetX, targetY, keys, ctx) {
 		this.currentMana = Math.min(this.currentMana + this.manaRegenPerTick, this.maxMana);
@@ -121,6 +143,13 @@ class Player {
 		var ghostWolfStatus = this.getStatus("Status_GhostWolf");
 		if (ghostWolfStatus) {
 			currentSpeed *= ghostWolfStatus.ghostWolfSpeedMultiplier;
+		}
+
+		var feralSpiritStatus = this.getStatus("Status_FeralSpirit");
+		if (feralSpiritStatus) {
+			if (feralSpiritStatus.tickCount % feralSpiritStatus.maelstromStackGenerateRate == 0) {
+				this.addMaelstromStack();
+			}
 		}
 
 		//save starting x,y to compare after, to check for movement
@@ -201,15 +230,15 @@ class Player {
 
 	//draws player on canvas context passed to it
 	draw(ctx, gcdCooldown, gcdTracker, skillCastTime, castingTime) {
+		ctx.save();
 		//totems
 		for (var i = 0; i < this.totems.length; i++) {
 			this.totems[i].draw(ctx);
 		}
 
 		//player
-		ctx.save();
-		ctx.fillStyle = this.color;
 		ctx.beginPath();
+		ctx.fillStyle = this.color;
 		var tempRadius = this.radius;
 		if (this.getStatus("Status_GhostWolf")) {
 			tempRadius = tempRadius / 2;
@@ -218,11 +247,10 @@ class Player {
 		}
 		ctx.arc(this.x, this.y, tempRadius, 0, 2 * Math.PI, true);
 		ctx.fill();
-		ctx.restore();
 
 		//gcd
+		ctx.save();
 		if (gcdTracker > 0) {
-			ctx.save();
 			/*
 			//circle line sweep down clockwise
 			ctx.strokeStyle = this.gcdColor;
@@ -233,54 +261,64 @@ class Player {
 			*/
 
 			//circle grow from center
+			ctx.beginPath();
 			ctx.strokeStyle = this.gcdColor;
 			ctx.globalAlpha = Math.min(1, Math.max(0, (gcdTracker / gcdCooldown)));
 			ctx.lineWidth = 1;
-			ctx.beginPath();
 			ctx.arc(this.x, this.y, (this.radius) * ((gcdCooldown - gcdTracker) / gcdCooldown), 0, 2 * Math.PI, true);
 			ctx.stroke();
-			ctx.restore();
+		}
+		ctx.restore();
+
+		//stormbringer
+		if (this.stormbringerBuff) {
+			ctx.beginPath();
+			ctx.strokeStyle = "aqua";
+			ctx.arc(this.x, this.y, (this.radius) * 0.5, 0, 2 * Math.PI, true);
+			ctx.stroke();
 		}
 
 		//casting visual
 		if (skillCastTime > 0) {
-			ctx.save();
-			ctx.fillStyle = this.castingColor;
 			ctx.beginPath();
+			ctx.fillStyle = this.castingColor;
 			ctx.arc(this.x, this.y, (this.radius - 1) * ((skillCastTime - castingTime) / skillCastTime), 0, 2 * Math.PI, true);
 			ctx.fill();
-			ctx.restore();
 		}
 
 		//bloodlust
 		if (this.getStatus("Status_Bloodlust")) {
-			ctx.save();
-			ctx.strokeStyle = "red";
 			ctx.beginPath();
+			ctx.strokeStyle = "red";
 			ctx.arc(this.x, this.y, (this.radius) * 1.5, 0, 2 * Math.PI, true);
 			ctx.stroke();
-			ctx.restore();
+		}
+
+		//feral spirit
+		if (this.getStatus("Status_FeralSpirit")) {
+			ctx.beginPath();
+			ctx.strokeStyle = "yellow";
+			ctx.lineWidth = 1;
+			ctx.arc(this.x, this.y, (this.radius) * 0.8, 0, 2 * Math.PI, true);
+			ctx.stroke();
 		}
 
 		//maelstrom stacks visual
-		ctx.save();
 		ctx.fillStyle = "orange";
 		for (var i = 0; i < this.maelstromStacks; i++) {
 			ctx.beginPath();
 			var tempAngle = i * ((2*Math.PI) / this.maelstromStacks) - (Math.PI/2);
-			ctx.arc(this.x + (this.radius * 0.8) * Math.cos(tempAngle), this.y + (this.radius - 1) * Math.sin(tempAngle), 2, 0, 2 * Math.PI, true);
+			ctx.arc(this.x + (this.radius * 0.8) * Math.cos(tempAngle), this.y + (this.radius * 0.8) * Math.sin(tempAngle), 3, 0, 2 * Math.PI, true);
 			ctx.fill();
 		}
-		ctx.restore();
 
 		//doomwinds buff
 		if (this.getStatus("Status_Doomwinds")) {
-			ctx.save();
-			ctx.strokeStyle = "aqua";
 			ctx.beginPath();
+			ctx.strokeStyle = "aqua";
 			ctx.arc(this.x, this.y, (this.radius) * 2, 0, 2 * Math.PI, true);
 			ctx.stroke();
-			ctx.restore();
 		}
+		ctx.restore();
 	}
 }

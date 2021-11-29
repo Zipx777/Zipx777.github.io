@@ -1,6 +1,7 @@
-//CircleAttack class
-class CircleAttack {
+//Attack_Circle class
+class Attack_Circle {
 	constructor(startX, startY, color) {
+		this.name = "Circle Attack";
 		this.x = startX || 0;
 		this.y = startY || 0;
 		this.color = color || "pink";
@@ -9,6 +10,7 @@ class CircleAttack {
 		this.tickCount = 0;
 		this.delay = 50;
 		this.duration = 50;
+		this.damage = 1;
 
 		this.finished = false;
 	}
@@ -17,8 +19,21 @@ class CircleAttack {
 		return this.finished;
 	}
 
+	extraUpdateLogic(player, boss, ctx) {
+
+	}
+
 	//update CircleAttack position
-	update() {
+	update(player, boss, ctx) {
+		this.extraUpdateLogic(player, boss, ctx);
+
+		var distBetweenSquared = Math.pow(player.getX() - this.x, 2) + Math.pow(player.getY() - this.y, 2);
+		if (this.tickCount > this.delay) {
+			if (distBetweenSquared < Math.pow(this.radius, 2)) {
+				player.takeDamage(this.damage);
+			}
+		}
+
 		if (this.tickCount > this.delay + this.duration) {
 			this.finished = true;
 		}

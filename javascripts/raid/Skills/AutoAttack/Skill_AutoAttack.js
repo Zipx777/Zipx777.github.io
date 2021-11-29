@@ -17,7 +17,7 @@ class Skill_AutoAttack extends Skill {
 	//return true if skill successfully activates
 	activate(ctx, player, bosss, projectiles) {
 		if (!this.onCooldown && this.inRange) {
-			console.log(this.name + " activated");
+			//console.log(this.name + " activated");
 			this.onCooldown = true;
 			this.cooldownTracker = this.cooldown;
 			var projectilesToFire = this.numProj;

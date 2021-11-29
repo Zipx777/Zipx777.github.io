@@ -3,6 +3,7 @@ class Status {
 	constructor(name) {
 		this.name = name || "default_status";
 		this.parent = null;
+		this.color = "pink";
 		this.damageTickDelay = 60;
 		this.damagePerTick = 0;
 		this.duration = 600;

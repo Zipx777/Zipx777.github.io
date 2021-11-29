@@ -10,7 +10,7 @@ class Status_FlameShock extends Status {
 
 	handleStatus() {
 		if (this.tickCount % this.damageTickDelay == 0) {
-			this.parent.takeDamage(this.damagePerTick, this.name);
+			this.parent.takeDamage(this.name, this.damagePerTick, this.color);
 		}
 	}
 }

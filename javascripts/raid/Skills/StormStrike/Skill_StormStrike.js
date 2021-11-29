@@ -17,7 +17,7 @@ class Skill_StormStrike extends Skill {
 	//return true if skill successfully activates
 	activate(ctx, player, bosss, projectiles) {
 		if (!this.onCooldown && this.inRange) {
-			console.log(this.name + " activated");
+			//console.log(this.name + " activated");
 			this.cooldownActivated();
 			var vectorToBoss = new Vector(boss.getX() - player.getX(), boss.getY() - player.getY());
 			var newProj;

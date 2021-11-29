@@ -3,7 +3,10 @@ class Boss {
 	constructor(startBossAttackSequence, startX, startY) {
 		this.x = startX;
 		this.y = startY;
-		this.health = 10000;
+		this.maxHealth = 50000;
+		this.currentHealth = 50000;
+		this.alive = true;
+
 		this.speed = 5;
 		this.color = "black";
 		this.radius = 20;
@@ -11,10 +14,17 @@ class Boss {
 		this.tickCount = 0;
 
 		this.statuses = [];
+		this.damageTexts = [];
 
 		this.bossAttackSequence = startBossAttackSequence;
 		this.explosionSFXFilePath = "sounds/turrets/playerDeath.wav";
 		this.explosionSFXVolume = 1;
+
+		this.tickCount = 0;
+
+		this.fightStarted = false;
+
+		this.damageReport = {};
 	}
 
 	//return value of x
@@ -46,9 +56,22 @@ class Boss {
 		return this.radius * this.hitboxRadiusPercent;
 	}
 
+	isAlive() {
+		return this.alive;
+	}
+
+	getStatus(statusName) {
+		for (var i = 0; i < this.statuses.length; i++) {
+			if (this.statuses[i].name == statusName) {
+				return this.statuses[i];
+			}
+		}
+		return null;
+	}
+
 	handleHitByProjectile(proj) {
 		if (proj.damage > 0) {
-			this.takeDamage(proj.damage, proj.skillOrigin);
+			this.takeDamage(proj.skillOrigin, proj.damage, proj.color);
 		}
 
 		if (proj.statusToApply != null) {
@@ -67,14 +90,31 @@ class Boss {
 		}
 	}
 
-	takeDamage(damageAmount, source) {
-		this.health = Math.max(0, this.health - damageAmount);
-		console.log("Damage from " + source + ": " + damageAmount);
+	takeDamage(damageSourceName, damageValue, damageColor) {
+		if (this.isAlive()) {
+			this.fightStarted = true;
+			this.currentHealth = Math.max(0, this.currentHealth - damageValue);
+			if (!this.damageReport[damageSourceName]) {
+				this.damageReport[damageSourceName] = damageValue;
+			} else {
+				this.damageReport[damageSourceName] += damageValue;
+			}
+			console.log("Damage from " + damageSourceName + ": " + damageValue);
+			var newDamageText = new DamageText(damageSourceName, this.x, this.y - this.radius, damageValue, damageColor);
+			if (damageSourceName == "Status_FlameShock" || damageSourceName == "Windfury Weapon" || damageSourceName == "Auto Attack") {
+				newDamageText.isSmall = true;
+			}
+			this.damageTexts.push(newDamageText);
+		}
 	}
 
 	//update Boss position/atacks
-	update(targetX, targetY, ctx) {
-		this.bossAttackSequence.update(targetX, targetY, ctx);
+	update(player, boss, ctx) {
+		if (!this.fightStarted || !this.isAlive()) {
+			return;
+		}
+
+		this.bossAttackSequence.update(player, boss, ctx);
 
 		var tempStatuses = [];
 		for (var i = 0; i < this.statuses.length; i++) {
@@ -84,17 +124,54 @@ class Boss {
 			}
 		}
 		this.statuses = tempStatuses;
+
+		var activeDamageTexts = [];
+		$.each(this.damageTexts, function(i, dT) {
+			if (!dT.isFinished()) {
+				dT.update();
+				activeDamageTexts.push(dT);
+			}
+		});
+		this.damageTexts = activeDamageTexts;
+
+		if (this.currentHealth <= 0) {
+			this.alive = false;
+		}
+
+		this.tickCount++;
 	}
 
 	//draws Boss on canvas context passed to it
 	draw(ctx) {
+		ctx.save();
 		this.bossAttackSequence.draw(ctx);
 
-		ctx.save();
+
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
 		ctx.fill();
+
+		//flameshock
+		var flameShockStatus = this.getStatus("Status_FlameShock");
+		if (flameShockStatus) {
+			ctx.strokeStyle = "red";
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, (this.radius) * (flameShockStatus.duration - flameShockStatus.tickCount) * 0.8 / flameShockStatus.duration, 0, 2 * Math.PI, true);
+			ctx.stroke();
+		}
 		ctx.restore();
+
+		$.each(this.damageTexts, function(i, dT) {
+			if (dT.isSmall) {
+				dT.draw(ctx);
+			}
+		});
+
+		$.each(this.damageTexts, function(i, dT) {
+			if (!dT.isSmall) {
+				dT.draw(ctx);
+			}
+		});
 	}
 }

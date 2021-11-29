@@ -14,7 +14,7 @@ class Skill_WindfuryWeapon extends Skill {
 	//return true if skill successfully activates
 	activate(ctx, player, bosss, projectiles) {
 		if (!this.onCooldow) {
-			console.log(this.name + " activated");
+			//console.log(this.name + " activated");
 			if (this.cooldown > 0) {
 				this.onCooldown = true;
 				this.cooldownTracker = this.cooldown;

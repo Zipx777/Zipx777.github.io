@@ -4,6 +4,7 @@ class Skill {
 		this.name = "default_skill";
 		this.buttonId = skillId || "default_buttonId";
 		this.skillButtonElement = $("#" + this.buttonId);
+		this.skillButtonCooldownTextElement = $("#" + this.buttonId + " .cooldownTextContainer");
 		this.cooldown = 0;
 		this.onCooldown = false;
 		this.castTime = 0;
@@ -25,7 +26,7 @@ class Skill {
 	resetCooldown() {
 		this.cooldownTracker = 0;
 		this.onCooldown = false;
-		this.skillButtonElement.text("");
+		this.skillButtonCooldownTextElement.text("");
 		this.skillButtonElement.removeClass("skillOnCooldown");
 	}
 
@@ -51,7 +52,7 @@ class Skill {
 	activate(ctx, player, bosss, projectiles) {
 		if (this.readyToActivate()) {
 			this.extraActivateLogic(player);
-			console.log(this.name + " activated");
+			//console.log(this.name + " activated");
 			this.cooldownActivated();
 			if (this.projectile) {
 				var newProj = new this.projectile(player.getX(), player.getY(), new Vector(boss.getX() - player.getX(), boss.getY() - player.getY()));
@@ -96,11 +97,11 @@ class Skill {
 		if (this.onCooldown) {
 			this.cooldownTracker--;
 			var cooldownInSeconds = Math.ceil(this.cooldownTracker / 60)
-			this.skillButtonElement.text(cooldownInSeconds);
+			this.skillButtonCooldownTextElement.text(cooldownInSeconds);
 			if (this.cooldownTracker <= 0) {
 				this.onCooldown = false;
 				this.cooldownTracker = 0;
-				this.skillButtonElement.text("");
+				this.skillButtonCooldownTextElement.text("");
 				this.skillButtonElement.removeClass("skillOnCooldown");
 			}
 		}

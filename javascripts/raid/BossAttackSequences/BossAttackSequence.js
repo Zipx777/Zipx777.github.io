@@ -10,30 +10,58 @@ class BossAttackSequence {
 	}
 
 	//update BossAttackSequence
-	update(targetX, targetY, ctx) {
-		if ((this.tickCount - this.openingDelay) % 400 == 0) {
-			var newAttackPattern = new Pattern_PlayerTargetedCircles(targetX, targetY, ctx);
-			newAttackPattern.duration = 250;
-			newAttackPattern.delayBetween = 30;
-			newAttackPattern.circlesRadii = 40;
-			newAttackPattern.attackDelay = 150;
-			newAttackPattern.attackDuration = 200;
-
-			var newAttackPattern2 = new Pattern_RandomCircles(targetX, targetY, ctx);
-			newAttackPattern2.duration = 150;
-			newAttackPattern2.delayBetween = 20;
-			newAttackPattern2.circlesRadii = 75;
-			newAttackPattern2.attackDelay = 200;
-			newAttackPattern2.attackDuration = 150;
-
-			this.activeAttackPatterns.push(newAttackPattern);
-			this.activeAttackPatterns.push(newAttackPattern2);
+	update(player, boss, ctx) {
+		var loopNumber = (((this.tickCount/60) - (this.tickCount/60) % 120) / 120);
+		var newAttackPattern;
+		switch ((this.tickCount / 60) % 120) {
+			case 5:
+				newAttackPattern = new Pattern_RandomCircles(player, boss, ctx);
+				newAttackPattern.delayBetween = Math.max(newAttackPattern.delayBetween - (loopNumber * 5), 0);
+				this.activeAttackPatterns.push(newAttackPattern);
+				break;
+			case 20:
+				newAttackPattern = new Pattern_PlayerTargetedCircles(player, boss, ctx);
+				newAttackPattern.circlesRadii += (loopNumber * 10);
+				this.activeAttackPatterns.push(newAttackPattern);
+				break;
+			case 35:
+				newAttackPattern = new Pattern_MovingCircleSpray(player, boss, ctx);
+				newAttackPattern.attackSpeed += (loopNumber * 0.2);
+				this.activeAttackPatterns.push(newAttackPattern);
+				break;
+			case 65:
+				newAttackPattern = new Pattern_RandomCircles(player, boss, ctx);
+				newAttackPattern.delayBetween = Math.max(newAttackPattern.delayBetween - (loopNumber * 5), 0);
+				this.activeAttackPatterns.push(newAttackPattern);
+				newAttackPattern = new Pattern_PlayerTargetedCircles(player, boss, ctx);
+				newAttackPattern.circlesRadii += (loopNumber * 10);
+				this.activeAttackPatterns.push(newAttackPattern);
+				break;
+			case 85:
+				newAttackPattern = new Pattern_PlayerTargetedCircles(player, boss, ctx);
+				newAttackPattern.circlesRadii += (loopNumber * 10);
+				this.activeAttackPatterns.push(newAttackPattern);
+				newAttackPattern = new Pattern_MovingCircleSpray(player, boss, ctx);
+				newAttackPattern.attackSpeed += (loopNumber * 0.5);
+				this.activeAttackPatterns.push(newAttackPattern);
+				break;
+			case 105:
+				newAttackPattern = new Pattern_RandomCircles(player, boss, ctx);
+				newAttackPattern.delayBetween = Math.max(newAttackPattern.delayBetween - (loopNumber * 5), 0);
+				this.activeAttackPatterns.push(newAttackPattern);
+				newAttackPattern = new Pattern_PlayerTargetedCircles(player, boss, ctx);
+				newAttackPattern.circlesRadii += (loopNumber * 10);
+				this.activeAttackPatterns.push(newAttackPattern);
+				newAttackPattern = new Pattern_MovingCircleSpray(player, boss, ctx);
+				newAttackPattern.attackSpeed += (loopNumber * 0.5);
+				this.activeAttackPatterns.push(newAttackPattern);
+				break;
 		}
 
 		var tempActiveAttackPatterns = [];
 		$.each(this.activeAttackPatterns, function(i,activeAttackPattern) {
 			if (!activeAttackPattern.isFinished()) {
-				activeAttackPattern.update(targetX, targetY, ctx);
+				activeAttackPattern.update(player, boss, ctx);
 				tempActiveAttackPatterns.push(activeAttackPattern);
 			}
 		});

@@ -13,11 +13,8 @@
 }
 
 /*area below the board, contains turnDisplay and resetButton*/
-#hotbar {
-	clear: left;
-	margin: auto;
-	height: 100%;
-	width: 600px;
+.hotbar {
+	height: 54px;
 }
 
 #controlSelect {
@@ -26,13 +23,64 @@
 
 .skillButton {
 	height: 50px;
-	line-height: 45px;
 	width: 50px;
 	float: left;
+	border: 2px solid darkgray;
+	background-color: black;
+
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: auto 75%;
+}
+
+.skillSpacer {
+	height: 50px;
+	width: 20px;
+	float: left;
+}
+
+.cooldownTextContainer {
+	width: 50px;
+	height: 50px;
+	line-height: 50px;
+	font-size: 30px;
 	text-align: center;
 	vertical-align: middle;
-	border: 2px solid blue;
-	background-color: green;
+	float: left;
+	color: white;
+}
+
+.skillButtonKeybindDisplay {
+	width: 25px;
+	height: 25px;
+	position: relative;
+
+	top: 25px;
+	left: 25px;
+}
+
+.skillButtonKeybindDisplay div {
+	height: 25px;
+	width: 25px;
+	color: white;
+	text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+	text-align: center;
+	vertical-align: middle;
+	position: absolute;
+}
+
+#coreSkills {
+	display: block;
+	width: 344px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#otherSkills {
+	display: block;
+	width: 398px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #gcdDisplay {
@@ -47,8 +95,10 @@
 
 .skillOnCooldown {
 	background-color: black;
+	background-size: 50%;
 	color: white;
-	opacity: 0.8;
+	text-shadow: 2px 0 0 #000, 0 -2px 0 #000, 0 2px 0 #000, -2px 0 0 #000;
+	opacity: 1;
 }
 
 .skillSelected {
@@ -65,4 +115,73 @@
 
 .skillOutOfRange {
 	background-color: red;
+}
+
+#resultsReport {
+	margin-top: 10px;
+	padding-left: 10px;
+	border: 5px solid gray;
+	display: none;
+}
+
+#damageBreakdown {
+	border: 2px solid black;
+}
+
+.damageBreakdownBar {
+	background-color: black;
+	height: 20px;
+}
+
+#qSkill {
+	background-image: url("../images/Raid/Skills/icon_lightningBolt.jpg");
+
+}
+
+#eSkill {
+	background-image: url("../images/Raid/Skills/icon_stormStrike.jpg");
+}
+
+#oneSkill {
+	background-image: url("../images/Raid/Skills/icon_lavaLash.jpg");
+}
+
+#twoSkill {
+	background-image: url("../images/Raid/Skills/icon_frostShock.jpg");
+}
+
+#threeSkill {
+	background-image: url("../images/Raid/Skills/icon_flameShock.jpg");
+}
+
+#fourSkill {
+	background-image: url("../images/Raid/Skills/icon_crashLightning.jpg");
+}
+
+#zSkill {
+	background-image: url("../images/Raid/Skills/icon_bloodlust.jpg");
+}
+
+#xSkill {
+	background-image: url("../images/Raid/Skills/icon_ascendance.jpg");
+}
+
+#vSkill {
+	background-image: url("../images/Raid/Skills/icon_feralSpirit.jpg");
+}
+
+#rSkill {
+	background-image: url("../images/Raid/Skills/icon_windfuryTotem.jpg");
+}
+
+#fSkill {
+	background-image: url("../images/Raid/Skills/icon_sundering.jpg");
+}
+
+#cSkill {
+	background-image: url("../images/Raid/Skills/icon_spiritWalk.jpg");
+}
+
+#fiveSkill {
+	background-image: url("../images/Raid/Skills/icon_GhostWolf.jpg");
 }

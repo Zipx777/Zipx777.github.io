@@ -4,7 +4,7 @@ class AttackPattern {
 		this.tickCount = 0;
 		this.duration = 100;
 		this.delayBetween = 10;
-		this.attackType = CircleAttack;
+		this.attackType = Attack_Circle;
 		this.numAttacks = 1;
 		this.attackColor = "red";
 		this.circlesRadii = 50;
@@ -20,24 +20,29 @@ class AttackPattern {
 	}
 
 	//returns vector with x and y position for the attack
-	calculateAttackLocation(targetX, targetY, ctx) {
+	calculateAttackLocation(player, boss, ctx) {
 		var attackLocation = new Vector(0.5 * ctx.canvas.width, 0.5 * ctx.canvas.height);
 		return attackLocation;
 	}
 
+	extraAttackSpawnLogic(newAttack, player, boss, ctx) {
+
+	}
+
 	//update AttackPattern
-	update(targetX, targetY, ctx) {
+	update(player, boss, ctx) {
 		if (this.tickCount > this.duration && this.activeAttacks.length == 0) {
 			this.finished = true;
 		} else {
 			if (this.tickCount <= this.duration) {
 				if (tickCount % this.delayBetween == 0) {
 					for (var i = 0; i < this.numAttacks; i++) {
-						var newAttackLocation = this.calculateAttackLocation(targetX, targetY, ctx);
+						var newAttackLocation = this.calculateAttackLocation(player, boss, ctx);
 						var newAttack = new this.attackType(newAttackLocation.getX(), newAttackLocation.getY(), this.attackColor);
 						newAttack.radius = this.circlesRadii;
 						newAttack.delay = this.attackDelay;
 						newAttack.duration = this.attackDuration;
+						this.extraAttackSpawnLogic(newAttack, player, boss, ctx);
 						this.activeAttacks.push(newAttack);
 					}
 				}
@@ -46,7 +51,7 @@ class AttackPattern {
 			var tempActiveAttacks = [];
 			$.each(this.activeAttacks, function(i,activeAttack) {
 				if (!activeAttack.isFinished()) {
-					activeAttack.update();
+					activeAttack.update(player, boss, ctx);
 					tempActiveAttacks.push(activeAttack);
 				}
 			});
