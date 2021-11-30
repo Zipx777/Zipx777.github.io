@@ -259,7 +259,8 @@ function populateResultsReport() {
 		if (nextDamage == 0) {
 			continuing = false;
 		} else {
-			var barWidth = (nextDamage / maxDamage) * 380;
+			var barWidth = (nextDamage / maxDamage) * 320;
+			console.log(barWidth);
 			var nextRowElement = $(document.createElement("tr"));
 			var skillNameElement = $(document.createElement("td"));
 			skillNameElement.text(nextKey);
@@ -268,7 +269,7 @@ function populateResultsReport() {
 			var skillDamageBarContainerElement = $(document.createElement("td"));
 			var skillDamageBarElement = $(document.createElement("div"));
 			skillDamageBarElement.addClass("damageBreakdownBar");
-			skillDamageBarElement.width(barWidth);
+			skillDamageBarElement.width(Math.max(1, barWidth));
 			skillDamageBarContainerElement.append(skillDamageBarElement);
 			nextRowElement.append(skillNameElement);
 			nextRowElement.append(skillDamageElement);

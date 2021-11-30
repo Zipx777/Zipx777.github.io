@@ -42,7 +42,7 @@ class DamageText {
 		} else {
 			ctx.shadowColor="black";
 			ctx.shadowBlur=1;
-			ctx.lineWidth=3;
+			ctx.lineWidth=2;
 			ctx.strokeText(Math.floor(this.value), this.x, this.y);
 			ctx.shadowBlur=0;
 		}

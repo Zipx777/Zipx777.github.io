@@ -6,6 +6,7 @@ class Boss {
 		this.maxHealth = 50000;
 		this.currentHealth = 50000;
 		this.alive = true;
+		this.phase = 0;
 
 		this.speed = 5;
 		this.color = "black";
@@ -102,7 +103,7 @@ class Boss {
 			} else {
 				this.damageReport[damageSourceName] += adjustedDamageValue;
 			}
-			console.log("Damage from " + damageSourceName + ": " + adjustedDamageValue);
+			console.log("Damage from " + damageSourceName + ": " + Math.floor(adjustedDamageValue));
 			var newDamageText = new DamageText(damageSourceName, this.x, this.y - this.radius, adjustedDamageValue, damageColor);
 			if (damageSourceName == "Status_FlameShock" || damageSourceName == "Windfury Weapon" || damageSourceName == "Auto Attack") {
 				newDamageText.isSmall = true;
@@ -154,6 +155,37 @@ class Boss {
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
 		ctx.fill();
+		ctx.restore();
+
+		if (this.phase == 1 || this.phase == 4 || this.phase == 6) {
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(this.x, this.y);
+			ctx.fillStyle = "purple";
+			ctx.arc(this.x, this.y, this.radius/2, 0 - (Math.PI/2) - (2 * Math.PI/6), 0 - (Math.PI / 6) , false);
+			ctx.fill();
+			ctx.restore();
+		}
+
+		if (this.phase == 2 || this.phase == 4 || this.phase == 5 || this.phase == 6) {
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(this.x, this.y);
+			ctx.fillStyle = "crimson";
+			ctx.arc(this.x, this.y, this.radius/2, 0 - (3 * Math.PI / 2), 0 - (5 * Math.PI / 6) , false);
+			ctx.fill();
+			ctx.restore();
+		}
+
+		if (this.phase == 3 || this.phase == 5 || this.phase == 6) {
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(this.x, this.y);
+			ctx.fillStyle = "lightgray";
+			ctx.arc(this.x, this.y, this.radius/2, 0 + (Math.PI / 2), 0 - (Math.PI / 6) , true);
+			ctx.fill();
+			ctx.restore();
+		}
 
 		//flameshock
 		var flameShockStatus = this.getStatus("Status_FlameShock");

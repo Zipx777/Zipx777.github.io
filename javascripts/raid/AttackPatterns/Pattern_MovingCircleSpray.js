@@ -4,10 +4,10 @@
 class Pattern_MovingCircleSpray extends AttackPattern {
 	constructor() {
 		super();
-		this.attackColor = "green";
+		this.attackColor = "grey";
 		this.attackType = Attack_MovingCircle;
-		this.duration = 200;
-		this.delayBetween = 20;
+		this.duration = 600;
+		this.delayBetween = 60;
 		this.attackDuration = 2000;
 		this.attackSpeed = 0.8;
 	}

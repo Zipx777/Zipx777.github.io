@@ -238,13 +238,14 @@ class Player {
 		for (var i = 0; i < this.totems.length; i++) {
 			this.totems[i].draw(ctx);
 		}
+		ctx.restore();
+
+		ctx.save();
 
 		//player
 		ctx.beginPath();
 		ctx.fillStyle = this.color;
-		if (this.tookDamageThisFrame) {
-			ctx.fillStyle = "red";
-		}
+
 		var tempRadius = this.radius;
 		if (this.getStatus("Status_GhostWolf")) {
 			tempRadius = tempRadius / 2;
@@ -253,9 +254,18 @@ class Player {
 		}
 		ctx.arc(this.x, this.y, tempRadius, 0, 2 * Math.PI, true);
 		ctx.fill();
+		ctx.restore();
+
+		ctx.save();
+		if (this.tookDamageThisFrame) {
+			ctx.beginPath();
+			ctx.fillStyle = "red";
+			ctx.arc(this.x, this.y, tempRadius/1.1, 0, 2 * Math.PI, true);
+			ctx.fill();
+		}
+		ctx.restore();
 
 		//gcd
-		ctx.save();
 		if (gcdTracker > 0) {
 			/*
 			//circle line sweep down clockwise
@@ -275,6 +285,7 @@ class Player {
 			ctx.stroke();
 		}
 		ctx.restore();
+		ctx.globalAlpha = 1;
 
 		//stormbringer
 		if (this.stormbringerBuff) {

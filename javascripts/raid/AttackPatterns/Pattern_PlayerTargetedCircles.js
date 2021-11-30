@@ -9,6 +9,7 @@ class Pattern_PlayerTargetedCircles extends AttackPattern {
 		this.circlesRadii = 40;
 		this.attackDelay = 150;
 		this.attackDuration = 200;
+		this.attackColor = "crimson";
 	}
 
 	//returns vector with x and y position for the attack
