@@ -22,7 +22,11 @@ var canvas,
 	wasdKeys,
 	sounds,
 	score,
-	gameOver;
+	gameOver,
+	now,
+	then,
+	fpsInterval,
+	startTime;
 
 //document ready function
 $(function() {
@@ -30,7 +34,7 @@ $(function() {
 
 	setEventHandlers();
 
-	animate();
+	startAnimating();
 });
 
 function initializeVariables() {
@@ -283,16 +287,30 @@ function populateResultsReport() {
 	$("#resultsReport").show();
 }
 
+function startAnimating() {
+	fpsInterval = 1000 / 59;
+  then = Date.now();
+  startTime = then;
+  animate();
+}
+
 //***************
 //main game loop
 //***************
 function animate() {
 
-	update();
-
-	draw();
-
 	window.requestAnimFrame(animate);
+
+	now = Date.now();
+	elapsed = now - then;
+	if (elapsed > fpsInterval) {
+		then = now - (elapsed % fpsInterval);
+
+		update();
+
+		draw();
+
+	}
 }
 
 //check for projectile hitting stuff
