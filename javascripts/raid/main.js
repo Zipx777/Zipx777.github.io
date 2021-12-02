@@ -303,7 +303,7 @@ function animate() {
 
 	now = Date.now();
 	elapsed = now - then;
-	if (elapsed > fpsInterval) {
+	if (elapsed >= fpsInterval) {
 		then = now - (elapsed % fpsInterval);
 
 		update();

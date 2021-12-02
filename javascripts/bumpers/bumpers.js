@@ -5,7 +5,11 @@ var canvas,
 	goals,
 	puck,
 	arrowKeys,
-	wasdKeys;
+	wasdKeys,
+	now,
+	then,
+	fpsInterval,
+	startTime;
 
 var gamePaused = true;
 var gameRunning = false;
@@ -15,37 +19,37 @@ var CSS_COLOR_NAMES = ["AliceBlue","AntiqueWhite","Aqua","Aquamarine","Azure","B
 //document ready function
 $(function() {
 	initializeVariables();
-	
+
 	populateColors();
-	
-	positionPiecesAtStart();	
-	
-	setEventHandlers();	
-	
+
+	positionPiecesAtStart();
+
+	setEventHandlers();
+
 	//start the loop
-	animate();
+	startAnimating();
 });
 
 //initializes all global variables
 function initializeVariables() {
 	canvas = $("#bumpersCanvas");
 	ctx = canvas[0].getContext("2d");
-	
+
 	//have to set height/width attributes to avoid weird canvas scaling issue
 	canvas.attr("width", "600").attr("height", "400");
-	
+
 	goals = [new Goal((ctx.canvas.width / 2), 0, "horizontal"),
 			new Goal((ctx.canvas.width / 2), ctx.canvas.height, "horizontal"),
 			new Goal(0, (ctx.canvas.height / 2), "vertical"),
-			new Goal(ctx.canvas.width, (ctx.canvas.height / 2), "vertical")];	
-		
-	players = [new Player(0, 0, "red"), new Player(0, 0, "blue")];	
-	
+			new Goal(ctx.canvas.width, (ctx.canvas.height / 2), "vertical")];
+
+	players = [new Player(0, 0, "red"), new Player(0, 0, "blue")];
+
 	//when a player wins the game, this will be set to 0 or 1
 	winningPlayer = -1;
-	
+
 	puck = new Puck(0, 0);
-	
+
 	arrowKeys = new Keys("arrows");
 	wasdKeys = new Keys("wasd");
 }
@@ -54,11 +58,11 @@ function initializeVariables() {
 function populateColors() {
 	var i;
 	var nextColor;
-	for (i = 0; i < CSS_COLOR_NAMES.length; i++) {		
+	for (i = 0; i < CSS_COLOR_NAMES.length; i++) {
 		$("#player1Color").append("<option value='" + CSS_COLOR_NAMES[i] + "'>" + CSS_COLOR_NAMES[i] + "</option>");
 		$("#player2Color").append("<option value='" + CSS_COLOR_NAMES[i] + "'>" + CSS_COLOR_NAMES[i] + "</option>");
 	}
-	
+
 	$("#player1Color option[value=Red]").prop("selected", true);
 	$("#player2Color option[value=Blue]").prop("selected", true);
 }
@@ -67,10 +71,10 @@ function populateColors() {
 function setEventHandlers() {
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
-	
+
 	$("#bumpersStartPauseButton").click(startPauseClicked);
 	$("#bumpersResetButton").click(resetClicked);
-	
+
 	$("#player1Color").change(player1ColorChanged);
 	$("#player2Color").change(player2ColorChanged);
 }
@@ -81,12 +85,12 @@ function positionPiecesAtStart() {
 		p1StartY = ctx.canvas.height / 2,
 		p2StartX = ctx.canvas.width - (goals[3].getWidth() / 2) - players[1].getRadius(),
 		p2StartY = ctx.canvas.height / 2;
-		
+
 		players[0].setX(p1StartX);
 		players[0].setY(p1StartY);
 		players[1].setX(p2StartX);
 		players[1].setY(p2StartY);
-		
+
 		puck.setX(ctx.canvas.width / 2);
 		puck.setY(ctx.canvas.height / 2);
 		puck.reset(); //randomizes direction
@@ -112,7 +116,7 @@ function keyUpHandler(e) {
 	if (e.which == 32) {
 		e.preventDefault();
 	}
-	
+
 	arrowKeys.onKeyUp(e);
 	wasdKeys.onKeyUp(e);
 }
@@ -146,17 +150,17 @@ function resetClicked() {
 	gamePaused = true;
 	gameRunning = false;
 	winningPlayer = -1;
-	
+
 	$("#bumpersStartPauseButton").text("Start");
 	$("#bumpersStartPauseButton").prop("disabled", false);
-	
+
 	positionPiecesAtStart();
 	resetGoals();
 	resetPuck();
-	
+
 	$("#player1Color").prop("disabled", false);
-	$("#player2Color").prop("disabled", false);	
-	
+	$("#player2Color").prop("disabled", false);
+
 	wasdKeys.reset();
 	arrowKeys.reset();
 }
@@ -174,15 +178,30 @@ function resetPuck() {
 	puck.reset();
 }
 
+function startAnimating() {
+	fpsInterval = 1000 / 59;
+  then = Date.now();
+  startTime = then;
+  animate();
+}
+
 //***************
 //main game loop
 //***************
 function animate() {
-	update();
-	
-	draw();
-	
+
 	window.requestAnimFrame(animate);
+
+	now = Date.now();
+	elapsed = now - then;
+	if (elapsed > fpsInterval) {
+		then = now - (elapsed % fpsInterval);
+
+		update();
+
+		draw();
+
+	}
 }
 
 //update game pieces' positions
@@ -192,16 +211,16 @@ function update() {
 			//update the players
 			players[0].update(ctx, wasdKeys);
 			players[1].update(ctx, arrowKeys);
-			
+
 			//update the puck
 			puck.update(ctx, players);
-			
+
 			//update the goals
 			var i;
 			for (i = 0; i < goals.length; i++) {
 				goals[i].update(puck);
-			}	
-		}			
+			}
+		}
 	}
 }
 
@@ -209,22 +228,22 @@ function update() {
 function draw() {
 	//clear the board
 	ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
-	
+
 	//draw the players
 	var i;
 	for (i = 0; i < players.length; i++) {
 		players[i].draw(ctx);
 	}
-	
+
 	//draw the goals
 	var j;
 	for (j = 0; j < goals.length; j++) {
 		goals[j].draw(ctx);
 	}
-	
+
 	//draw the puck
 	puck.draw(ctx);
-	
+
 	//if a player has won, display win text
 	if (winningPlayer >= 0) {
 		ctx.font = "30px Verdana";
@@ -235,22 +254,22 @@ function draw() {
 
 //check for a game win, return true if the game was won
 function checkForWin() {
-	//loop through all goals to see if they were all last hit by the same player		
+	//loop through all goals to see if they were all last hit by the same player
 	var potentialWinner = goals[0].getLastPlayerHit();
 	var win = true;
-	
+
 	//win is false if potentialWinner is -1 because that means the goal hasn't been hit yet
 	if (potentialWinner == -1) {
 		win = false;
 	}
-	
+
 	var j;
 	for (j = 0; j < goals.length; j++) {
 		if (goals[j].getLastPlayerHit() != potentialWinner) {
 			win = false;
 		}
 	}
-	
+
 	if (win) {
 		gameWon(potentialWinner);
 	}

@@ -17,7 +17,11 @@ var canvas,
 	mouseY,
 	wasdKeys,
 	sounds,
-	score;
+	score,
+	now,
+	then,
+	fpsInterval,
+	startTime;
 
 //document ready function
 $(function() {
@@ -25,7 +29,7 @@ $(function() {
 
 	setEventHandlers();
 
-	animate();
+	startAnimating();
 });
 
 function initializeVariables() {
@@ -243,22 +247,36 @@ function turretAreaClick() {
 	//expSFX.play();
 }
 
+function startAnimating() {
+	fpsInterval = 1000 / 59;
+  then = Date.now();
+  startTime = then;
+  animate();
+}
+
 //***************
 //main game loop
 //***************
 function animate() {
 
-	update();
-
-	draw();
-
 	window.requestAnimFrame(animate);
+
+	now = Date.now();
+	elapsed = now - then;
+	if (true || elapsed > fpsInterval) {
+		then = now - (elapsed % fpsInterval);
+
+		update();
+
+		draw();
+
+	}
 }
 
 //update player and turret states
 function update() {
 	if (freeze) {
-		return;
+		//return;
 	}
 
 	//update player
