@@ -271,7 +271,7 @@ var Circle = function(startX, startY, startXSpeed, startYSpeed, startColor) {
 
 		checkForCollisionWithWall(dt, ctx, g, cor);
 		if (!(y + (radius * 2) > ctx.canvas.height)) {
-			ySpeed += (g * dt);// * 1000);
+			ySpeed += (g * dt);
 		}
 	};
 

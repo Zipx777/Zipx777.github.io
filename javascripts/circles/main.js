@@ -197,7 +197,7 @@ function physicsType0Update(dt) {
 function physicsType1Update() {
 	var i;
 	for (i = 0; i < circles.length; i++) {
-		circles[i].update(ctx, gravity, cor);
+		circles[i].update(1/59,ctx, gravity, cor);
 	}
 
 	var j;
