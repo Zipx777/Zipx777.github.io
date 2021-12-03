@@ -10,7 +10,8 @@ var canvas,
 	now,
 	then,
 	fpsInterval,
-	startTime;
+	startTime,
+	windowFocus;
 
 //document ready function
 $(function() {
@@ -78,12 +79,21 @@ function initializeVariables() {
 
 	physicsType = 0;
 	physicsNames = ["Realistic with bugs", "Looks normal...oh", "Party", "Accurate black hole simulator", "Quantum theory"];
+
+	windowFocus = true;
 }
 
 //link events to their event handler functions
 function setEventHandlers() {
 	$("#circlesRestartButton").click(restartClicked);
 	$("#circlesRandomizeButton").click(randomizeClicked);
+	$(window).focus(function() {
+		then = Date.now();
+		windowFocus = true;
+	});
+	$(window).blur(function() {
+		windowFocus = false;
+	});
 }
 
 //slider value changed
@@ -143,7 +153,7 @@ function animate() {
 
 	now = Date.now();
 	elapsed = now - then;
-	if (elapsed > 0) { //fpsInterval) {
+	if (elapsed > 0 && windowFocus) { //fpsInterval) {
 		then = now;// - (elapsed % fpsInterval);
 
 		update(elapsed / 1000);
