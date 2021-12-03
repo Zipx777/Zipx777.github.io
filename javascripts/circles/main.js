@@ -159,16 +159,16 @@ function update(dt) {
 			physicsType0Update(dt);
 			break;
 		case 1:
-			physicsType1Update();
+			physicsType1Update(dt);
 			break;
 		case 2:
-			physicsType2Update();
+			physicsType2Update(dt);
 			break;
 		case 3:
-			physicsType3Update();
+			physicsType3Update(dt);
 			break;
 		case 4:
-			physicsType4Update();
+			physicsType4Update(dt);
 			break;
 	}
 }
@@ -194,10 +194,10 @@ function physicsType0Update(dt) {
 }
 
 //Realistic with random bursts of weirdness
-function physicsType1Update() {
+function physicsType1Update(dt) {
 	var i;
 	for (i = 0; i < circles.length; i++) {
-		circles[i].update(1/59,ctx, gravity, cor);
+		circles[i].update(dt, ctx, gravity, cor);
 	}
 
 	var j;
@@ -214,7 +214,7 @@ function physicsType1Update() {
 }
 
 //party, circles bunch together and kind of move as a group
-function physicsType2Update() {
+function physicsType2Update(dt) {
 	var i;
 	for (i = 0; i < circles.length; i++) {
 		var j;
@@ -227,15 +227,15 @@ function physicsType2Update() {
 				}
 			}
 		}
-		circles[i].update(ctx, 0.4, cor);
+		circles[i].update(dt, ctx, 400, cor);
 	}
 }
 
 //black hole weirdness
-function physicsType3Update() {
+function physicsType3Update(dt) {
 	var i;
 	for (i = 0; i < circles.length; i++) {
-		circles[i].update(ctx, gravity, 1);
+		circles[i].update(dt, ctx, gravity, 1);
 	}
 
 	var j;
@@ -252,10 +252,10 @@ function physicsType3Update() {
 }
 
 //quantum theory, hard to explain
-function physicsType4Update() {
+function physicsType4Update(dt) {
 	var i;
 	for (i = 0; i < circles.length; i++) {
-		circles[i].update(ctx, 0.5, cor);
+		circles[i].update(1/59, ctx, 500, cor);
 		var j;
 		for (j = 0; j < circles.length; j++) {
 			if (i != j) {
