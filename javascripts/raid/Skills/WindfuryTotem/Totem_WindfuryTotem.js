@@ -4,7 +4,7 @@ class Totem_WindfuryTotem extends Totem {
 		super(startX, startY);
 		this.name = "Totem_WindfuryTotem";
 		this.color = "LightBlue";
-		this.duration = 3600;
+		this.duration = 60;
 		this.range = 200;
 		this.statusToApply = Status_WindfuryTotem;
 	}

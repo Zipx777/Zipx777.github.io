@@ -3,14 +3,15 @@ class Status_FlameShock extends Status {
 	constructor() {
 		super();
 		this.name = "Status_FlameShock";
-		this.duration = 1080;
-		this.damageTickDelay = 60;
+		this.duration = 18;
+		this.damageTickDelay = 1;
 		this.damagePerTick = 30;
 	}
 
-	handleStatus() {
-		if (this.tickCount % this.damageTickDelay == 0) {
+	handleStatus(dt) {
+		if (this.timeSinceLastTick >= this.damageTickDelay) {
 			this.parent.takeDamage(this.name, this.damagePerTick, this.color);
+			this.timeSinceLastTick = this.timeSinceLastTick % this.damageTickDelay;
 		}
 	}
 }

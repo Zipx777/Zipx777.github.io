@@ -3,7 +3,7 @@ class Status_SpiritWalk extends Status {
 	constructor() {
 		super();
 		this.name = "Status_SpiritWalk";
-		this.duration = 480;
+		this.duration = 8;
 		this.spiritWalkSpeedMultiplier = 1.6;
 	}
 }

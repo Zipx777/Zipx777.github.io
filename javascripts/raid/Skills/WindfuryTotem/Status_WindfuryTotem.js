@@ -3,7 +3,7 @@ class Status_WindfuryTotem extends Status {
 	constructor() {
 		super();
 		this.name = "Status_WindfuryTotem";
-		this.duration = 1080;
+		this.duration = 18;
 		this.procChance = 0.2;
 		this.extraProjectilesOnProc = 1
 	}

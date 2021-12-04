@@ -3,7 +3,7 @@ class Player {
 	constructor(startX, startY) {
 		this.x = startX;
 		this.y = startY;
-		this.speed = 2;
+		this.speed = 2 * 60;
 		this.color = "blue";
 		this.gcdColor = "white";
 		this.castingColor = "aqua";
@@ -126,7 +126,7 @@ class Player {
 	}
 
 	//update Player position and skills
-	update(targetX, targetY, keys, ctx) {
+	update(dt, targetX, targetY, keys, ctx) {
 		this.tookDamageThisFrame = false;
 		this.currentMana = Math.min(this.currentMana + this.manaRegenPerTick, this.maxMana);
 
@@ -146,13 +146,6 @@ class Player {
 		var ghostWolfStatus = this.getStatus("Status_GhostWolf");
 		if (ghostWolfStatus) {
 			currentSpeed *= ghostWolfStatus.ghostWolfSpeedMultiplier;
-		}
-
-		var feralSpiritStatus = this.getStatus("Status_FeralSpirit");
-		if (feralSpiritStatus) {
-			if (feralSpiritStatus.tickCount % feralSpiritStatus.maelstromStackGenerateRate == 0) {
-				this.addMaelstromStack();
-			}
 		}
 
 		//save starting x,y to compare after, to check for movement
@@ -195,8 +188,8 @@ class Player {
 			if (movementVector.length() > 0) {
 				movementVector = movementVector.normalize().multiply(currentSpeed);
 
-				this.x += movementVector.getX();
-				this.y += movementVector.getY();
+				this.x += movementVector.getX() * dt;
+				this.y += movementVector.getY() * dt;
 
 				//stop player going out of bounds
 				this.x = Math.max(0, this.x);
@@ -214,7 +207,7 @@ class Player {
 
 		var activeStatuses = [];
 		for (var i = 0; i < this.statuses.length; i++) {
-			this.statuses[i].update();
+			this.statuses[i].update(dt);
 			if (!this.statuses[i].isFinished()) {
 				activeStatuses.push(this.statuses[i]);
 			}
@@ -223,7 +216,7 @@ class Player {
 
 		var activeTotems = [];
 		for (var i = 0; i < this.totems.length; i++) {
-			this.totems[i].update(this);
+			this.totems[i].update(dt, this);
 			if (this.totems[i].isAlive()) {
 				activeTotems.push(this.totems[i]);
 			}

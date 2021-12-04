@@ -12,7 +12,7 @@ class Boss {
 		this.color = "black";
 		this.radius = 20;
 		this.hitboxRadiusPercent = 1;
-		this.tickCount = 0;
+		this.timeElapsed = 0;
 
 		this.statuses = [];
 		this.damageTexts = [];
@@ -21,7 +21,7 @@ class Boss {
 		this.explosionSFXFilePath = "sounds/turrets/playerDeath.wav";
 		this.explosionSFXVolume = 1;
 
-		this.tickCount = 0;
+		this.timeElapsed = 0;
 
 		this.fightStarted = false;
 
@@ -113,16 +113,16 @@ class Boss {
 	}
 
 	//update Boss position/atacks
-	update(player, boss, ctx) {
+	update(dt, player, boss, ctx) {
 		if (!this.fightStarted || !this.isAlive()) {
 			return;
 		}
 
-		this.bossAttackSequence.update(player, boss, ctx);
+		this.bossAttackSequence.update(dt, player, boss, ctx);
 
 		var tempStatuses = [];
 		for (var i = 0; i < this.statuses.length; i++) {
-			this.statuses[i].update();
+			this.statuses[i].update(dt);
 			if (!this.statuses[i].isFinished()) {
 				tempStatuses.push(this.statuses[i]);
 			}
@@ -130,10 +130,10 @@ class Boss {
 		this.statuses = tempStatuses;
 
 		var activeDamageTexts = [];
-		$.each(this.damageTexts, function(i, dT) {
-			if (!dT.isFinished()) {
-				dT.update();
-				activeDamageTexts.push(dT);
+		$.each(this.damageTexts, function(i, nextDamageText) {
+			if (!nextDamageText.isFinished()) {
+				nextDamageText.update(dt);
+				activeDamageTexts.push(nextDamageText);
 			}
 		});
 		this.damageTexts = activeDamageTexts;
@@ -142,7 +142,7 @@ class Boss {
 			this.alive = false;
 		}
 
-		this.tickCount++;
+		this.timeElapsed += dt;
 	}
 
 	//draws Boss on canvas context passed to it
@@ -192,7 +192,7 @@ class Boss {
 		if (flameShockStatus) {
 			ctx.strokeStyle = "red";
 			ctx.beginPath();
-			ctx.arc(this.x, this.y, (this.radius) * (flameShockStatus.duration - flameShockStatus.tickCount) * 0.8 / flameShockStatus.duration, 0, 2 * Math.PI, true);
+			ctx.arc(this.x, this.y, (this.radius) * (flameShockStatus.duration - flameShockStatus.timeElapsed) * 0.8 / flameShockStatus.duration, 0, 2 * Math.PI, true);
 			ctx.stroke();
 		}
 		ctx.restore();

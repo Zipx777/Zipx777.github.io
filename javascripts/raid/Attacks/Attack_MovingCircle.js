@@ -4,12 +4,12 @@ class Attack_MovingCircle extends Attack_Circle {
 		super(startX, startY, color);
 		this.name = "Moving Circle Attack";
 		this.direction = new Vector(1,0);
-		this.speed = 0.5;
-		this.delay = 100;
+		this.speed = 30;
+		this.delay = 2;
 		this.bounceOffWalls = false;
 	}
 
-	extraUpdateLogic(player, boss, ctx) {
+	extraUpdateLogic(dt, player, boss, ctx) {
 		var velocity = this.direction.normalize().multiply(this.speed);
 
 		if (this.bounceOffWalls) {
@@ -26,8 +26,8 @@ class Attack_MovingCircle extends Attack_Circle {
 			}
 		}
 
-		this.x += velocity.getX();
-		this.y += velocity.getY();
+		this.x += velocity.getX() * dt;
+		this.y += velocity.getY() * dt;
 
 		this.direction = velocity;
 	}

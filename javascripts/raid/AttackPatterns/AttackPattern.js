@@ -1,15 +1,16 @@
 //AttackPattern class
 class AttackPattern {
 	constructor() {
-		this.tickCount = 0;
-		this.duration = 100;
-		this.delayBetween = 10;
+		this.timeElapsed = 0;
+		this.duration = 2;
+		this.delayBetweenAttacks = 1;
+		this.timeSinceLastAttack = 0;
 		this.attackType = Attack_Circle;
 		this.numAttacks = 1;
 		this.attackColor = "pink";
 		this.circlesRadii = 50;
-		this.attackDelay = 50;
-		this.attackDuration = 50;
+		this.attackDelay = 1;
+		this.attackDuration = 1;
 
 		this.activeAttacks = [];
 		this.finished = false;
@@ -30,12 +31,13 @@ class AttackPattern {
 	}
 
 	//update AttackPattern
-	update(player, boss, ctx) {
-		if (this.tickCount > this.duration && this.activeAttacks.length == 0) {
+	update(dt, player, boss, ctx) {
+		if ((this.timeElapsed > this.duration) && this.activeAttacks.length == 0) {
 			this.finished = true;
 		} else {
-			if (this.tickCount <= this.duration) {
-				if (tickCount % this.delayBetween == 0) {
+			if (this.timeElapsed <= this.duration) {
+				if (this.timeSinceLastAttack >= this.delayBetweenAttacks) {
+					this.timeSinceLastAttack = this.timeSinceLastAttack % this.delayBetweenAttacks;
 					for (var i = 0; i < this.numAttacks; i++) {
 						var newAttackLocation = this.calculateAttackLocation(player, boss, ctx);
 						var newAttack = new this.attackType(newAttackLocation.getX(), newAttackLocation.getY(), this.attackColor);
@@ -51,14 +53,15 @@ class AttackPattern {
 			var tempActiveAttacks = [];
 			$.each(this.activeAttacks, function(i,activeAttack) {
 				if (!activeAttack.isFinished()) {
-					activeAttack.update(player, boss, ctx);
+					activeAttack.update(dt, player, boss, ctx);
 					tempActiveAttacks.push(activeAttack);
 				}
 			});
 			this.activeAttacks = tempActiveAttacks;
 		}
 
-		this.tickCount++;
+		this.timeElapsed += dt;
+		this.timeSinceLastAttack += dt;
 	}
 
 	//draws AttackPattern on canvas context passed to it

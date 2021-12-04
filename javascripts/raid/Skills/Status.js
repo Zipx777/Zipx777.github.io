@@ -4,13 +4,14 @@ class Status {
 		this.name = name || "default_status";
 		this.parent = null;
 		this.color = "pink";
-		this.damageTickDelay = 60;
+		this.damageTickDelay = 1;
+		this.timeSinceLastTick = 0;
 		this.damagePerTick = 0;
-		this.duration = 600;
+		this.duration = 10;
 		this.toggles = false;
 		this.procChance = 1;
-		this.tickCount = 0; //can be set to negative to handle refresh overcharge buffer
-		this.refreshBuffer = 180;//up to 3sec of an existing status will be saved when a new one refreshes it
+		this.timeElapsed = 0; //can be set to negative to handle refresh overcharge buffer
+		this.refreshBuffer = 3;//up to 3sec of an existing status will be saved when a new one refreshes it
 		this.finished = false;
 	}
 
@@ -20,21 +21,22 @@ class Status {
 
 	//another instance of this status was applied, refresh duration with some buffer
 	refresh() {
-		this.tickCount -= this.duration;
-		while (this.tickCount < (-1 * this.refreshBuffer)) {
-			this.tickCount += this.damageTickDelay;
+		this.timeElapsed -= this.duration;
+		while (this.timeElapsed < (-1 * this.refreshBuffer)) {
+			this.timeElapsed += this.damageTickDelay;
 		}
 	}
 
 	//function for statuses inheriting this to override to handle specific status functionality like DoT/Debuff
-	handleStatus() {
+	handleStatus(dt) {
 
 	}
 
-	update() {
-		this.tickCount++;
-		this.handleStatus();
-		if (this.tickCount > this.duration && this.duration > 0) {
+	update(dt) {
+		this.timeElapsed += dt;
+		this.timeSinceLastTick += dt;
+		this.handleStatus(dt);
+		if (this.timeElapsed > this.duration && this.duration > 0) {
 			this.finished = true;
 		}
 	}

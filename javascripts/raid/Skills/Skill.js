@@ -62,7 +62,9 @@ class Skill {
 				projectiles.push(newProj);
 			}
 			if (this.playerStatusToApply) {
-				player.addPlayerStatus(new this.playerStatusToApply);
+				var newStatusToApply = new this.playerStatusToApply;
+				newStatusToApply.parent = player;
+				player.addPlayerStatus(newStatusToApply);
 			}
 			if (this.totemToSpawn) {
 				player.spawnTotem(new this.totemToSpawn);
@@ -72,12 +74,12 @@ class Skill {
 		return false;
 	}
 
-	extraUpdateLogic(player) {
+	extraUpdateLogic(dt, player) {
 
 	}
 
-	update(player, boss) {
-		this.extraUpdateLogic(player);
+	update(dt, player, boss) {
+		this.extraUpdateLogic(dt, player);
 		var xDistBetween = player.getX() - boss.getX();
 		var yDistBetween = player.getY() - boss.getY();
 		var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
@@ -95,8 +97,8 @@ class Skill {
 		}
 
 		if (this.onCooldown) {
-			this.cooldownTracker--;
-			var cooldownInSeconds = Math.ceil(this.cooldownTracker / 60)
+			this.cooldownTracker -= dt;
+			var cooldownInSeconds = Math.ceil(this.cooldownTracker)
 			this.skillButtonCooldownTextElement.text(cooldownInSeconds);
 			if (this.cooldownTracker <= 0) {
 				this.onCooldown = false;

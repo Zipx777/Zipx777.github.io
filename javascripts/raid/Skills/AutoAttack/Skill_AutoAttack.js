@@ -4,8 +4,8 @@ class Skill_AutoAttack extends Skill {
 		super(name, skillId, cooldown);
 		this.name = "Auto Attack";
 		this.autoActivate = true;
-		this.baseCooldown = 130;
-		this.cooldown = 130;
+		this.baseCooldown = 2.1;
+		this.cooldown = 2.1;
 		this.isMelee = true;
 		this.baseRange = 100;
 		this.range = 100;
@@ -47,14 +47,14 @@ class Skill_AutoAttack extends Skill {
 		return false;
 	}
 
-	update(player, boss) {
-		this.extraUpdateLogic(player);
+	update(dt, player, boss) {
+		this.extraUpdateLogic(dt, player);
 		var xDistBetween = player.getX() - boss.getX();
 		var yDistBetween = player.getY() - boss.getY();
 		var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
 		var distToBoss = Math.sqrt(distBetweenSquared);
 		if (this.onCooldown) {
-			this.cooldownTracker--;
+			this.cooldownTracker -= dt;
 			if (this.cooldownTracker <= 0) {
 				this.onCooldown = false;
 			}
@@ -67,7 +67,7 @@ class Skill_AutoAttack extends Skill {
 		}
 	}
 
-	extraUpdateLogic(player) {
+	extraUpdateLogic(dt, player) {
 		this.range = this.baseRange;
 		var ascendanceStatus = player.getStatus("Status_Ascendance");
 		if (ascendanceStatus) {

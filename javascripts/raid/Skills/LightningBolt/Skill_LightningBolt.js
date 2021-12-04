@@ -3,8 +3,8 @@ class Skill_LightningBolt extends Skill {
 	constructor(skillId) {
 		super(skillId);
 		this.name = "Lightning Bolt";
-		this.castTime = 150;
-		this.noStacksCastTime = 150;
+		this.castTime = 2.5;
+		this.noStacksCastTime = 2.5;
 		this.range = 300;
 
 		this.projectile = Projectile_LightningBolt;
@@ -19,8 +19,8 @@ class Skill_LightningBolt extends Skill {
 		proj.modifyDamage(player.snapshotMaelstromStacks);
 	}
 
-	extraUpdateLogic(player) {
-		this.castTime = this.noStacksCastTime - (30 * player.snapshotMaelstromStacks);
+	extraUpdateLogic(dt, player) {
+		this.castTime = this.noStacksCastTime - (0.5 * player.snapshotMaelstromStacks);
 		this.skillButtonElement.removeClass("skillProcced");
 		if (player.maelstromStacks >= 5) {
 			this.skillButtonElement.addClass("skillProcced");

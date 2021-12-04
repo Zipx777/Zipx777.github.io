@@ -6,10 +6,10 @@ class Pattern_MovingCircleSpray extends AttackPattern {
 		super();
 		this.attackColor = "grey";
 		this.attackType = Attack_MovingCircle;
-		this.duration = 600;
-		this.delayBetween = 60;
-		this.attackDuration = 2000;
-		this.attackSpeed = 0.8;
+		this.duration = 10;
+		this.delayBetween = 1;
+		this.attackDuration = 30;
+		this.attackSpeed = 30;
 	}
 
 	extraAttackSpawnLogic(newAttack, player, boss, ctx) {

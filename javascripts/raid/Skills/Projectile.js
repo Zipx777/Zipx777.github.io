@@ -6,7 +6,7 @@ class Projectile {
 		this.damage = 0;
 		this.statusToApply = null;
 
-		this.speed = 3;
+		this.speed = 180;
 		this.color = "pink";
 		this.radius = 6;
 		this.hitboxRadiusPercent = 1;
@@ -17,9 +17,9 @@ class Projectile {
 		this.skillOrigin = null;
 
 		//homing-specific variables, 0 maxRotationSpeed for no homing
-		this.maxRotationSpeed = 5;
+		this.maxRotationSpeed = 300;
 		this.currentRotationSpeed = 0;
-		this.rotationAcceleration = 0.3;
+		this.rotationAcceleration = 180;
 		this.targetInFrontAngle = 180;
 
 		this.doomed = false;
@@ -104,7 +104,7 @@ class Projectile {
 	}
 
 	//update projectile position
-	update(target) {
+	update(dt, target) {
 		var targetX = target.getX();
 		var targetY = target.getY();
 
@@ -119,9 +119,10 @@ class Projectile {
 		//##########################################
 
 		if (Math.abs(signedAngleBetween) < (this.targetInFrontAngle * Math.PI / 180)) {
-			if (Math.abs(signedAngleBetween) * 180 / Math.PI < Math.abs(this.currentRotationSpeed)) {
+			if (Math.abs(signedAngleBetween) * 180 / Math.PI < Math.abs(this.currentRotationSpeed * dt)) {
 				//snap to target if aim is less than <rotationSpeed> away to avoid flickering
-				//this.facingVector = vectorToTarget;
+				this.facingVector = vectorToTarget;
+				this.currentRotationSpeed = 0;
 			}
 			this.targetInFront = true;
 		} else {
@@ -129,21 +130,33 @@ class Projectile {
 		}
 
 		if (this.targetInFront) {
-			this.currentRotationSpeed *= 0.95;
+			var currentRotationSign = 1;
+			if (this.currentRotationSpeed == 0) {
+				currentRotationSign = 1;
+			} else {
+				currentRotationSign = this.currentRotationSpeed / Math.abs(this.currentRotationSpeed);
+			}
+			this.currentRotationSpeed = currentRotationSign * (Math.abs(this.currentRotationSpeed) - (0.05 * Math.abs(this.currentRotationSpeed) * dt));
 			if (signedAngleBetween < 0) {
-				this.currentRotationSpeed -= this.rotationAcceleration;
+				this.currentRotationSpeed -= this.rotationAcceleration * dt;
 				this.currentRotationSpeed = Math.max(this.maxRotationSpeed * -1, this.currentRotationSpeed);
 			} else {
-				this.currentRotationSpeed += this.rotationAcceleration;
+				this.currentRotationSpeed += this.rotationAcceleration * dt;
 				this.currentRotationSpeed = Math.min(this.maxRotationSpeed, this.currentRotationSpeed);
 			}
 		} else {
-			this.currentRotationSpeed *= 0.97;
+			var currentRotationSign = 1;
+			if (this.currentRotationSpeed == 0) {
+				currentRotationSign = 1;
+			} else {
+				currentRotationSign = this.currentRotationSpeed / Math.abs(this.currentRotationSpeed);
+			}
+			this.currentRotationSpeed = currentRotationSign * (Math.abs(this.currentRotationSpeed) - (0.03 * Math.abs(this.currentRotationSpeed) * dt));
 		}
 
-		var newTurretAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * Math.PI / 180);
+		var newFacingAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * dt * Math.PI / 180);
 
-		var newFacingVector = new Vector(Math.cos(newTurretAngle), Math.sin(newTurretAngle));
+		var newFacingVector = new Vector(Math.cos(newFacingAngle), Math.sin(newFacingAngle));
 
 		this.facingVector = newFacingVector.normalize();
 
@@ -153,8 +166,8 @@ class Projectile {
 
 		var velocity = this.facingVector.normalize().multiply(this.speed);
 
-		this.x = this.x + velocity.getX();
-		this.y = this.y + velocity.getY();
+		this.x = this.x + velocity.getX() * dt;
+		this.y = this.y + velocity.getY() * dt;
 
 		if (this.x < 0 || this.x > ctx.canvas.width || this.y < 0 || this.y > ctx.canvas.height) {
 			this.inBounds = false;

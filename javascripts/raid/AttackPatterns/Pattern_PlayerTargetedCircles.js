@@ -4,11 +4,11 @@
 class Pattern_PlayerTargetedCircles extends AttackPattern {
 	constructor() {
 		super();
-		this.duration = 250;
-		this.delayBetween = 30;
+		this.duration = 4;
+		this.delayBetweenAttacks = 0.5;
 		this.circlesRadii = 40;
-		this.attackDelay = 150;
-		this.attackDuration = 200;
+		this.attackDelay = 2.5;
+		this.attackDuration = 3.5;
 		this.attackColor = "crimson";
 	}
 

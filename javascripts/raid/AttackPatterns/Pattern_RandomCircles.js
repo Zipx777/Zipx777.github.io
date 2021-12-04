@@ -5,11 +5,11 @@ class Pattern_RandomCircles extends AttackPattern {
 	constructor() {
 		super();
 		this.attackColor = "purple";
-		this.duration = 150;
-		this.delayBetween = 20;
+		this.duration = 3;
+		this.delayBetweenAttacks = 0.5;
 		this.circlesRadii = 75;
-		this.attackDelay = 200;
-		this.attackDuration = 150;
+		this.attackDelay = 3;
+		this.attackDuration = 3;
 	}
 
 	calculateAttackLocation(player, boss, ctx) {

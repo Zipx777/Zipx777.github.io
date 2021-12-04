@@ -7,10 +7,10 @@ class Attack_Circle {
 		this.color = color || "pink";
 		this.alpha = 1;
 		this.radius = 50;
-		this.tickCount = 0;
-		this.delay = 50;
-		this.duration = 50;
-		this.damage = 1;
+		this.timeElapsed = 0;
+		this.delay = 1;
+		this.duration = 1;
+		this.damage = 60;
 
 		this.finished = false;
 	}
@@ -19,26 +19,26 @@ class Attack_Circle {
 		return this.finished;
 	}
 
-	extraUpdateLogic(player, boss, ctx) {
+	extraUpdateLogic(dt, player, boss, ctx) {
 
 	}
 
 	//update CircleAttack position
-	update(player, boss, ctx) {
-		this.extraUpdateLogic(player, boss, ctx);
+	update(dt, player, boss, ctx) {
+		this.extraUpdateLogic(dt, player, boss, ctx);
 
 		var distBetweenSquared = Math.pow(player.getX() - this.x, 2) + Math.pow(player.getY() - this.y, 2);
-		if (this.tickCount > this.delay) {
+		if (this.timeElapsed > this.delay) {
 			if (distBetweenSquared < Math.pow(this.radius, 2)) {
-				player.takeDamage(this.damage);
+				player.takeDamage(this.damage * dt);
 			}
 		}
 
-		if (this.tickCount > this.delay + this.duration) {
+		if (this.timeElapsed > this.delay + this.duration) {
 			this.finished = true;
 		}
 
-		this.tickCount++;
+		this.timeElapsed += dt;
 	}
 
 	//draws CircleAttack on canvas context passed to it
@@ -46,17 +46,17 @@ class Attack_Circle {
 		ctx.save();
 		ctx.translate(this.x,this.y);
 
-		if (this.tickCount <= this.delay) {
+		if (this.timeElapsed <= this.delay) {
 			ctx.strokeStyle = this.color;
-			ctx.globalAlpha = Math.min(1, Math.max(0.5, (this.tickCount / this.delay)));
+			ctx.globalAlpha = Math.min(1, Math.max(0.5, (this.timeElapsed / this.delay)));
 			ctx.beginPath();
 			ctx.arc(0, 0, this.radius, 0, 2 * Math.PI, true);
 			ctx.stroke();
 
 			ctx.fillStyle = this.color;
-			ctx.globalAlpha = 0.6 * Math.max(0.2, (this.tickCount / this.delay));
+			ctx.globalAlpha = 0.6 * Math.max(0.2, (this.timeElapsed / this.delay));
 			ctx.beginPath();
-			ctx.arc(0, 0, this.radius * (this.tickCount / this.delay), 0, 2 * Math.PI, true);
+			ctx.arc(0, 0, this.radius * (this.timeElapsed / this.delay), 0, 2 * Math.PI, true);
 			ctx.fill();
 
 		} else {

@@ -3,8 +3,8 @@ class Skill_StormStrike extends Skill {
 	constructor(skillId) {
 		super(skillId);
 		this.name = "Storm Strike";
-		this.baseCooldown = 450; //remember cooldown for after Ascendance ends
-		this.cooldown = 450;
+		this.baseCooldown = 7.5; //remember cooldown for after Ascendance ends
+		this.cooldown = 7.5;
 		this.baseRange = 100;
 		this.range = 100;
 		this.numProj = 2;
@@ -51,7 +51,7 @@ class Skill_StormStrike extends Skill {
 		return false;
 	}
 
-	extraUpdateLogic(player) {
+	extraUpdateLogic(dt, player) {
 		this.cooldown = this.baseCooldown * player.hasteMultiplier;
 		this.range = this.baseRange;
 		var ascendanceStatus = player.getStatus("Status_Ascendance");

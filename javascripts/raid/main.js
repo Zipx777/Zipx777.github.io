@@ -1,6 +1,5 @@
 var canvas,
 	ctx,
-	tickCount,
 	player,
 	keybinds,
 	skillButtons,
@@ -26,7 +25,9 @@ var canvas,
 	now,
 	then,
 	fpsInterval,
-	startTime;
+	startTime,
+	timeElapsed,
+	windowFocus;
 
 //document ready function
 $(function() {
@@ -48,7 +49,6 @@ function initializeVariables() {
 	//height and width set in the .css for #raidArea
 	canvas.attr("width", canvasWidth).attr("height", canvasHeight);
 
-	tickCount = 0;
 	gameOver = false;
 
 	projectiles = [];
@@ -98,12 +98,12 @@ function initializeVariables() {
 		skillButtons[skills[i].buttonId] = skills[i];
 	}
 
-	baseGcdCooldown = 90;
-	gcdCooldown = 90;
+	baseGcdCooldown = 1.5;
+	gcdCooldown = 1.5;
 	gcdTracker = 0;
 
 	skillSelectedID = null;
-	skillSelectBuffer = 30;
+	skillSelectBuffer = 0.5;
 	skillSelectBufferTracker = 0;
 
 	casting = false;
@@ -119,6 +119,10 @@ function initializeVariables() {
 	mouseY = player.getY();
 
 	wasdKeys = new Keys("wasd");
+
+	windowFocus = true;
+
+	timeElapsed = 0;
 }
 
 function setEventHandlers() {
@@ -129,6 +133,14 @@ function setEventHandlers() {
 
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
+
+	$(window).focus(function() {
+		then = Date.now();
+		windowFocus = true;
+	});
+	$(window).blur(function() {
+		windowFocus = false;
+	});
 }
 
 function raidAreaMouseMove(e) {
@@ -227,7 +239,7 @@ function populateResultsReport() {
 	for (var key in boss.damageReport) {
 		totalDamage += boss.damageReport[key];
 	}
-	var totalDps = totalDamage / (boss.tickCount / 60);
+	var totalDps = totalDamage / boss.timeElapsed;
 	var damageTaken = player.maxHealth - player.currentHealth;
 	var damageTakenQuip = "Umm healers? Hello?!";
 	if (damageTaken == 0) {
@@ -303,10 +315,10 @@ function animate() {
 
 	now = Date.now();
 	elapsed = now - then;
-	if (elapsed >= fpsInterval) {
-		then = now - (elapsed % fpsInterval);
+	if (elapsed > 0 && windowFocus) { //>= fpsInterval) {
+		then = now;// - (elapsed % fpsInterval);
 
-		update();
+		update(elapsed / 1000);
 
 		draw();
 
@@ -370,7 +382,7 @@ function checkProjForCollisions(proj) {
 }
 
 //update player and object states
-function update() {
+function update(dt) {
 	//show results info
 	if ((!boss.isAlive() || !player.isAlive()) && !gameOver) {
 		gameOver = true;
@@ -381,8 +393,8 @@ function update() {
 		return;
 	}
 
-	player.update(mouseX, mouseY, wasdKeys, ctx);
-	boss.update(player, boss, ctx);
+	player.update(dt, mouseX, mouseY, wasdKeys, ctx);
+	boss.update(dt, player, boss, ctx);
 
 	this.gcdCooldown = this.baseGcdCooldown * player.hasteMultiplier;
 
@@ -400,12 +412,12 @@ function update() {
 
 
 	if (gcdTracker > 0) {
-		gcdTracker = Math.min(gcdTracker - 1, gcdCooldown);
+		gcdTracker = Math.min(gcdTracker - dt, gcdCooldown);
 		$("#gcdDisplay").text(gcdTracker);
 	}
 
 	$.each(skills, function(i,skill) {
-		skill.update(player, boss);
+		skill.update(dt, player, boss);
 		if (skill.autoActivate && !skillToCast) {
 			if (skill.inRange && !skill.onCooldown) {
 				skill.activate(ctx, player, boss, projectiles);
@@ -427,7 +439,7 @@ function update() {
 				stopCasting();
 			}
 		} else {
-			castingTimer--;
+			castingTimer -= dt;
 			$(".skillCasting").removeClass("skillCasting");
 			skillToCast.skillButtonElement.addClass("skillCasting");
 		}
@@ -435,7 +447,7 @@ function update() {
 
 	if (skillSelectedID) {
 		pressSkillButton(skillSelectedID);
-		skillSelectBufferTracker--;
+		skillSelectBufferTracker -= dt;
 		if (skillSelectBufferTracker <= 0) {
 			skillSelectedID = null;
 			skillSelectBufferTracker = 0;
@@ -447,7 +459,7 @@ function update() {
 	var activeProjectiles = [];
 	for (var i = 0; i < projectiles.length; i++) {
 		if (projectiles[i].isInBounds()) {
-			projectiles[i].update(boss);
+			projectiles[i].update(dt, boss);
 
 			if (checkProjForCollisions(projectiles[i])) {
 					projectiles[i].explode(effects);
@@ -462,14 +474,14 @@ function update() {
 
 	var activeEffects = [];
 	$.each(effects, function(i,effect) {
-		effect.update();
+		effect.update(dt);
 		if (effect.isAlive()) {
 			activeEffects.push(effect);
 		}
 	});
 	effects = activeEffects;
 
-	tickCount++;
+	timeElapsed += dt;
 }
 
 //draw player and raid

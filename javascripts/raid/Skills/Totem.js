@@ -13,7 +13,7 @@ class Totem {
 		this.statusToApply = null;
 
 		this.duration = 100;
-		this.tickCount = 0;
+		this.timeElapsed = 0;
 
 		this.alive = true;
 	}
@@ -29,8 +29,8 @@ class Totem {
 		return distBetween <= this.range;
 	}
 
-	update(player) {
-		if (this.tickCount >= this.duration) {
+	update(dt, player) {
+		if (this.timeElapsed >= this.duration) {
 			this.alive = false;
 		}
 
@@ -47,7 +47,7 @@ class Totem {
 				player.removeStatus(this.statusToApply.name)
 			}
 		}
-		this.tickCount++;
+		this.timeElapsed += dt;
 	}
 
 	//draws totem
