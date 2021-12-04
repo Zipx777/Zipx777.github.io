@@ -256,7 +256,7 @@ function populateResultsReport() {
 		damageTakenQuip = "Chris, I'm taking this. And this. And this. And that one too.";
 	}
 	$("#overallDpsResult").text(Math.floor(totalDps));
-	$("#damageTakenResult").text(damageTaken);
+	$("#damageTakenResult").text(Math.floor(damageTaken));
 	$("#damageTakenQuip").text(damageTakenQuip);
 	var nextKey = "";
 	var nextDamage = 0;

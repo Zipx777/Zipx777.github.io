@@ -14,10 +14,10 @@ class BossAttackSequence {
 		var loopNumber = Math.floor((this.timeElapsed - (this.timeElapsed % 120)) / 120);
 
 		var newAttackPattern;
-		var nextCase = Math.floor((this.timeElapsed) % 120);
+		var nextCase = Math.floor(this.timeElapsed);
 		if (nextCase > this.lastCase) {
 			this.lastCase = nextCase;
-			switch (nextCase) {
+			switch (nextCase % 120) {
 				case 0:
 					boss.phase = 0;
 					break;
