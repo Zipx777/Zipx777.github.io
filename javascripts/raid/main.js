@@ -276,7 +276,6 @@ function populateResultsReport() {
 			continuing = false;
 		} else {
 			var barWidth = (nextDamage / maxDamage) * 320;
-			console.log(barWidth);
 			var nextRowElement = $(document.createElement("tr"));
 			var skillNameElement = $(document.createElement("td"));
 			skillNameElement.text(nextKey);

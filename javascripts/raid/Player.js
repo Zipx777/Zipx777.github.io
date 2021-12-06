@@ -152,23 +152,28 @@ class Player {
 		var saveStartX = this.x;
 		var saveStartY = this.y;
 
+		var movementVector = new Vector(0,0);
+
 		//update movement
 		if (this.controlMode == 1) {
-			var vectorTowardsMouse = new Vector(targetX - this.x, targetY - this.y);
-			if (vectorTowardsMouse.length() > this.speed) {
-				vectorTowardsMouse = vectorTowardsMouse.normalize().multiply(currentSpeed);
+			movementVector = new Vector(targetX - this.x, targetY - this.y);
+			var xDiffMouse = Math.abs(this.x - targetX);
+			var yDiffMouse = Math.abs(this.y - targetY);
+			movementVector = movementVector.normalize().multiply(currentSpeed).multiply(dt);
+			if (movementVector.length() > 0) {
+				if (xDiffMouse < Math.abs(movementVector.getX())) {
+					this.x = targetX;
+				} else {
+					this.x += movementVector.getX();
+				}
+
+				if (yDiffMouse < Math.abs(movementVector.getY())) {
+					this.y = targetY;
+				} else {
+					this.y += movementVector.getY();
+				}
 			}
-
-			this.x += vectorTowardsMouse.getX();
-			this.y += vectorTowardsMouse.getY();
-
-			//clamp position to within the canvas bounds
-			this.x = Math.max(this.x, 0);
-			this.y = Math.max(this.y, 0);
-			this.x = Math.min(this.x, ctx.canvas.width);
-			this.y = Math.min(this.y, ctx.canvas.height);
 		} else if (this.controlMode == 2) {
-			var movementVector = new Vector(0,0);
 			if (keys.up) {
 				movementVector.setY(movementVector.getY() - 1);
 			}
@@ -186,18 +191,17 @@ class Player {
 			}
 
 			if (movementVector.length() > 0) {
-				movementVector = movementVector.normalize().multiply(currentSpeed);
-
-				this.x += movementVector.getX() * dt;
-				this.y += movementVector.getY() * dt;
-
-				//stop player going out of bounds
-				this.x = Math.max(0, this.x);
-				this.x = Math.min(ctx.canvas.width, this.x);
-				this.y = Math.max(0, this.y);
-				this.y = Math.min(ctx.canvas.height, this.y);
+				movementVector = movementVector.normalize().multiply(currentSpeed).multiply(dt);
+				this.x += movementVector.getX();
+				this.y += movementVector.getY();
 			}
 		}
+
+		//stop player going out of bounds
+		this.x = Math.max(0, this.x);
+		this.x = Math.min(ctx.canvas.width, this.x);
+		this.y = Math.max(0, this.y);
+		this.y = Math.min(ctx.canvas.height, this.y);
 
 		if (this.x == saveStartX && this.y == saveStartY) {
 			this.isMoving = false;
