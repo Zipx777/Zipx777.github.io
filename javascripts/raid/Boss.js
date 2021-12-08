@@ -103,7 +103,7 @@ class Boss {
 			} else {
 				this.damageReport[damageSourceName] += adjustedDamageValue;
 			}
-			console.log("Damage from " + damageSourceName + ": " + Math.floor(adjustedDamageValue));
+			//console.log("Damage from " + damageSourceName + ": " + Math.floor(adjustedDamageValue));
 			var newDamageText = new DamageText(damageSourceName, this.x, this.y - this.radius, adjustedDamageValue, damageColor);
 			if (damageSourceName == "Status_FlameShock" || damageSourceName == "Windfury Weapon" || damageSourceName == "Auto Attack") {
 				newDamageText.isSmall = true;
@@ -112,11 +112,29 @@ class Boss {
 		}
 	}
 
+	updateTimer() {
+		var secondsElapsed = Math.floor(this.timeElapsed);
+		var minutesElapsed = Math.floor(this.timeElapsed / 60);
+		var minutesText = minutesElapsed + ":";
+		var secondsIntoTheMinute = secondsElapsed % 60;
+		var secondsText = "";
+		if (secondsIntoTheMinute == 0) {
+			secondsText = "00";
+		} else if (secondsIntoTheMinute < 10) {
+			secondsText ="0" + secondsIntoTheMinute;
+		} else {
+			secondsText = secondsIntoTheMinute;
+		}
+		$("#timerDiv").text(minutesText + secondsText);
+	}
+
 	//update Boss position/atacks
 	update(dt, player, boss, ctx) {
 		if (!this.fightStarted || !this.isAlive()) {
 			return;
 		}
+
+		this.updateTimer();
 
 		this.bossAttackSequence.update(dt, player, boss, ctx);
 

@@ -1,6 +1,7 @@
 /*Turret*/
 
 #raidArea {
+	clear:right;
 	border: 20px solid black;
 	height: 400px;
 	width: 600px;
@@ -10,6 +11,14 @@
 	background-color: white;
 	height: 100%;
 	width: 100%;
+}
+
+#timerDiv {
+	float: right;
+	clear:left;
+	color: black;
+	line-height: 25px;
+	font-size: 25px;
 }
 
 /*area below the board, contains turnDisplay and resetButton*/
