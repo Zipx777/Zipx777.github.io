@@ -19,15 +19,47 @@ class Player {
 		this.currentMana = 100;
 		this.manaRegenPerTick = 0.01;
 
+		this.skills = [
+			new Skill_StormStrike("eSkill"),
+			new Skill_LightningBolt("qSkill"),
+			new Skill_LavaLash("oneSkill"),
+			new Skill_FrostShock("twoSkill"),
+			new Skill_FlameShock("threeSkill"),
+			new Skill_CrashLightning("fourSkill"),
+
+			new Skill_Bloodlust("zSkill"),
+			new Skill_Ascendance("xSkill"),
+			new Skill_FeralSpirit("vSkill"),
+			new Skill_WindfuryTotem("rSkill"),
+			new Skill_Sundering("fSkill"),
+
+			new Skill_SpiritWalk("cSkill"),
+			new Skill_GhostWolf("fiveSkill"),
+
+			new Skill_HealingSurge("gSkill"),
+			new Skill_AutoAttack(),
+			new Skill_WindfuryWeapon()
+		];
+
 		this.totems = [];
 		this.statuses = [];
+
+		this.maelstromChance = 0.2;
 		this.maelstromStacks = 0;
 		this.snapshotMaelstromStacks = 0; //how many stacks were there when lightning bolt started casting
 
 		this.baseHasteMultiplier = 0.8; //save base haste
 		this.hasteMultiplier = 0.8; //speeds up auto attack and melee cooldowns
 
+		this.stormbringerChance = 0.05;
 		this.stormbringerBuff = false;
+
+		this.windfuryWeaponChance = 0.2;
+
+		this.autoAttackTotalUptime = 0;
+		this.maelstromStacksGenerated = 0;
+		this.maelstromStacksWasted = 0;
+		this.flameShockTotalUptime = 0;
 
 		this.explosionSFXFilePath = "sounds/turrets/playerDeath.wav";
 		this.explosionSFXVolume = 1;
@@ -106,7 +138,12 @@ class Player {
 	}
 
 	addMaelstromStack() {
-		this.maelstromStacks = Math.min(10, this.maelstromStacks + 1);
+		this.maelstromStacks += 1;
+		this.maelstromStacksGenerated++;
+		if (this.maelstromStacks > 10) {
+			this.maelstromStacks = 10;
+			this.maelstromStacksWasted++;
+		}
 	}
 
 	setStartingHealth(value) {
@@ -125,8 +162,55 @@ class Player {
 		return this.currentHealth > 0;
 	}
 
+	getSkillByName(name) {
+		for (var i = 0; i < this.skills.length; i++) {
+			if (this.skills[i].name == name) {
+				return this.skills[i];
+			}
+		}
+		console.log("ERROR: " + name + " skill wasn't found");
+		return null;
+	}
+
+	handleProjectileImpactLogic(proj) {
+		if (proj.isMelee) {
+			//stormbringer
+			if (proj.skillOrigin != "Auto Attack") {
+				if (Math.random() <= this.stormbringerChance) {
+					var stormStrikeSkill = this.getSkillByName("Storm Strike");
+					if (stormStrikeSkill) {
+						stormStrikeSkill.resetCooldown();
+						stormStrikeSkill.skillButtonElement.removeClass("skillProced");
+						stormStrikeSkill.skillButtonElement.addClass("skillProcced");
+						this.stormbringerBuff = true;
+					}
+				}
+			}
+
+			//windfury weapon
+			var windfuryChance = this.windfuryWeaponChance;
+			var doomwindsStatus = this.getStatus("Status_Doomwinds");
+			if (doomwindsStatus) {
+				windfuryChance = doomwindsStatus.doomwindsWindfuryChance;
+			}
+			if (proj.skillOrigin != "Windfury Weapon") {
+				if (Math.random() <= windfuryChance) {
+					var windfuryWeaponSkill = this.getSkillByName("Windfury Weapon");
+					if (windfuryWeaponSkill) {
+						windfuryWeaponSkill.activate(ctx, this, boss, projectiles);
+					}
+				}
+			}
+
+			//maelstrom
+			if (Math.random() <= this.maelstromChance) {
+				this.addMaelstromStack();
+			}
+		}
+	}
+
 	//update Player position and skills
-	update(dt, targetX, targetY, keys, ctx) {
+	update(dt, targetX, targetY, keys, boss, ctx) {
 		this.tookDamageThisFrame = false;
 		this.currentMana = Math.min(this.currentMana + this.manaRegenPerTick, this.maxMana);
 
@@ -226,6 +310,15 @@ class Player {
 			}
 		}
 		this.totems = activeTotems;
+
+		var autoAttackSkill = this.getSkillByName("Auto Attack");
+		if ((boss.fightStarted && autoAttackSkill.onCooldown) ) {
+			this.autoAttackTotalUptime += dt;
+		}
+
+		if (boss.getStatus("Status_FlameShock")) {
+			this.flameShockTotalUptime += dt;
+		}
 	}
 
 	//draws player on canvas context passed to it

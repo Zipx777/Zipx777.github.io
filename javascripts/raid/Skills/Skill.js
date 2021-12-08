@@ -20,10 +20,6 @@ class Skill {
 		this.objectToSpawn = null;
 	}
 
-	onCooldown() {
-		return this.onCooldown;
-	}
-
 	resetCooldown() {
 		this.cooldownTracker = 0;
 		this.onCooldown = false;

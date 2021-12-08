@@ -12,7 +12,6 @@ class Skill_LightningBolt extends Skill {
 
 	extraActivateLogic(player) {
 		player.maelstromStacks -= player.snapshotMaelstromStacks;
-		console.log("Maelstrom Stacks after cast: " + player.maelstromStacks);
 	}
 
 	extraProjectileLogic(proj, player) {

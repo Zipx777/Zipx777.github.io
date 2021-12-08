@@ -51,6 +51,9 @@ function initializeVariables() {
 
 	gameOver = false;
 
+	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
+	boss = new Boss(new BossAttackSequence(), 0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height);
+
 	projectiles = [];
 	effects = [];
 
@@ -71,31 +74,9 @@ function initializeVariables() {
 		82: "rSkill"
 	};
 
-	skills = [
-		new Skill_StormStrike("eSkill"),
-		new Skill_LightningBolt("qSkill"),
-		new Skill_LavaLash("oneSkill"),
-		new Skill_FrostShock("twoSkill"),
-		new Skill_FlameShock("threeSkill"),
-		new Skill_CrashLightning("fourSkill"),
-
-		new Skill_Bloodlust("zSkill"),
-		new Skill_Ascendance("xSkill"),
-		new Skill_FeralSpirit("vSkill"),
-		new Skill_WindfuryTotem("rSkill"),
-		new Skill_Sundering("fSkill"),
-
-		new Skill_SpiritWalk("cSkill"),
-		new Skill_GhostWolf("fiveSkill"),
-
-		new Skill_HealingSurge("gSkill"),
-		new Skill_AutoAttack(),
-		new Skill_WindfuryWeapon()
-	];
-
 	skillButtons = {};
-	for (var i = 0; i < skills.length; i++) {
-		skillButtons[skills[i].buttonId] = skills[i];
+	for (var i = 0; i < player.skills.length; i++) {
+		skillButtons[player.skills[i].buttonId] = player.skills[i];
 	}
 
 	baseGcdCooldown = 1.5;
@@ -109,8 +90,7 @@ function initializeVariables() {
 	casting = false;
 	castingTimer = 0;
 
-	player = new Player(0.2 * ctx.canvas.width, 0.5 * ctx.canvas.height);
-	boss = new Boss(new BossAttackSequence(), 0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height);
+
 
 	freeze = false;
 
@@ -296,6 +276,10 @@ function populateResultsReport() {
 		}
 	}
 	$("#resultsReport").show();
+
+	console.log("Auto Attack uptime: " + (player.autoAttackTotalUptime / boss.timeElapsed));
+	console.log("Maelstrom Stacks not wasted: " + ((player.maelstromStacksGenerated - player.maelstromStacksWasted) / player.maelstromStacksGenerated));
+	console.log("Flame Shock uptime: " + (player.flameShockTotalUptime / boss.timeElapsed));
 }
 
 function startAnimating() {
@@ -331,50 +315,10 @@ function checkProjForCollisions(proj) {
 	//check projectile versus boss
 	if (collisionCheck(proj, boss)) {
 		collisionHappened = true;
-		proj.parent = boss;
+		//proj.parent = boss;
 		boss.handleHitByProjectile(proj);
-		if (proj.isMelee) {
-			//stormbringer
-			var stormbringerChance = 0.05;
-			if (proj.skillOrigin != "Auto Attack") {
-				if (Math.random() <= stormbringerChance) {
-					for (var i = 0; i < skills.length; i++) {
-						if (skills[i].name == "Storm Strike") {
-							skills[i].resetCooldown();
-							skills[i].skillButtonElement.removeClass("skillProced");
-							skills[i].skillButtonElement.addClass("skillProcced");
-							player.stormbringerBuff = true;
-							console.log("Stormbringer proc");
-						}
-					}
-				}
-			}
 
-			//windfury weapon
-			var windfuryChance = 0.2;
-			var doomwindsStatus = player.getStatus("Status_Doomwinds");
-			if (doomwindsStatus) {
-				windfuryChance = doomwindsStatus.doomwindsWindfuryChance;
-			}
-			if (proj.skillOrigin != "Windfury Weapon") {
-				if (Math.random() <= windfuryChance) {
-					var tempSkillReference = null;
-					for (var i = 0; i < skills.length; i++) {
-						if (skills[i].name == "Windfury Weapon") {
-							tempSkillReference = skills[i];
-						}
-					}
-					tempSkillReference.activate(ctx, player, boss, projectiles);
-				}
-			}
-
-
-			//maelstrom
-			var maelstromChance = 0.2;
-			if (Math.random() <= maelstromChance) {
-				player.addMaelstromStack();
-			}
-		}
+		player.handleProjectileImpactLogic(proj);
 	}
 
 	return collisionHappened;
@@ -392,7 +336,7 @@ function update(dt) {
 		return;
 	}
 
-	player.update(dt, mouseX, mouseY, wasdKeys, ctx);
+	player.update(dt, mouseX, mouseY, wasdKeys, boss, ctx);
 	boss.update(dt, player, boss, ctx);
 
 	this.gcdCooldown = this.baseGcdCooldown * player.hasteMultiplier;
@@ -408,14 +352,12 @@ function update(dt) {
 		player.snapshotMaelstromStacks = Math.min(5, player.maelstromStacks);
 	}
 
-
-
 	if (gcdTracker > 0) {
 		gcdTracker = Math.min(gcdTracker - dt, gcdCooldown);
 		$("#gcdDisplay").text(gcdTracker);
 	}
 
-	$.each(skills, function(i,skill) {
+	$.each(player.skills, function(i,skill) {
 		skill.update(dt, player, boss);
 		if (skill.autoActivate && !skillToCast) {
 			if (skill.inRange && !skill.onCooldown) {
@@ -429,7 +371,7 @@ function update(dt) {
 			var skillActivated = skillToCast.activate(ctx, player, boss, projectiles);
 			if (skillActivated) {
 				if (skillToCast.shock) {
-					$.each(skills, function(i,skill) {
+					$.each(player.skills, function(i,skill) {
 						if (skill.shock && skill.name != skillToCast.name) {
 							skill.cooldownActivated();
 						}
