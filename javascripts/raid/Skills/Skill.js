@@ -2,7 +2,7 @@
 class Skill {
 	constructor(skillId) {
 		this.name = "default_skill";
-		this.buttonId = skillId || "default_buttonId";
+		this.buttonId = skillId;
 		this.skillButtonElement = $("#" + this.buttonId);
 		this.skillButtonCooldownTextElement = $("#" + this.buttonId + " .cooldownTextContainer");
 		this.cooldown = 0;
@@ -14,6 +14,7 @@ class Skill {
 		this.range = -1; //negative range means infinite range
 		this.inRange = true;
 		this.projectile = null;
+		this.numProj = 1;
 		this.autoActivate = false; //used to let AutoAttack fire at will
 		this.playerStatusToApply = null; //applies a status (probably a buff) to player when activated
 		this.objectToSpawn = null;
@@ -44,6 +45,17 @@ class Skill {
 
 	}
 
+	extraNumberOfProjectilesLogic(player) {
+		return 0;
+	}
+
+	extraSpawnFacingLogic(initialAngle, i) {
+		var newAngle = initialAngle;
+		newAngle += (Math.PI/12 * Math.pow(-1, i));
+		newAngle += ((Math.random() * 0.2) - 0.1);
+		return newAngle;
+	}
+
 	extraProjectileLogic(proj) {
 
 	}
@@ -55,11 +67,27 @@ class Skill {
 			//console.log(this.name + " activated");
 			this.cooldownActivated();
 			if (this.projectile) {
-				var newProj = new this.projectile(player.getX(), player.getY(), new Vector(boss.getX() - player.getX(), boss.getY() - player.getY()));
-				newProj.skillOrigin = this.name;
-				newProj.isMelee = this.isMelee;
-				this.extraProjectileLogic(newProj, player);
-				projectiles.push(newProj);
+				var vectorToBoss = new Vector(boss.getX() - player.getX(), boss.getY() - player.getY());
+				var newProj;
+				var spawnFacingVector;
+				var projectilesToFire = this.numProj;
+				projectilesToFire += this.extraNumberOfProjectilesLogic(player);
+				for (var i = 0; i < projectilesToFire; i++) {
+					spawnFacingVector = new Vector(1,1);
+					spawnFacingVector.setAngle(vectorToBoss.toAngle());
+
+					if (this.numProj > 1) {
+						var tempAngle = spawnFacingVector.toAngle();
+						spawnFacingVector.setAngle(this.extraSpawnFacingLogic(tempAngle, i));
+					}
+
+					newProj = new this.projectile(player.getX(), player.getY(), spawnFacingVector);
+					newProj.skillOrigin = this.name;
+					newProj.isMelee = this.isMelee;
+					this.extraProjectileLogic(newProj, player);
+					projectiles.push(newProj);
+				}
+
 			}
 			if (this.playerStatusToApply) {
 				var newStatusToApply = new this.playerStatusToApply;
