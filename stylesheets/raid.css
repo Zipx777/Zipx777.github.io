@@ -1,5 +1,9 @@
 /*Turret*/
 
+td {
+	vertical-align: middle;
+}
+
 #raidArea {
 	clear:right;
 	border: 20px solid black;
@@ -133,8 +137,32 @@
 	display: none;
 }
 
+#statTrackers {
+	border: 2px solid black;
+}
+
 #damageBreakdown {
 	border: 2px solid black;
+}
+
+.statTrackerNameCell {
+	width: 150px;
+}
+
+.statTrackerNumberCell {
+	width: 50px;
+	text-align: center;
+}
+
+.statTrackerBarCell {
+	width: 350px;
+	padding: 0px;
+	height: 35px;
+}
+
+.statTrackerBar {
+	background-color: black;
+	height: 100%;
 }
 
 .damageBreakdownBar {

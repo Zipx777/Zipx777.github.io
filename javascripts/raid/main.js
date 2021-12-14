@@ -238,6 +238,56 @@ function populateResultsReport() {
 	$("#overallDpsResult").text(Math.floor(totalDps));
 	$("#damageTakenResult").text(Math.floor(damageTaken));
 	$("#damageTakenQuip").text(damageTakenQuip);
+
+	//main stats bars
+	//console.log("Auto Attack uptime: " + (player.autoAttackTotalUptime / boss.timeElapsed));
+	//console.log("Maelstrom Stacks not wasted: " + ((player.maelstromStacksGenerated - player.maelstromStacksWasted) / player.maelstromStacksGenerated));
+	//console.log("Flame Shock uptime: " + (player.flameShockTotalUptime / boss.timeElapsed));
+
+	var autoAttackUptime = player.autoAttackTotalUptime / boss.timeElapsed;
+	var maelstromStacksNotWasted = (Math.max(player.maelstromStacksGenerated, 1) - player.maelstromStacksWasted) / Math.max(player.maelstromStacksGenerated, 1);
+	var flameShockUptime = player.flameShockTotalUptime / boss.timeElapsed;
+	var statsArray = {
+		"Auto Attack uptime": autoAttackUptime,
+		"Maelstrom gained": maelstromStacksNotWasted,
+		"Flame Shock uptime": flameShockUptime
+	};
+
+	for (var stat in statsArray) {
+		console.log(stat + ": " + statsArray[stat]);
+
+		var statTrackRowElement = $(document.createElement("tr"));
+		var statTrackNameElement = $(document.createElement("td"));
+		statTrackNameElement.addClass("statTrackerNameCell");
+		statTrackNameElement.text(stat);
+		var statTrackNumberElement = $(document.createElement("td"));
+		statTrackNumberElement.addClass("statTrackerNumberCell");
+		var prettyNumber = (Math.floor(statsArray[stat] * 1000)) / 10;
+		statTrackNumberElement.text(prettyNumber);
+		var statTrackBarContainerElement = $(document.createElement("td"));
+		statTrackBarContainerElement.addClass("statTrackerBarCell");
+		var statTrackBarElement = $(document.createElement("div"));
+		statTrackBarElement.addClass("statTrackerBar");
+		if (statsArray[stat] >= 0.95) {
+			statTrackBarElement.css("background-color", "lime");
+		} else if (statsArray[stat] >= 0.9) {
+			statTrackBarElement.css("background-color", "green");
+		} else if (statsArray[stat] >= 0.8) {
+			statTrackBarElement.css("background-color", "orange");
+		} else {
+			statTrackBarElement.css("background-color", "firebrick");
+		}
+		var statTrackBarWidth = statsArray[stat] * 350;
+		statTrackBarElement.width(Math.max(1, statTrackBarWidth));
+		statTrackBarContainerElement.append(statTrackBarElement);
+		statTrackRowElement.append(statTrackNameElement);
+		statTrackRowElement.append(statTrackNumberElement);
+		statTrackRowElement.append(statTrackBarContainerElement);
+
+		$("#statTrackers").append(statTrackRowElement);
+	}
+
+	//damage breakdown
 	var nextKey = "";
 	var nextDamage = 0;
 	var maxDamage = 0;
@@ -276,10 +326,6 @@ function populateResultsReport() {
 		}
 	}
 	$("#resultsReport").show();
-
-	console.log("Auto Attack uptime: " + (player.autoAttackTotalUptime / boss.timeElapsed));
-	console.log("Maelstrom Stacks not wasted: " + ((player.maelstromStacksGenerated - player.maelstromStacksWasted) / player.maelstromStacksGenerated));
-	console.log("Flame Shock uptime: " + (player.flameShockTotalUptime / boss.timeElapsed));
 }
 
 function startAnimating() {
