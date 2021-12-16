@@ -12,6 +12,10 @@ class Player {
 		this.isMoving = false;
 		this.tookDamageThisFrame = false;
 
+		this.baseGcdCooldown = 1.5;
+		this.gcdCooldown - 1.5;
+		this.gcdTracker = 1.5;
+
 		this.maxHealth = 500;
 		this.currentHealth = this.maxHealth;
 
@@ -319,10 +323,12 @@ class Player {
 		if (boss.getStatus("Status_FlameShock")) {
 			this.flameShockTotalUptime += dt;
 		}
+
+		this.gcdCooldown = this.baseGcdCooldown * this.hasteMultiplier;
 	}
 
 	//draws player on canvas context passed to it
-	draw(ctx, gcdCooldown, gcdTracker, skillCastTime, castingTime) {
+	draw(ctx, skillCastTime, castingTime) {
 		ctx.save();
 		//totems
 		for (var i = 0; i < this.totems.length; i++) {
@@ -356,7 +362,7 @@ class Player {
 		ctx.restore();
 
 		//gcd
-		if (gcdTracker > 0) {
+		if (this.gcdTracker > 0) {
 			/*
 			//circle line sweep down clockwise
 			ctx.strokeStyle = this.gcdColor;
@@ -369,9 +375,9 @@ class Player {
 			//circle grow from center
 			ctx.beginPath();
 			ctx.strokeStyle = this.gcdColor;
-			ctx.globalAlpha = Math.min(1, Math.max(0, (gcdTracker / gcdCooldown)));
+			ctx.globalAlpha = Math.min(1, Math.max(0, (this.gcdTracker / this.gcdCooldown)));
 			ctx.lineWidth = 1;
-			ctx.arc(this.x, this.y, (this.radius) * ((gcdCooldown - gcdTracker) / gcdCooldown), 0, 2 * Math.PI, true);
+			ctx.arc(this.x, this.y, (this.radius) * ((this.gcdCooldown - this.gcdTracker) / this.gcdCooldown), 0, 2 * Math.PI, true);
 			ctx.stroke();
 		}
 		ctx.restore();

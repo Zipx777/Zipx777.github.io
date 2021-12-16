@@ -3,7 +3,6 @@ var canvas,
 	player,
 	keybinds,
 	skillButtons,
-	skills,
 	skillSelectedID,
 	skillSelectBuffer,
 	skillSelectBufferTracker,
@@ -11,9 +10,7 @@ var canvas,
 	castingTimer,
 	projectiles,
 	effects,
-	baseGcdCooldown,
-	gcdCooldown,
-	gcdTracker,
+
 	boss,
 	freeze,
 	mouseX,
@@ -79,10 +76,6 @@ function initializeVariables() {
 		skillButtons[player.skills[i].buttonId] = player.skills[i];
 	}
 
-	baseGcdCooldown = 1.5;
-	gcdCooldown = 1.5;
-	gcdTracker = 0;
-
 	skillSelectedID = null;
 	skillSelectBuffer = 0.5;
 	skillSelectBufferTracker = 0;
@@ -130,7 +123,7 @@ function raidAreaMouseMove(e) {
 }
 
 function pressSkillButton(skillId) {
-	if (gcdTracker <= 0) {
+	if (player.gcdTracker <= 0) {
 		var skillToActivate = skillButtons[skillId];
 		if (skillToActivate.readyToActivate() && !(player.isMoving && skillToActivate.castTime > 0) && !skillToCast) {
 			castingTimer = skillToActivate.castTime;
@@ -142,7 +135,7 @@ function pressSkillButton(skillId) {
 				player.snapshotMaelstromStacks = Math.min(5, player.maelstromStacks);
 			}
 
-			gcdTracker = gcdCooldown;
+			player.gcdTracker = player.gcdCooldown;
 			skillSelectedID = null;
 			skillSelectBufferTracker = 0;
 			$(".skillSelected").removeClass("skillSelected");
@@ -254,8 +247,6 @@ function populateResultsReport() {
 	};
 
 	for (var stat in statsArray) {
-		console.log(stat + ": " + statsArray[stat]);
-
 		var statTrackRowElement = $(document.createElement("tr"));
 		var statTrackNameElement = $(document.createElement("td"));
 		statTrackNameElement.addClass("statTrackerNameCell");
@@ -263,7 +254,7 @@ function populateResultsReport() {
 		var statTrackNumberElement = $(document.createElement("td"));
 		statTrackNumberElement.addClass("statTrackerNumberCell");
 		var prettyNumber = (Math.floor(statsArray[stat] * 1000)) / 10;
-		statTrackNumberElement.text(prettyNumber);
+		statTrackNumberElement.text(prettyNumber + " %");
 		var statTrackBarContainerElement = $(document.createElement("td"));
 		statTrackBarContainerElement.addClass("statTrackerBarCell");
 		var statTrackBarElement = $(document.createElement("div"));
@@ -385,11 +376,11 @@ function update(dt) {
 	player.update(dt, mouseX, mouseY, wasdKeys, boss, ctx);
 	boss.update(dt, player, boss, ctx);
 
-	this.gcdCooldown = this.baseGcdCooldown * player.hasteMultiplier;
+
 
 	if (player.isMoving) {
 		if (skillToCast && castingTimer > 0) {
-			gcdTracker = 0; //reset the GCD if a cast was interrupted
+			player.gcdTracker = 0; //reset the GCD if a cast was interrupted
 			stopCasting();
 		}
 	}
@@ -398,9 +389,9 @@ function update(dt) {
 		player.snapshotMaelstromStacks = Math.min(5, player.maelstromStacks);
 	}
 
-	if (gcdTracker > 0) {
-		gcdTracker = Math.min(gcdTracker - dt, gcdCooldown);
-		$("#gcdDisplay").text(gcdTracker);
+	if (player.gcdTracker > 0) {
+		player.gcdTracker = Math.min(player.gcdTracker - dt, player.gcdCooldown);
+		$("#gcdDisplay").text(player.gcdTracker);
 	}
 
 	$.each(player.skills, function(i,skill) {
@@ -486,7 +477,7 @@ function draw() {
 	if (skillToCast) {
 		skillCastTime = skillToCast.castTime;
 	}
-	player.draw(ctx, gcdCooldown, gcdTracker, skillCastTime, castingTimer);
+	player.draw(ctx, skillCastTime, castingTimer);
 
 	$.each(projectiles, function(i, proj) {
 		proj.draw(ctx);
