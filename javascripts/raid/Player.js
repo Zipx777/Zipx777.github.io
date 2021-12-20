@@ -14,7 +14,10 @@ class Player {
 
 		this.baseGcdCooldown = 1.5;
 		this.gcdCooldown - 1.5;
-		this.gcdTracker = 1.5;
+		this.gcdTracker = 0;
+
+		this.skillToCast = null;
+		this.castingTimer = 0;
 
 		this.maxHealth = 500;
 		this.currentHealth = this.maxHealth;
@@ -162,6 +165,12 @@ class Player {
 		}
 	}
 
+	stopCasting() {
+		this.skillToCast = null;
+		this.castingTimer = 0; //should be unnecessary
+		$(".skillCasting").removeClass("skillCasting");
+	}
+
 	isAlive() {
 		return this.currentHealth > 0;
 	}
@@ -213,8 +222,29 @@ class Player {
 		}
 	}
 
+	attemptToActivateSkill(skillId) {
+		if (this.gcdTracker <= 0) {
+			var skillToActivate = skillButtons[skillId];
+			if (skillToActivate.readyToActivate() && !(this.isMoving && skillToActivate.castTime > 0) && !this.skillToCast) {
+				this.castingTimer = skillToActivate.castTime;
+				this.skillToCast = skillToActivate;
+				if (skillToActivate.playerStatusToApply != Status_GhostWolf && skillToActivate.name != "Spirit Walk") {
+					this.removeStatus("Status_GhostWolf");
+				}
+				if (this.skillToCast.name == "Lightning Bolt") {
+					this.snapshotMaelstromStacks = Math.min(5, this.maelstromStacks);
+				}
+
+				this.gcdTracker = this.gcdCooldown;
+				skillSelectedID = null;
+				skillSelectBufferTracker = 0;
+				$(".skillSelected").removeClass("skillSelected");
+			}
+		}
+	}
+
 	//update Player position and skills
-	update(dt, targetX, targetY, keys, boss, ctx) {
+	update(dt, targetX, targetY, keys, player, boss, ctx) {
 		this.tookDamageThisFrame = false;
 		this.currentMana = Math.min(this.currentMana + this.manaRegenPerTick, this.maxMana);
 
@@ -325,10 +355,55 @@ class Player {
 		}
 
 		this.gcdCooldown = this.baseGcdCooldown * this.hasteMultiplier;
+
+		if (this.isMoving) {
+			if (this.skillToCast && this.castingTimer > 0) {
+				this.gcdTracker = 0; //reset the GCD if a cast was interrupted
+				this.stopCasting();
+			}
+		}
+
+		if ((this.skillToCast && !(this.skillToCast.name == "Lightning Bolt")) || !this.skillToCast) {
+			this.snapshotMaelstromStacks = Math.min(5, this.maelstromStacks);
+		}
+
+		if (this.gcdTracker > 0) {
+			this.gcdTracker = Math.min(this.gcdTracker - dt, this.gcdCooldown);
+			$("#gcdDisplay").text(this.gcdTracker);
+		}
+
+		$.each(this.skills, function(i,skill) {
+			skill.update(dt, player, boss);
+			if (skill.autoActivate && !this.skillToCast) {
+				if (skill.inRange && !skill.onCooldown) {
+					skill.activate(ctx, player, boss, projectiles);
+				}
+			}
+		});
+
+		if (this.skillToCast) {
+			if (this.castingTimer <= 0) {
+				var skillActivated = this.skillToCast.activate(ctx, player, boss, projectiles);
+				if (skillActivated) {
+					if (this.skillToCast.shock) {
+						$.each(this.skills, function(i,skill) {
+							if (skill.shock && skill.name != skillActivated.name) {
+								skill.cooldownActivated();
+							}
+						});
+					}
+					this.stopCasting();
+				}
+			} else {
+				this.castingTimer -= dt;
+				$(".skillCasting").removeClass("skillCasting");
+				this.skillToCast.skillButtonElement.addClass("skillCasting");
+			}
+		}
 	}
 
 	//draws player on canvas context passed to it
-	draw(ctx, skillCastTime, castingTime) {
+	draw(ctx) {
 		ctx.save();
 		//totems
 		for (var i = 0; i < this.totems.length; i++) {
@@ -392,10 +467,14 @@ class Player {
 		}
 
 		//casting visual
+		var skillCastTime = 0;
+		if (this.skillToCast) {
+			skillCastTime = this.skillToCast.castTime;
+		}
 		if (skillCastTime > 0) {
 			ctx.beginPath();
 			ctx.fillStyle = this.castingColor;
-			ctx.arc(this.x, this.y, (this.radius - 1) * ((skillCastTime - castingTime) / skillCastTime), 0, 2 * Math.PI, true);
+			ctx.arc(this.x, this.y, (this.radius - 1) * ((skillCastTime - this.castingTimer) / skillCastTime), 0, 2 * Math.PI, true);
 			ctx.fill();
 		}
 

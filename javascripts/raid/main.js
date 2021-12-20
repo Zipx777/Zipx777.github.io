@@ -1,30 +1,28 @@
 var canvas,
 	ctx,
 	player,
-	keybinds,
-	skillButtons,
-	skillSelectedID,
-	skillSelectBuffer,
-	skillSelectBufferTracker,
-	skillToCast,
-	castingTimer,
+	boss,
 	projectiles,
 	effects,
 
-	boss,
-	freeze,
 	mouseX,
 	mouseY,
 	wasdKeys,
-	sounds,
-	score,
+
 	gameOver,
 	now,
 	then,
 	fpsInterval,
 	startTime,
 	timeElapsed,
-	windowFocus;
+	windowFocus,
+
+	keybinds,
+	skillButtons,
+
+	skillSelectedID,
+	skillSelectBuffer,
+	skillSelectBufferTracker;
 
 //document ready function
 $(function() {
@@ -80,13 +78,6 @@ function initializeVariables() {
 	skillSelectBuffer = 0.5;
 	skillSelectBufferTracker = 0;
 
-	casting = false;
-	castingTimer = 0;
-
-
-
-	freeze = false;
-
 	//set initial mouse position to the player so the player doesn't immediately start traveling somewhere
 	mouseX = player.getX();
 	mouseY = player.getY();
@@ -99,7 +90,6 @@ function initializeVariables() {
 }
 
 function setEventHandlers() {
-	$("#raidArea").click(raidAreaClick);
 	$("body").mousemove(raidAreaMouseMove);
 	$("#wasdButton").click(wasdButtonClick);
 	$("#mouseButton").click(mouseButtonClick);
@@ -123,24 +113,7 @@ function raidAreaMouseMove(e) {
 }
 
 function pressSkillButton(skillId) {
-	if (player.gcdTracker <= 0) {
-		var skillToActivate = skillButtons[skillId];
-		if (skillToActivate.readyToActivate() && !(player.isMoving && skillToActivate.castTime > 0) && !skillToCast) {
-			castingTimer = skillToActivate.castTime;
-			skillToCast = skillToActivate;
-			if (skillToActivate.playerStatusToApply != Status_GhostWolf && skillToActivate.name != "Spirit Walk") {
-				player.removeStatus("Status_GhostWolf");
-			}
-			if (skillToCast.name == "Lightning Bolt") {
-				player.snapshotMaelstromStacks = Math.min(5, player.maelstromStacks);
-			}
-
-			player.gcdTracker = player.gcdCooldown;
-			skillSelectedID = null;
-			skillSelectBufferTracker = 0;
-			$(".skillSelected").removeClass("skillSelected");
-		}
-	}
+	player.attemptToActivateSkill(skillId);
 }
 
 function setSelectedSkill(skillID) {
@@ -148,11 +121,7 @@ function setSelectedSkill(skillID) {
 	$("#" + skillID).addClass("skillSelected");
 }
 
-function stopCasting() {
-	skillToCast = null;
-	castingTimer = 0; //should be unnecessary
-	$(".skillCasting").removeClass("skillCasting");
-}
+
 
 //handler when a key is pressed
 function keyDownHandler(e) {
@@ -185,11 +154,6 @@ function wasdButtonClick() {
 	player.setControlMode(2);
 }
 
-function playerTookDamage() {
-	player.takeDamage();
-	freeze = true;
-}
-
 function collisionCheck(target1, target2) {
 	var xDistBetween = target1.getX() - target2.getX();
 	var yDistBetween = target1.getY() - target2.getY();
@@ -200,11 +164,6 @@ function collisionCheck(target1, target2) {
 	} else {
 		return false;
 	}
-}
-
-function raidAreaClick() {
-	//var expSFX = new Audio("sounds/raids/explosion.mp3");
-	//expSFX.play();
 }
 
 function populateResultsReport() {
@@ -338,7 +297,7 @@ function animate() {
 	if (elapsed > 0 && windowFocus) { //>= fpsInterval) {
 		then = now;// - (elapsed % fpsInterval);
 
-		update(elapsed / 1000);
+		update(elapsed / 1000); //dt passed in seconds, average of about 0.016 for 60fps
 
 		draw();
 
@@ -373,55 +332,8 @@ function update(dt) {
 		return;
 	}
 
-	player.update(dt, mouseX, mouseY, wasdKeys, boss, ctx);
+	player.update(dt, mouseX, mouseY, wasdKeys, player, boss, ctx);
 	boss.update(dt, player, boss, ctx);
-
-
-
-	if (player.isMoving) {
-		if (skillToCast && castingTimer > 0) {
-			player.gcdTracker = 0; //reset the GCD if a cast was interrupted
-			stopCasting();
-		}
-	}
-
-	if ((skillToCast && !(skillToCast.name == "Lightning Bolt")) || !skillToCast) {
-		player.snapshotMaelstromStacks = Math.min(5, player.maelstromStacks);
-	}
-
-	if (player.gcdTracker > 0) {
-		player.gcdTracker = Math.min(player.gcdTracker - dt, player.gcdCooldown);
-		$("#gcdDisplay").text(player.gcdTracker);
-	}
-
-	$.each(player.skills, function(i,skill) {
-		skill.update(dt, player, boss);
-		if (skill.autoActivate && !skillToCast) {
-			if (skill.inRange && !skill.onCooldown) {
-				skill.activate(ctx, player, boss, projectiles);
-			}
-		}
-	});
-
-	if (skillToCast) {
-		if (castingTimer <= 0) {
-			var skillActivated = skillToCast.activate(ctx, player, boss, projectiles);
-			if (skillActivated) {
-				if (skillToCast.shock) {
-					$.each(player.skills, function(i,skill) {
-						if (skill.shock && skill.name != skillToCast.name) {
-							skill.cooldownActivated();
-						}
-					});
-				}
-				stopCasting();
-			}
-		} else {
-			castingTimer -= dt;
-			$(".skillCasting").removeClass("skillCasting");
-			skillToCast.skillButtonElement.addClass("skillCasting");
-		}
-	}
 
 	if (skillSelectedID) {
 		pressSkillButton(skillSelectedID);
@@ -473,11 +385,7 @@ function draw() {
 	boss.draw(ctx);
 
 	//draw the player
-	var skillCastTime = 0;
-	if (skillToCast) {
-		skillCastTime = skillToCast.castTime;
-	}
-	player.draw(ctx, skillCastTime, castingTimer);
+	player.draw(ctx);
 
 	$.each(projectiles, function(i, proj) {
 		proj.draw(ctx);
@@ -525,7 +433,7 @@ function draw() {
 	ctx.rect(20,ctx.canvas.height - 15,560,10);
 	ctx.stroke();
 
-	if (!boss.isAlive()) {
+	if (!boss.isAlive()) { //You Win!
 		ctx.save();
 		ctx.font = '100px serif';
 		ctx.textAlign = "center";
@@ -536,7 +444,7 @@ function draw() {
 		ctx.shadowBlur=0;
 		ctx.fillStyle = "orange";
 		ctx.fillText("You Win!", ctx.canvas.width / 2, ctx.canvas.height / 2);
-	} else if (!player.isAlive()) {
+	} else if (!player.isAlive()) { //You Lose :(
 		ctx.font = '100px serif';
 		ctx.textAlign = "center";
 		ctx.shadowColor="black";

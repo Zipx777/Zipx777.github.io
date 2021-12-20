@@ -28,9 +28,11 @@ class Skill {
 	}
 
 	cooldownActivated() {
-		this.onCooldown = true;
-		this.cooldownTracker = this.cooldown;
-		this.skillButtonElement.addClass("skillOnCooldown");
+		if (!this.onCooldown) {
+			this.onCooldown = true;
+			this.cooldownTracker = this.cooldown;
+			this.skillButtonElement.addClass("skillOnCooldown");
+		}
 	}
 
 	readyToActivate() {
