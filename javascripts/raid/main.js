@@ -104,6 +104,9 @@ function setEventHandlers() {
 	$(window).blur(function() {
 		windowFocus = false;
 	});
+	$(window).contextmenu(function() {
+		wasdKeys.reset();
+	});
 }
 
 function raidAreaMouseMove(e) {

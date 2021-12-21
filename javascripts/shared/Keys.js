@@ -6,7 +6,7 @@ var Keys = function(directionType) {
 		up = false,
 		right = false,
 		down = false;
-	
+
 	var caseLeft, caseUp, caseRight, caseDown;
 	if (type == "arrows") {
 		caseLeft = 37;
@@ -19,8 +19,8 @@ var Keys = function(directionType) {
 		caseRight = 68;
 		caseDown = 83;
 	}
-		
-	var onKeyDown = function(e) {			
+
+	var onKeyDown = function(e) {
 		var keycode = e.which;
 		switch(keycode) {
 			case caseLeft:
@@ -37,7 +37,7 @@ var Keys = function(directionType) {
 				break;
 		}
 	}
-	
+
 	var onKeyUp = function(e) {
 		var keycode = e.which;
 		switch(keycode) {
@@ -55,14 +55,14 @@ var Keys = function(directionType) {
 				break;
 		}
 	}
-	
+
 	var reset = function() {
-		left = false;
-		up = false;
-		right = false;
-		down = false;
+		this.left = false;
+		this.up = false;
+		this.right = false;
+		this.down = false;
 	}
-	
+
 	return {
 		up: up,
 		left: left,
