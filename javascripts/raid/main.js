@@ -112,10 +112,6 @@ function raidAreaMouseMove(e) {
 	mouseY = e.pageY - canvasElementOffset.top;
 }
 
-function pressSkillButton(skillId) {
-	player.attemptToActivateSkill(skillId);
-}
-
 function setSelectedSkill(skillID) {
 	$(".skillSelected").removeClass("skillSelected");
 	$("#" + skillID).addClass("skillSelected");
@@ -159,11 +155,8 @@ function collisionCheck(target1, target2) {
 	var yDistBetween = target1.getY() - target2.getY();
 	var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
 	var combinedRadiiSquared = Math.pow(target1.getHitboxRadius(), 2) + Math.pow(target2.getHitboxRadius(), 2);
-	if (distBetweenSquared <= combinedRadiiSquared) {
-		return true;
-	} else {
-		return false;
-	}
+
+	return (distBetweenSquared <= combinedRadiiSquared);
 }
 
 function populateResultsReport() {
@@ -336,7 +329,7 @@ function update(dt) {
 	boss.update(dt, player, boss, ctx);
 
 	if (skillSelectedID) {
-		pressSkillButton(skillSelectedID);
+		player.attemptToActivateSkill(skillSelectedID);
 		skillSelectBufferTracker -= dt;
 		if (skillSelectBufferTracker <= 0) {
 			skillSelectedID = null;
@@ -433,6 +426,7 @@ function draw() {
 	ctx.rect(20,ctx.canvas.height - 15,560,10);
 	ctx.stroke();
 
+	//game over messages
 	if (!boss.isAlive()) { //You Win!
 		ctx.save();
 		ctx.font = '100px serif';
