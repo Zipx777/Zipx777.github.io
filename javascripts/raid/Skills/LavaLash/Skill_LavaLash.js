@@ -3,6 +3,7 @@ class Skill_LavaLash extends Skill {
 	constructor(skillId) {
 		super(skillId);
 		this.name = "Lava Lash";
+		this.backgroundImageFilePath = "javascripts/raid/Skills/LavaLash/icon_lavaLash.jpg";
 		this.baseCooldown = 12;
 		this.cooldown = 12;
 		this.range = 100;

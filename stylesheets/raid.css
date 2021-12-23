@@ -170,55 +170,6 @@ td {
 	height: 20px;
 }
 
-#qSkill {
-	background-image: url("../images/Raid/Skills/icon_lightningBolt.jpg");
-
-}
-
-#eSkill {
-	background-image: url("../images/Raid/Skills/icon_stormStrike.jpg");
-}
-
-#oneSkill {
-	background-image: url("../images/Raid/Skills/icon_lavaLash.jpg");
-}
-
-#twoSkill {
-	background-image: url("../images/Raid/Skills/icon_frostShock.jpg");
-}
-
-#threeSkill {
-	background-image: url("../images/Raid/Skills/icon_flameShock.jpg");
-}
-
-#fourSkill {
-	background-image: url("../images/Raid/Skills/icon_crashLightning.jpg");
-}
-
-#zSkill {
-	background-image: url("../images/Raid/Skills/icon_bloodlust.jpg");
-}
-
-#xSkill {
-	background-image: url("../images/Raid/Skills/icon_ascendance.jpg");
-}
-
-#vSkill {
-	background-image: url("../images/Raid/Skills/icon_feralSpirit.jpg");
-}
-
-#rSkill {
-	background-image: url("../images/Raid/Skills/icon_windfuryTotem.jpg");
-}
-
-#fSkill {
-	background-image: url("../images/Raid/Skills/icon_sundering.jpg");
-}
-
-#cSkill {
-	background-image: url("../images/Raid/Skills/icon_spiritWalk.jpg");
-}
-
-#fiveSkill {
-	background-image: url("../images/Raid/Skills/icon_ghostWolf.jpg");
+.readyToChangeKeybind {
+	background-color: fuchsia;
 }

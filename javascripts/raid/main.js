@@ -22,7 +22,10 @@ var canvas,
 
 	skillSelectedID,
 	skillSelectBuffer,
-	skillSelectBufferTracker;
+	skillSelectBufferTracker,
+
+	changeKeybindState,
+	buttonIdBeingChanged;
 
 //document ready function
 $(function() {
@@ -52,27 +55,33 @@ function initializeVariables() {
 	projectiles = [];
 	effects = [];
 
+	//link buttons to keys
 	keybinds = {
-		69: "eSkill",
-		81: "qSkill",
-		49: "oneSkill",
-		50: "twoSkill",
-		51: "threeSkill",
-		52: "fourSkill",
-		86: "vSkill",
-		90: "zSkill",
-		53: "fiveSkill",
-		67: "cSkill",
-		71: "gSkill",
-		88: "xSkill",
-		70: "fSkill",
-		82: "rSkill"
+		"skill_1": 81,
+		"skill_2": 69,
+		"skill_3": 49,
+		"skill_4": 50,
+		"skill_5": 51,
+		"skill_6": 52,
+		"skill_7": 90,
+		"skill_8": 88,
+		"skill_9": 86,
+		"skill_10": 82,
+		"skill_11": 70,
+		"skill_12": 67,
+		"skill_13": 53
 	};
 
+	//link buttons to skills
 	skillButtons = {};
 	for (var i = 0; i < player.skills.length; i++) {
 		skillButtons[player.skills[i].buttonId] = player.skills[i];
 	}
+
+	//set up button backgrounds/hotkeys
+	$.each(skillButtons, function(buttonId,skill) {
+		skill.skillButtonElement.css("background-image", "url(\"" + skill.backgroundImageFilePath + "\")");
+	});
 
 	skillSelectedID = null;
 	skillSelectBuffer = 0.5;
@@ -84,6 +93,9 @@ function initializeVariables() {
 
 	wasdKeys = new Keys("wasd");
 
+	changeKeybindState = false;
+	buttonIdKeybindBeingChanged = null;
+
 	windowFocus = true;
 
 	timeElapsed = 0;
@@ -93,9 +105,11 @@ function setEventHandlers() {
 	$("body").mousemove(raidAreaMouseMove);
 	$("#wasdButton").click(wasdButtonClick);
 	$("#mouseButton").click(mouseButtonClick);
+	$(".skillButton").click(skillButtonClick);
 
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
+	$(document).mousedown(mouseDownHandler);
 
 	$(window).focus(function() {
 		then = Date.now();
@@ -104,9 +118,11 @@ function setEventHandlers() {
 	$(window).blur(function() {
 		windowFocus = false;
 	});
-	$(window).contextmenu(function() {
-		wasdKeys.reset();
-	});
+
+	$(document). bind("contextmenu",function(e){ return false; });
+	//$(window).contextmenu(function() {
+		//wasdKeys.reset();
+	//});
 }
 
 function raidAreaMouseMove(e) {
@@ -124,25 +140,58 @@ function setSelectedSkill(skillID) {
 
 //handler when a key is pressed
 function keyDownHandler(e) {
-	wasdKeys.onKeyDown(e);
+	var keycode = e.which;
+	console.log(keycode);
+	if (changeKeybindState) {
+		keybinds[buttonIdBeingChanged] = keycode;
+		$("#" + buttonIdBeingChanged + " .skillButtonKeybindDisplay div").text(e.key);
+		$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
+		changeKeybindState = false;
+	} else {
+		wasdKeys.onKeyDown(e);
+		$.each(keybinds, function(buttonID,keyNum) {
+			if (keyNum == keycode) {
+				skillSelectedID = buttonID;
+				skillSelectBufferTracker = skillSelectBuffer;
+				setSelectedSkill(skillSelectedID);
+			}
+		});
+	}
+
+}
+
+function mouseDownHandler(e) {
 	//console.log(e.which);
 	var keycode = e.which;
-	//e = 69, q = 81
-
-	var tempKeys = Object.keys(keybinds);
-
-	for (var i = 0; i < tempKeys.length; i++) {
-		if (tempKeys[i] == keycode) {
-			skillSelectedID = keybinds[keycode];
-			skillSelectBufferTracker = skillSelectBuffer;
-			setSelectedSkill(skillSelectedID);
-		}
+	if (changeKeybindState) {
+		keybinds[buttonIdBeingChanged] = keycode;
+		$("#" + buttonIdBeingChanged + " .skillButtonKeybindDisplay div").text(keycode);
+		$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
+		changeKeybindState = false;
+		buttonIdBeingChanged = null;
+	} else {
+		$.each(keybinds, function(buttonID,keyNum) {
+			if (keyNum == keycode) {
+				skillSelectedID = buttonID;
+				skillSelectBufferTracker = skillSelectBuffer;
+				setSelectedSkill(skillSelectedID);
+			}
+		});
 	}
 }
 
 //handler for when a key is released
 function keyUpHandler(e) {
 	wasdKeys.onKeyUp(e);
+}
+
+function skillButtonClick() {
+	if (!boss.fightStarted) {
+		changeKeybindState = true;
+		buttonIdBeingChanged = $(this).attr("id");
+		$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
+		$("#" + buttonIdBeingChanged).addClass("readyToChangeKeybind");
+	}
 }
 
 function mouseButtonClick() {
@@ -324,7 +373,7 @@ function update(dt) {
 		populateResultsReport();
 	}
 
-	if (gameOver) {
+	if (gameOver || changeKeybindState) {
 		return;
 	}
 

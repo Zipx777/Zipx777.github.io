@@ -27,23 +27,23 @@ class Player {
 		this.manaRegenPerTick = 0.01;
 
 		this.skills = [
-			new Skill_StormStrike("eSkill"),
-			new Skill_LightningBolt("qSkill"),
-			new Skill_LavaLash("oneSkill"),
-			new Skill_FrostShock("twoSkill"),
-			new Skill_FlameShock("threeSkill"),
-			new Skill_CrashLightning("fourSkill"),
+			new Skill_LightningBolt("skill_1"),
+			new Skill_StormStrike("skill_2"),
 
-			new Skill_Bloodlust("zSkill"),
-			new Skill_Ascendance("xSkill"),
-			new Skill_FeralSpirit("vSkill"),
-			new Skill_WindfuryTotem("rSkill"),
-			new Skill_Sundering("fSkill"),
+			new Skill_LavaLash("skill_3"),
+			new Skill_FrostShock("skill_4"),
+			new Skill_FlameShock("skill_5"),
+			new Skill_CrashLightning("skill_6"),
 
-			new Skill_SpiritWalk("cSkill"),
-			new Skill_GhostWolf("fiveSkill"),
+			new Skill_Bloodlust("skill_7"),
+			new Skill_Ascendance("skill_8"),
+			new Skill_FeralSpirit("skill_9"),
+			new Skill_WindfuryTotem("skill_10"),
+			new Skill_Sundering("skill_11"),
 
-			new Skill_HealingSurge("gSkill"),
+			new Skill_SpiritWalk("skill_12"),
+			new Skill_GhostWolf("skill_13"),
+
 			new Skill_AutoAttack(),
 			new Skill_WindfuryWeapon()
 		];

@@ -3,6 +3,7 @@ class Skill_StormStrike extends Skill {
 	constructor(skillId) {
 		super(skillId);
 		this.name = "Storm Strike";
+		this.backgroundImageFilePath = "javascripts/raid/Skills/StormStrike/icon_stormStrike.jpg";
 		this.baseCooldown = 7.5; //remember cooldown for after Ascendance ends
 		this.cooldown = 7.5;
 		this.baseRange = 100;

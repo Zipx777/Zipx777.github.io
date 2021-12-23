@@ -3,6 +3,7 @@ class Skill_CrashLightning extends Skill {
 	constructor(skillId) {
 		super(skillId);
 		this.name = "Crash Lightning";
+		this.backgroundImageFilePath = "javascripts/raid/Skills/CrashLightning/icon_crashLightning.jpg";
 		this.baseCooldown = 9;
 		this.cooldown = 9;
 		this.range = 100;

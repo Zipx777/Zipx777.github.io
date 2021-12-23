@@ -5,6 +5,7 @@ class Skill {
 		this.buttonId = skillId;
 		this.skillButtonElement = $("#" + this.buttonId);
 		this.skillButtonCooldownTextElement = $("#" + this.buttonId + " .cooldownTextContainer");
+		this.backgroundImageFilePath = "javascripts/raid/Skills/icon_default.jpg";
 		this.cooldown = 0;
 		this.onCooldown = false;
 		this.castTime = 0;

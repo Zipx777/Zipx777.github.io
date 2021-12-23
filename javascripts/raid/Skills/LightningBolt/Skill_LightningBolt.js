@@ -3,6 +3,7 @@ class Skill_LightningBolt extends Skill {
 	constructor(skillId) {
 		super(skillId);
 		this.name = "Lightning Bolt";
+		this.backgroundImageFilePath = "javascripts/raid/Skills/LightningBolt/icon_lightningBolt.jpg";
 		this.castTime = 2.5;
 		this.noStacksCastTime = 2.5;
 		this.range = 300;
