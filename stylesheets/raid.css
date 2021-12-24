@@ -171,5 +171,9 @@ td {
 }
 
 .readyToChangeKeybind {
+	background-color: yellow;
+}
+
+.noKeybindSet {
 	background-color: fuchsia;
 }

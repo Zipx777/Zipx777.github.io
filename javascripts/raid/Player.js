@@ -31,8 +31,8 @@ class Player {
 			new Skill_StormStrike("skill_2"),
 
 			new Skill_LavaLash("skill_3"),
-			new Skill_FrostShock("skill_4"),
-			new Skill_FlameShock("skill_5"),
+			new Skill_FlameShock("skill_4"),
+			new Skill_FrostShock("skill_5"),
 			new Skill_CrashLightning("skill_6"),
 
 			new Skill_Bloodlust("skill_7"),

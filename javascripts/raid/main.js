@@ -140,36 +140,43 @@ function setSelectedSkill(skillID) {
 
 //handler when a key is pressed
 function keyDownHandler(e) {
-	var keycode = e.which;
-	console.log(keycode);
-	if (changeKeybindState) {
-		keybinds[buttonIdBeingChanged] = keycode;
-		$("#" + buttonIdBeingChanged + " .skillButtonKeybindDisplay div").text(e.key);
-		$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
-		changeKeybindState = false;
-	} else {
-		wasdKeys.onKeyDown(e);
-		$.each(keybinds, function(buttonID,keyNum) {
-			if (keyNum == keycode) {
-				skillSelectedID = buttonID;
-				skillSelectBufferTracker = skillSelectBuffer;
-				setSelectedSkill(skillSelectedID);
-			}
-		});
-	}
-
+	keyOrMousePressed(e, "key");
 }
 
 function mouseDownHandler(e) {
+	if (e.which != 1) {
+		keyOrMousePressed(e, "mouse");
+	}
+}
+
+function keyOrMousePressed(e, source) {
 	//console.log(e.which);
 	var keycode = e.which;
 	if (changeKeybindState) {
+		$.each(keybinds, function(buttonID,keyNum) {
+			if (keyNum == keycode) {
+				keybinds[buttonID] = null;
+				$("#" + buttonID).addClass("noKeybindSet");
+				$("#" + buttonID + " .skillButtonKeybindDisplay div").text("");
+			}
+		});
 		keybinds[buttonIdBeingChanged] = keycode;
-		$("#" + buttonIdBeingChanged + " .skillButtonKeybindDisplay div").text(keycode);
+		var hotkeyText = "";
+		if (e.key) {
+			hotkeyText = e.key.toUpperCase();
+		} else {
+			hotkeyText = keycode;
+		}
+		if (source == "mouse") {
+			hotkeyText = "m" + hotkeyText;
+		}
+		$("#" + buttonIdBeingChanged + " .skillButtonKeybindDisplay div").text(hotkeyText);
+		$("#" + buttonIdBeingChanged).removeClass("noKeybindSet");
 		$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
 		changeKeybindState = false;
 		buttonIdBeingChanged = null;
 	} else {
+		wasdKeys.onKeyDown(e);
 		$.each(keybinds, function(buttonID,keyNum) {
 			if (keyNum == keycode) {
 				skillSelectedID = buttonID;
@@ -186,10 +193,11 @@ function keyUpHandler(e) {
 }
 
 function skillButtonClick() {
-	if (!boss.fightStarted) {
+	if (!boss.fightStarted && !changeKeybindState) {
 		changeKeybindState = true;
 		buttonIdBeingChanged = $(this).attr("id");
 		$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
+		$("#" + buttonIdBeingChanged).removeClass("noKeybindSet");
 		$("#" + buttonIdBeingChanged).addClass("readyToChangeKeybind");
 	}
 }
@@ -500,6 +508,19 @@ function draw() {
 		ctx.shadowBlur=0;
 		ctx.fillStyle = "red";
 		ctx.fillText("You Died :(", ctx.canvas.width / 2, ctx.canvas.height / 2);
+	}
+
+	if (changeKeybindState) {
+		ctx.save();
+		ctx.font = '100px serif';
+		ctx.textAlign = "center";
+		ctx.shadowColor="black";
+		ctx.shadowBlur=1;
+		ctx.lineWidth=3;
+		ctx.strokeText("Set Keybind", ctx.canvas.width / 2, ctx.canvas.height / 2);
+		ctx.shadowBlur=0;
+		ctx.fillStyle = "yellow";
+		ctx.fillText("Set Keybind", ctx.canvas.width / 2, ctx.canvas.height / 2);
 	}
 
 	if (gameOver) {
