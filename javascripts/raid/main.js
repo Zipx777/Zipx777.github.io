@@ -25,7 +25,9 @@ var canvas,
 	skillSelectBufferTracker,
 
 	changeKeybindState,
-	buttonIdBeingChanged;
+	buttonIdBeingChanged,
+
+	persistentStorage;
 
 //document ready function
 $(function() {
@@ -37,6 +39,11 @@ $(function() {
 });
 
 function initializeVariables() {
+	//can be local or session
+	//local persists after browser close, but if something breaks, someone can be blocked without external help
+	//session is safer cause they can just close and relaunch to unblock
+	persistentStorage = window.sessionStorage;
+
 	canvas = $("#raidCanvas");
 	ctx = canvas[0].getContext("2d");
 
@@ -71,6 +78,23 @@ function initializeVariables() {
 		"skill_12": 67,
 		"skill_13": 53
 	};
+
+	//check for locally saved keybinds and apply if found
+	var savedKeybinds = JSON.parse(persistentStorage.getItem("savedKeybinds"));
+	var savedHotkeyTextForChangedKeybinds = JSON.parse(persistentStorage.getItem("savedHotkeyTextForChangedKeybinds"));
+	console.log(savedKeybinds);
+	console.log(savedHotkeyTextForChangedKeybinds);
+	if (savedKeybinds) {
+		if (savedHotkeyTextForChangedKeybinds) {
+			$.each(savedHotkeyTextForChangedKeybinds, function(buttonId,hotkeyText) {
+				setKeybindOnSkill(buttonId, savedKeybinds[buttonId], hotkeyText)
+			});
+		} else {
+			console.log("We found saved keybinds, but no saved text for the keybinds");
+		}
+	} else {
+		console.log("No saved keybinds detected");
+	}
 
 	//link buttons to skills
 	skillButtons = {};
@@ -136,7 +160,30 @@ function setSelectedSkill(skillID) {
 	$("#" + skillID).addClass("skillSelected");
 }
 
+function setKeybindOnSkill(buttonElementId, keyNum, hotkeyText) {
+	//remove keybind from other skills with that button to avoid duplicates
+	$.each(keybinds, function(buttonID,thisKeyNum) {
+		if (thisKeyNum == keyNum) {
+			keybinds[buttonID] = null;
+			$("#" + buttonID).addClass("noKeybindSet");
+			$("#" + buttonID + " .skillButtonKeybindDisplay div").text("");
+		}
+	});
+	keybinds[buttonElementId] = keyNum;
 
+	$("#" + buttonElementId + " .skillButtonKeybindDisplay div").text(hotkeyText);
+	$("#" + buttonElementId).removeClass("noKeybindSet");
+	$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
+
+	persistentStorage.setItem("savedKeybinds", JSON.stringify(keybinds));
+
+	var savedHotkeyTextForChangedKeybinds = JSON.parse(persistentStorage.getItem("savedHotkeyTextForChangedKeybinds"));
+	if (!savedHotkeyTextForChangedKeybinds) {
+		savedHotkeyTextForChangedKeybinds = {};
+	}
+	savedHotkeyTextForChangedKeybinds[buttonElementId] = hotkeyText;
+	persistentStorage.setItem("savedHotkeyTextForChangedKeybinds", JSON.stringify(savedHotkeyTextForChangedKeybinds));
+}
 
 //handler when a key is pressed
 function keyDownHandler(e) {
@@ -150,31 +197,21 @@ function mouseDownHandler(e) {
 }
 
 function keyOrMousePressed(e, source) {
-	//console.log(e.which);
+	//console.log(source + ":" + e.which + "-" + e.key);
 	var keycode = e.which;
 	if (changeKeybindState) {
-		$.each(keybinds, function(buttonID,keyNum) {
-			if (keyNum == keycode) {
-				keybinds[buttonID] = null;
-				$("#" + buttonID).addClass("noKeybindSet");
-				$("#" + buttonID + " .skillButtonKeybindDisplay div").text("");
-			}
-		});
-		keybinds[buttonIdBeingChanged] = keycode;
 		var hotkeyText = "";
 		if (e.key) {
 			hotkeyText = e.key.toUpperCase();
 		} else {
-			hotkeyText = keycode;
+			hotkeyText = e.which;
 		}
 		if (source == "mouse") {
 			hotkeyText = "m" + hotkeyText;
 		}
-		$("#" + buttonIdBeingChanged + " .skillButtonKeybindDisplay div").text(hotkeyText);
-		$("#" + buttonIdBeingChanged).removeClass("noKeybindSet");
-		$(".readyToChangeKeybind").removeClass("readyToChangeKeybind");
-		changeKeybindState = false;
+		setKeybindOnSkill(buttonIdBeingChanged, e.which, hotkeyText);
 		buttonIdBeingChanged = null;
+		changeKeybindState = false;
 	} else {
 		wasdKeys.onKeyDown(e);
 		$.each(keybinds, function(buttonID,keyNum) {
@@ -208,6 +245,7 @@ function mouseButtonClick() {
 
 function wasdButtonClick() {
 	player.setControlMode(2);
+	alert(window.localStorage.clear());
 }
 
 function collisionCheck(target1, target2) {
