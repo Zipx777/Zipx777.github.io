@@ -82,13 +82,20 @@ function initializeVariables() {
 	//check for locally saved keybinds and apply if found
 	var savedKeybinds = JSON.parse(persistentStorage.getItem("savedKeybinds"));
 	var savedHotkeyTextForChangedKeybinds = JSON.parse(persistentStorage.getItem("savedHotkeyTextForChangedKeybinds"));
-	console.log(savedKeybinds);
-	console.log(savedHotkeyTextForChangedKeybinds);
 	if (savedKeybinds) {
 		if (savedHotkeyTextForChangedKeybinds) {
-			$.each(savedHotkeyTextForChangedKeybinds, function(buttonId,hotkeyText) {
-				setKeybindOnSkill(buttonId, savedKeybinds[buttonId], hotkeyText)
-			});
+			try {
+				console.log("Setting saved keybinds");
+				$.each(savedHotkeyTextForChangedKeybinds, function(buttonId,hotkeyText) {
+					setKeybindOnSkill(buttonId, savedKeybinds[buttonId], hotkeyText);
+					if (hotkeyText == "null") {
+						setKeybindToNull(buttonId);
+					}
+				});
+			} catch(error) {
+				console.log(error);
+			}
+
 		} else {
 			console.log("We found saved keybinds, but no saved text for the keybinds");
 		}
@@ -160,13 +167,18 @@ function setSelectedSkill(skillID) {
 	$("#" + skillID).addClass("skillSelected");
 }
 
+function setKeybindToNull(buttonId) {
+	keybinds[buttonId] = null;
+	$("#" + buttonId).addClass("noKeybindSet");
+	$("#" + buttonId + " .skillButtonKeybindDisplay div").text("");
+}
+
 function setKeybindOnSkill(buttonElementId, keyNum, hotkeyText) {
 	//remove keybind from other skills with that button to avoid duplicates
 	$.each(keybinds, function(buttonID,thisKeyNum) {
 		if (thisKeyNum == keyNum) {
-			keybinds[buttonID] = null;
-			$("#" + buttonID).addClass("noKeybindSet");
-			$("#" + buttonID + " .skillButtonKeybindDisplay div").text("");
+			setKeybindToNull(buttonID);
+			setPersistentStorageKeyValueInItem("savedHotkeyTextForChangedKeybinds", buttonID, "null");
 		}
 	});
 	keybinds[buttonElementId] = keyNum;
@@ -177,12 +189,16 @@ function setKeybindOnSkill(buttonElementId, keyNum, hotkeyText) {
 
 	persistentStorage.setItem("savedKeybinds", JSON.stringify(keybinds));
 
-	var savedHotkeyTextForChangedKeybinds = JSON.parse(persistentStorage.getItem("savedHotkeyTextForChangedKeybinds"));
-	if (!savedHotkeyTextForChangedKeybinds) {
-		savedHotkeyTextForChangedKeybinds = {};
+	setPersistentStorageKeyValueInItem("savedHotkeyTextForChangedKeybinds", buttonElementId, hotkeyText);
+}
+
+function setPersistentStorageKeyValueInItem(item, key, value) {
+	var savedItem = JSON.parse(persistentStorage.getItem(item));
+	if (!savedItem) {
+		savedItem = {};
 	}
-	savedHotkeyTextForChangedKeybinds[buttonElementId] = hotkeyText;
-	persistentStorage.setItem("savedHotkeyTextForChangedKeybinds", JSON.stringify(savedHotkeyTextForChangedKeybinds));
+	savedItem[key] = value;
+	persistentStorage.setItem(item, JSON.stringify(savedItem));
 }
 
 //handler when a key is pressed
@@ -245,7 +261,7 @@ function mouseButtonClick() {
 
 function wasdButtonClick() {
 	player.setControlMode(2);
-	alert(window.localStorage.clear());
+	alert(persistentStorage.clear());
 }
 
 function collisionCheck(target1, target2) {
