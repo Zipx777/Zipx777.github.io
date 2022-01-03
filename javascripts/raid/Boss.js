@@ -8,7 +8,9 @@ class Boss {
 		this.alive = true;
 		this.phase = 0;
 
-		this.speed = 5;
+		this.speed = 50;
+		this.targetDestination = new Vector(this.x,this.y);
+
 		this.color = "black";
 		this.radius = 20;
 		this.hitboxRadiusPercent = 1;
@@ -158,6 +160,20 @@ class Boss {
 
 		if (this.currentHealth <= 0) {
 			this.alive = false;
+		}
+
+		var xDiff = this.targetDestination.getX() - this.x;
+		var yDiff = this.targetDestination.getY() - this.y;
+		var distToTargetDistSquared = Math.pow(xDiff, 2) + Math.pow(yDiff, 2);
+		var distToTravelThisTick = this.speed * dt;
+		if (distToTargetDistSquared <= Math.pow(distToTravelThisTick, 2)) {
+			this.x = this.targetDestination.getX();
+			this.y = this.targetDestination.getY();
+		} else {
+			var movementVector = new Vector(xDiff, yDiff);
+			movementVector = movementVector.normalize().multiply(distToTravelThisTick);
+			this.x += movementVector.getX();
+			this.y += movementVector.getY();
 		}
 
 		this.timeElapsed += dt;

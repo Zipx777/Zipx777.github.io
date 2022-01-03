@@ -18,6 +18,11 @@ var Vector = function(startX, startY) {
 		y = newY;
 	}
 
+	var setCoords = function(newX, newY) {
+		x = newX;
+		y = newY;
+	}
+
 	var setAngle = function(newAngle) {
 		x = Math.cos(newAngle);
 		y = Math.sin(newAngle);
@@ -64,6 +69,7 @@ var Vector = function(startX, startY) {
 		getY: getY,
 		setX: setX,
 		setY: setY,
+		setCoords: setCoords,
 		setAngle: setAngle,
 		length: length,
 		multiply: multiply,

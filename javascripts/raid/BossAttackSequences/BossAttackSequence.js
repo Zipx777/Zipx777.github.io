@@ -23,12 +23,14 @@ class BossAttackSequence {
 					break;
 				case 3:
 					boss.phase = 1;
+					boss.targetDestination.setCoords(ctx.canvas.width / 2, ctx.canvas.height / 2);
 					break;
 				case 5:
-					newAttackPattern = new Pattern_RandomCircles(player, boss, ctx);
+					newAttackPattern = new Pattern_RandomRectangles();
 					newAttackPattern.delayBetween = Math.max(newAttackPattern.delayBetween - (loopNumber * 0.05), 0.1);
 					this.activeAttackPatterns.push(newAttackPattern);
 					break;
+					/*
 				case 15:
 					boss.phase = 0;
 					break;
@@ -96,6 +98,7 @@ class BossAttackSequence {
 					newAttackPattern.attackSpeed += (loopNumber * 0.2);
 					this.activeAttackPatterns.push(newAttackPattern);
 					break;
+					*/
 				}
 		}
 
