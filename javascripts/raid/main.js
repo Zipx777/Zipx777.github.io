@@ -306,10 +306,12 @@ function populateResultsReport() {
 	var autoAttackUptime = player.autoAttackTotalUptime / boss.timeElapsed;
 	var maelstromStacksNotWasted = (Math.max(player.maelstromStacksGenerated, 1) - player.maelstromStacksWasted) / Math.max(player.maelstromStacksGenerated, 1);
 	var flameShockUptime = player.flameShockTotalUptime / boss.timeElapsed;
+	var gcdUptime = player.gcdUptime / boss.timeElapsed;
 	var statsArray = {
 		"Auto Attack uptime": autoAttackUptime,
 		"Maelstrom gained": maelstromStacksNotWasted,
-		"Flame Shock uptime": flameShockUptime
+		"Flame Shock uptime": flameShockUptime,
+		"GCD Uptime": gcdUptime
 	};
 
 	for (var stat in statsArray) {

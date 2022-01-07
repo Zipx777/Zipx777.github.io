@@ -67,6 +67,7 @@ class Player {
 		this.maelstromStacksGenerated = 0;
 		this.maelstromStacksWasted = 0;
 		this.flameShockTotalUptime = 0;
+		this.gcdUptime = 0;
 
 		this.explosionSFXFilePath = "sounds/turrets/playerDeath.wav";
 		this.explosionSFXVolume = 1;
@@ -245,6 +246,23 @@ class Player {
 
 	//update Player position and skills
 	update(dt, targetX, targetY, keys, player, boss, ctx) {
+		
+		//track postgame stats
+		if (boss.fightStarted) {
+			var autoAttackSkill = this.getSkillByName("Auto Attack");
+			if (autoAttackSkill.onCooldown) {
+				this.autoAttackTotalUptime += dt;
+			}
+
+			if (boss.getStatus("Status_FlameShock")) {
+				this.flameShockTotalUptime += dt;
+			}
+
+			if (this.gcdTracker > 0) {
+				this.gcdUptime += dt;
+			}
+		}
+
 		this.tookDamageThisFrame = false;
 		this.currentMana = Math.min(this.currentMana + this.manaRegenPerTick, this.maxMana);
 
@@ -345,15 +363,6 @@ class Player {
 		}
 		this.totems = activeTotems;
 
-		var autoAttackSkill = this.getSkillByName("Auto Attack");
-		if ((boss.fightStarted && autoAttackSkill.onCooldown) ) {
-			this.autoAttackTotalUptime += dt;
-		}
-
-		if (boss.getStatus("Status_FlameShock")) {
-			this.flameShockTotalUptime += dt;
-		}
-
 		this.gcdCooldown = this.baseGcdCooldown * this.hasteMultiplier;
 
 		if (this.isMoving) {
@@ -369,7 +378,6 @@ class Player {
 
 		if (this.gcdTracker > 0) {
 			this.gcdTracker = Math.min(this.gcdTracker - dt, this.gcdCooldown);
-			$("#gcdDisplay").text(this.gcdTracker);
 		}
 
 		$.each(this.skills, function(i,skill) {
