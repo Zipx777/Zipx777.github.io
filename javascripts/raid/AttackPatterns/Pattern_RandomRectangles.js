@@ -9,7 +9,7 @@ class Pattern_RandomRectangles extends AttackPattern {
 		this.duration = 10000;
 		this.delayBetweenAttacks = 0.2;
 		this.attackDelay = 1;
-		this.attackDuration = 0.5;
+		this.attackDuration = 0.3;
 	}
 
 	update(dt, player, boss, ctx) {

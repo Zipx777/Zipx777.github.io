@@ -15,8 +15,6 @@ class Attack_Rectangle {
 		this.color = "pink";
 		this.alpha = 1;
 		this.timeElapsed = 0;
-		this.delay = 1;
-		this.duration = 1;
 		this.damage = 100;
 		this.triggered = false;
 
@@ -109,7 +107,7 @@ class Attack_Rectangle {
 			}
 		}
 
-		if (this.timeElapsed > this.delay + this.duration) {
+		if (this.timeElapsed > (this.delay + this.duration)) {
 			this.finished = true;
 		}
 
@@ -121,25 +119,28 @@ class Attack_Rectangle {
 		ctx.save();
 		//ctx.translate(this.x,this.y);
 
+		var totalX = this.points[0].getX();
+		var totalY = this.points[0].getY();
+		for (var i = 1; i < this.points.length; i++) {
+			totalX += this.points[i].getX();
+			totalY += this.points[i].getY();
+		}
+		var averageX = totalX / this.points.length;
+		var averageY = totalY / this.points.length;
+
 		if (this.timeElapsed <= this.delay) {
 			ctx.strokeStyle = this.color;
 			ctx.globalAlpha = Math.min(1, Math.max(0.5, (this.timeElapsed / this.delay)));
 			ctx.beginPath();
 			ctx.moveTo(this.points[0].getX(), this.points[0].getY());
-			var totalX = this.points[0].getX();
-			var totalY = this.points[0].getY();
 			for (var i = 1; i < this.points.length; i++) {
 				ctx.lineTo(this.points[i].getX(), this.points[i].getY());
-				totalX += this.points[i].getX();
-				totalY += this.points[i].getY();
 			}
-			var averageX = totalX / 4;
-			var averageY = totalY / 4;
 			ctx.lineTo(this.points[0].getX(), this.points[0].getY());
 			ctx.stroke();
 
 			ctx.fillStyle = this.color;
-			ctx.globalAlpha = Math.min(1, Math.max(0.5, (this.timeElapsed / this.delay)));
+			ctx.globalAlpha = Math.min(1, Math.max(0, (this.timeElapsed / this.delay)));
 			ctx.beginPath();
 			ctx.moveTo(averageX + ((this.points[0].getX() - averageX) * this.timeElapsed / this.delay), averageY + ((this.points[0].getY() - averageY) * this.timeElapsed / this.delay));
 			for (var i = 1; i < this.points.length; i++) {
@@ -147,16 +148,15 @@ class Attack_Rectangle {
 			}
 			ctx.lineTo(averageX + ((this.points[0].getX() - averageX) * this.timeElapsed / this.delay), averageY + ((this.points[0].getY() - averageY) * this.timeElapsed / this.delay));
 			ctx.fill();
-
 		} else {
 			ctx.fillStyle = "red";
-			ctx.globalAlpha = Math.min(Math.max(1 - ((this.timeElapsed - this.delay) / this.duration), 0), 1);
+			ctx.globalAlpha = Math.min(Math.max(1 - (2 * (this.timeElapsed - this.delay) / this.duration), 0), 1);
 			ctx.beginPath();
-			ctx.moveTo(this.points[0].getX(), this.points[0].getY());
+			ctx.moveTo(this.points[0].getX() + (averageX - this.points[0].getX()) * ((this.timeElapsed - this.delay) / this.duration), this.points[0].getY() + (averageY - this.points[0].getY()) * ((this.timeElapsed - this.delay) / this.duration));
 			for (var i = 1; i < this.points.length; i++) {
-				ctx.lineTo(this.points[i].getX(), this.points[i].getY());
+				ctx.lineTo(this.points[i].getX() + (averageX - this.points[i].getX()) * ((this.timeElapsed - this.delay) / this.duration), this.points[i].getY() + (averageY - this.points[i].getY()) * ((this.timeElapsed - this.delay) / this.duration));
 			}
-			ctx.lineTo(this.points[0].getX(), this.points[0].getY());
+			ctx.lineTo(this.points[0].getX() + (averageX - this.points[0].getX()) * ((this.timeElapsed - this.delay) / this.duration), this.points[0].getY() + (averageY - this.points[0].getY()) * ((this.timeElapsed - this.delay) / this.duration));
 			ctx.fill();
 		}
 

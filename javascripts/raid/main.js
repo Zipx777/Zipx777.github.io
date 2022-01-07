@@ -150,10 +150,10 @@ function setEventHandlers() {
 		windowFocus = false;
 	});
 
-	$(document). bind("contextmenu",function(e){ return false; });
-	//$(window).contextmenu(function() {
-		//wasdKeys.reset();
-	//});
+	//$(document). bind("contextmenu",function(e){ return false; });
+	$(window).contextmenu(function() {
+		wasdKeys.reset();
+	});
 }
 
 function raidAreaMouseMove(e) {
