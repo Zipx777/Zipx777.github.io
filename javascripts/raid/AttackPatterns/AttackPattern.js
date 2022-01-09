@@ -21,13 +21,12 @@ class AttackPattern {
 	}
 
 	//returns vector with x and y position for the attack
-	calculateAttackLocation(player, boss, ctx) {
-		var attackLocation = new Vector(0.5 * ctx.canvas.width, 0.5 * ctx.canvas.height);
-		return attackLocation;
-	}
-
-	extraAttackSpawnLogic(newAttack, player, boss, ctx) {
-
+	createAttack(player, boss, ctx) {
+		var newAttack = new this.attackType(newAttackLocation.getX(), newAttackLocation.getY(), this.attackColor);
+		newAttack.radius = this.circlesRadii;
+		newAttack.delay = this.attackDelay;
+		newAttack.duration = this.attackDuration;
+		return newAttack;
 	}
 
 	//update AttackPattern
@@ -39,12 +38,7 @@ class AttackPattern {
 				if (this.timeSinceLastAttack >= this.delayBetweenAttacks) {
 					this.timeSinceLastAttack = this.timeSinceLastAttack % this.delayBetweenAttacks;
 					for (var i = 0; i < this.numAttacks; i++) {
-						var newAttackLocation = this.calculateAttackLocation(player, boss, ctx);
-						var newAttack = new this.attackType(newAttackLocation.getX(), newAttackLocation.getY(), this.attackColor);
-						newAttack.radius = this.circlesRadii;
-						newAttack.delay = this.attackDelay;
-						newAttack.duration = this.attackDuration;
-						this.extraAttackSpawnLogic(newAttack, player, boss, ctx);
+						var newAttack = this.createAttack(player, boss, ctx);
 						this.activeAttacks.push(newAttack);
 					}
 				}
@@ -66,8 +60,10 @@ class AttackPattern {
 
 	//draws AttackPattern on canvas context passed to it
 	draw(ctx) {
-		$.each(this.activeAttacks, function (i, activeAttack) {
-			activeAttack.draw(ctx);
-		});
+		//draw earlier attacks on top of newer ones, the earlier ones are the ones that are (usually) closer to exploding
+		//also when the attack goes off, the going-off effect can get drowned out by newer attack windups without this
+		for (var i = this.activeAttacks.length - 1; i >= 0; i--) {
+			this.activeAttacks[i].draw(ctx);
+		}
 	}
 }

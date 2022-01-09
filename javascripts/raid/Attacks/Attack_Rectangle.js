@@ -14,6 +14,10 @@ class Attack_Rectangle {
 
 		this.color = "pink";
 		this.alpha = 1;
+
+		this.delay = 5;
+		this.duration = 5;
+
 		this.timeElapsed = 0;
 		this.damage = 100;
 		this.triggered = false;

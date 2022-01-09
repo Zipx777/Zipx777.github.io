@@ -237,6 +237,7 @@ class Boss {
 			}
 		});
 
+		//write bigger number over the smaller oness
 		$.each(this.damageTexts, function(i, dT) {
 			if (!dT.isSmall) {
 				dT.draw(ctx);
