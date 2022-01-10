@@ -12,15 +12,14 @@ class Pattern_MovingCircleSpray extends AttackPattern {
 		this.attackSpeed = 30;
 	}
 
-	extraAttackSpawnLogic(newAttack, player, boss, ctx) {
+	createAttack(player, boss, ctx) {
+		var newAttack = new this.attackType(boss.x, boss.y, this.attackColor);
 		var randomVector = new Vector(Math.random() - 0.5, Math.random() - 0.5);
 		newAttack.direction = randomVector;
 		newAttack.bounceOffWalls = true;
 		newAttack.speed = this.attackSpeed;
-	}
-
-	calculateAttackLocation(player, boss, ctx) {
-		var attackLocation = new Vector(boss.x, boss.y);
-		return attackLocation;
+		newAttack.delay = this.attackDelay;
+		newAttack.duration = this.attackDuration;
+		return newAttack;
 	}
 }

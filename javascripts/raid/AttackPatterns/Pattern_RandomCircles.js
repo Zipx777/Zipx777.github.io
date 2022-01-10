@@ -12,11 +12,13 @@ class Pattern_RandomCircles extends AttackPattern {
 		this.attackDuration = 3;
 	}
 
-	calculateAttackLocation(player, boss, ctx) {
+	createAttack(player, boss, ctx) {
 		var borderMargin = 10;
 		var randX = Math.random() * (ctx.canvas.width - 2*borderMargin) + borderMargin;
 		var randY = Math.random() * (ctx.canvas.height - 2*borderMargin) + borderMargin;
-		var attackLocation = new Vector(randX, randY);
-		return attackLocation;
+		var newAttack = new this.attackType(randX, randY, this.attackColor);
+		newAttack.delay = this.attackDelay;
+		newAttack.duration = this.attackDuration;
+		return newAttack;
 	}
 }

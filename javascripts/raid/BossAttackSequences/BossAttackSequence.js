@@ -11,8 +11,8 @@ class BossAttackSequence {
 
 	//update BossAttackSequence
 	update(dt, player, boss, ctx) {
-		var loopNumber = Math.floor((this.timeElapsed - (this.timeElapsed % 120)) / 120);
 		var loopDuration = 40;
+		var loopNumber = Math.floor((this.timeElapsed - (this.timeElapsed % loopDuration)) / loopDuration) + 1;
 
 		var newAttackPattern;
 		var nextCase = Math.floor(this.timeElapsed);
@@ -32,6 +32,10 @@ class BossAttackSequence {
 				case 5:
 					newAttackPattern = new Pattern_BossToPlayerRectangles();
 					this.activeAttackPatterns.push(newAttackPattern);
+					if (loopNumber == 2) {
+						var loop2Attack = new Pattern_PlayerTargetedCircles();
+						this.activeAttackPatterns.push(loop2Attack);
+					}
 					break;
 				case 8:
 					newAttackPattern = new Pattern_BossToPlayerRectangles();
@@ -51,6 +55,10 @@ class BossAttackSequence {
 					boss.targetDestination.setCoords(3 * ctx.canvas.width / 4, ctx.canvas.height / 2);
 					newAttackPattern = new Pattern_SynchronizedMassacre();
 					this.activeAttackPatterns.push(newAttackPattern);
+					if (loopNumber == 2) {
+						var loop2Attack = new Pattern_PlayerTargetedCircles();
+						this.activeAttackPatterns.push(loop2Attack);
+					}
 					break;
 				case 26:
 					boss.speed = 2000;
@@ -64,6 +72,10 @@ class BossAttackSequence {
 				case 33:
 					newAttackPattern = new Pattern_Massacre();
 					this.activeAttackPatterns.push(newAttackPattern);
+					if (loopNumber == 2) {
+						var loop2Attack = new Pattern_PlayerTargetedCircles();
+						this.activeAttackPatterns.push(loop2Attack);
+					}
 					break;
 					/*
 				case 15:

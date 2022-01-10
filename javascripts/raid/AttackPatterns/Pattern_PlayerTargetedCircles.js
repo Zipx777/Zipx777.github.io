@@ -4,7 +4,7 @@
 class Pattern_PlayerTargetedCircles extends AttackPattern {
 	constructor() {
 		super();
-		this.duration = 4;
+		this.duration = 7;
 		this.delayBetweenAttacks = 0.5;
 		this.circlesRadii = 40;
 		this.attackDelay = 2.5;
@@ -12,9 +12,11 @@ class Pattern_PlayerTargetedCircles extends AttackPattern {
 		this.attackColor = "crimson";
 	}
 
-	//returns vector with x and y position for the attack
-	calculateAttackLocation(player, boss, ctx) {
-		var attackLocation = new Vector(player.getX(), player.getY());
-		return attackLocation;
+	createAttack(player, boss, ctx) {
+		var borderMargin = 10;
+		var newAttack = new this.attackType(player.getX(), player.getY(), this.attackColor);
+		newAttack.delay = this.attackDelay;
+		newAttack.duration = this.attackDuration;
+		return newAttack;
 	}
 }
