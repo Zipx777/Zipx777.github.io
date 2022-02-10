@@ -276,7 +276,7 @@ function animate() {
 //update player and turret states
 function update() {
 	if (freeze) {
-		//return;
+		return;
 	}
 
 	//update player
