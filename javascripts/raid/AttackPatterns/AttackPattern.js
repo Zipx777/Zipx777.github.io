@@ -4,7 +4,7 @@ class AttackPattern {
 		this.timeElapsed = 0;
 		this.duration = 2;
 		this.delayBetweenAttacks = 1;
-		this.timeSinceLastAttack = 0;
+		this.timeSinceLastAttack = 255;
 		this.attackType = Attack_Circle;
 		this.numAttacks = 1;
 		this.attackColor = "pink";

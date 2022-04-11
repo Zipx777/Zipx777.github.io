@@ -19,7 +19,7 @@ class Attack_Rectangle {
 		this.duration = 5;
 
 		this.timeElapsed = 0;
-		this.damage = 100;
+		this.damage = 50;
 		this.triggered = false;
 
 		this.finished = false;

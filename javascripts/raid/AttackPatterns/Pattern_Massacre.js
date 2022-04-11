@@ -8,7 +8,7 @@ class Pattern_Massacre extends AttackPattern {
 		this.attackType = Attack_Rectangle;
 		this.duration = 5;
 		this.delayBetweenAttacks = 0.2;
-		this.attackDelay = 1;
+		this.attackDelay = 1.2;
 		this.attackDuration = 0.3;
 	}
 

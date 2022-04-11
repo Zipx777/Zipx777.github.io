@@ -6,9 +6,9 @@ class Pattern_BossToPlayerRectangles extends AttackPattern {
 		super();
 		this.attackColor = "pink";
 		this.attackType = Attack_Rectangle;
-		this.duration = 2;
+		this.duration = 1.6;
 		this.delayBetweenAttacks = 0.2;
-		this.attackDelay = 1;
+		this.attackDelay = 1.2;
 		this.attackDuration = 0.3;
 	}
 

@@ -131,9 +131,7 @@ class Projectile {
 
 		if (this.targetInFront) {
 			var currentRotationSign = 1;
-			if (this.currentRotationSpeed == 0) {
-				currentRotationSign = 1;
-			} else {
+			if (this.currentRotationSpeed != 0) {
 				currentRotationSign = this.currentRotationSpeed / Math.abs(this.currentRotationSpeed);
 			}
 			this.currentRotationSpeed = currentRotationSign * (Math.abs(this.currentRotationSpeed) - (0.05 * Math.abs(this.currentRotationSpeed) * dt));
@@ -151,7 +149,7 @@ class Projectile {
 			} else {
 				currentRotationSign = this.currentRotationSpeed / Math.abs(this.currentRotationSpeed);
 			}
-			this.currentRotationSpeed = currentRotationSign * (Math.abs(this.currentRotationSpeed) - (0.03 * Math.abs(this.currentRotationSpeed) * dt));
+			//this.currentRotationSpeed = currentRotationSign * (Math.abs(this.currentRotationSpeed) - (0.03 * Math.abs(this.currentRotationSpeed) * dt));
 		}
 
 		var newFacingAngle = this.facingVector.toAngle() + (this.currentRotationSpeed * dt * Math.PI / 180);
@@ -170,7 +168,7 @@ class Projectile {
 		this.y = this.y + velocity.getY() * dt;
 
 		if (this.x < 0 || this.x > ctx.canvas.width || this.y < 0 || this.y > ctx.canvas.height) {
-			this.inBounds = false;
+			//this.inBounds = false;
 		}
 
 		if (this.alive && this.doomed) {
