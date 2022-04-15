@@ -6,7 +6,5 @@ class Projectile_WindfuryWeapon extends Projectile {
 		this.color = "blue";
 		this.radius = 2;
 		this.speed = 300;
-		this.maxRotationSpeed = 400;
-		this.rotationAcceleration = 400;
 	}
 }

@@ -27,22 +27,14 @@ class BossAttackSequence {
 						boss.speed = 50;
 						boss.targetDestination.setCoords(ctx.canvas.width / 2, ctx.canvas.height / 2);
 						break;
-					case 10:
-						newAttackPattern = new Pattern_BossToPlayerRectangles();
-						newAttackPattern.duration = 0;
+					case 10: //countdown timer is for 3.5 min, which lines up with this attack starting
+						newAttackPattern = new Pattern_BossTargetedCircle();
+						newAttackPattern.attackDelay = 10;
+						newAttackPattern.attackDuration = 200;
+						newAttackPattern.circlesRadii = 375;
 						this.activeAttackPatterns.push(newAttackPattern);
 						break;
 					case 13:
-						newAttackPattern = new Pattern_BossToPlayerRectangles();
-						newAttackPattern.duration = 1;
-						this.activeAttackPatterns.push(newAttackPattern);
-						break;
-					case 16:
-						newAttackPattern = new Pattern_BossToPlayerRectangles();
-						newAttackPattern.duration = 200;
-						this.activeAttackPatterns.push(newAttackPattern);
-						break;
-					case 20:
 						newAttackPattern = new Pattern_Massacre();
 						newAttackPattern.duration = 200;
 						this.activeAttackPatterns.push(newAttackPattern);

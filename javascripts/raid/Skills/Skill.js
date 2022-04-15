@@ -50,7 +50,7 @@ class Skill {
 
 	extraSpawnFacingLogic(initialAngle, i) {
 		var newAngle = initialAngle;
-		newAngle += (Math.PI/12 * Math.pow(-1, i));
+		newAngle += (Math.PI/8 * Math.pow(-1, i));
 		newAngle += ((Math.random() * 0.2) - 0.1);
 		return newAngle;
 	}

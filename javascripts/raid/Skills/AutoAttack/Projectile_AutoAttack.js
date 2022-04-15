@@ -5,8 +5,5 @@ class Projectile_AutoAttack extends Projectile {
 		this.damage = 30;
 		this.color = "blue";
 		this.radius = 3;
-
-		this.maxRotationSpeed = 250;
-		this.rotationAcceleration = 300;
 	}
 }

@@ -17,9 +17,9 @@ class Projectile {
 		this.skillOrigin = null;
 
 		//homing-specific variables, 0 maxRotationSpeed for no homing
-		this.maxRotationSpeed = 300;
+		this.maxRotationSpeed = 3000;
 		this.currentRotationSpeed = 0;
-		this.rotationAcceleration = 180;
+		this.rotationAcceleration = 600;
 		this.targetInFrontAngle = 180;
 
 		this.doomed = false;

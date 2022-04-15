@@ -115,17 +115,31 @@ class Boss {
 	}
 
 	updateTimer() {
+		var fightDurationTotalSeconds = 210; //matches up with BossAttackSequence timing
 		var secondsElapsed = Math.floor(this.timeElapsed);
-		var minutesElapsed = Math.floor(this.timeElapsed / 60);
-		var minutesText = minutesElapsed + ":";
-		var secondsIntoTheMinute = secondsElapsed % 60;
+		var totalSecondsRemaining = fightDurationTotalSeconds - secondsElapsed;
+
+		var timeUp = false;
+		if (totalSecondsRemaining < 0) {
+			timeUp = true;
+			totalSecondsRemaining = Math.abs(totalSecondsRemaining);
+		}
+
+		var timeRemaining_secondsPart = totalSecondsRemaining % 60;
+		var timeRemaining_minutesPart = Math.floor(totalSecondsRemaining / 60);;
+
+		var minutesText = timeRemaining_minutesPart + ":";
+		if (timeUp) {
+			minutesText = "-" + minutesText;
+			$("#timerDiv").css("color", "red");
+		}
 		var secondsText = "";
-		if (secondsIntoTheMinute == 0) {
+		if (timeRemaining_secondsPart == 0) {
 			secondsText = "00";
-		} else if (secondsIntoTheMinute < 10) {
-			secondsText ="0" + secondsIntoTheMinute;
+		} else if (timeRemaining_secondsPart < 10) {
+			secondsText ="0" + timeRemaining_secondsPart;
 		} else {
-			secondsText = secondsIntoTheMinute;
+			secondsText = timeRemaining_secondsPart;
 		}
 		$("#timerDiv").text(minutesText + secondsText);
 	}

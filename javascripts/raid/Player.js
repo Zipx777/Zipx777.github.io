@@ -246,7 +246,7 @@ class Player {
 
 	//update Player position and skills
 	update(dt, targetX, targetY, keys, player, boss, ctx) {
-		
+
 		//track postgame stats
 		if (boss.fightStarted) {
 			var autoAttackSkill = this.getSkillByName("Auto Attack");
