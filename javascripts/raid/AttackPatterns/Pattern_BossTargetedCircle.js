@@ -10,7 +10,7 @@ class Pattern_BossTargetedCircle extends AttackPattern {
 		this.delayBetweenAttacks = 2;
 		this.circlesRadii = 75;
 		this.attackDelay = 3;
-		this.attackDuration = 45;
+		this.attackDuration = 58;
 		this.attackDamage = 50;
 	}
 

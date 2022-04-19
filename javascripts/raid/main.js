@@ -27,6 +27,12 @@ var canvas,
 	changeKeybindState,
 	buttonIdBeingChanged,
 
+	gameStarted,
+	easyPosition,
+	mediumPosition,
+	hardPosition,
+	difficultySelectorRadius,
+
 	persistentStorage;
 
 //document ready function
@@ -39,6 +45,13 @@ $(function() {
 });
 
 function initializeVariables() {
+	gameStarted = false;
+	difficultySelected = null;
+	difficultySelectorRadius = 30;
+	easyPosition = new Vector(100,300);
+	mediumPosition = new Vector(300,300);
+	hardPosition = new Vector(500,300);
+
 	//can be local or session
 	//local persists after browser close, but if something breaks, someone can be blocked without external help
 	//session is safer cause they can just close and relaunch to unblock
@@ -264,11 +277,11 @@ function wasdButtonClick() {
 	alert(persistentStorage.clear());
 }
 
-function collisionCheck(target1, target2) {
+function collisionCheck(target1, target1Radius, target2, target2Radius) {
 	var xDistBetween = target1.getX() - target2.getX();
 	var yDistBetween = target1.getY() - target2.getY();
 	var distBetweenSquared = Math.pow(xDistBetween, 2) + Math.pow(yDistBetween, 2);
-	var combinedRadiiSquared = Math.pow(target1.getHitboxRadius(), 2) + Math.pow(target2.getHitboxRadius(), 2);
+	var combinedRadiiSquared = Math.pow(target1Radius, 2) + Math.pow(target2Radius, 2);
 
 	return (distBetweenSquared <= combinedRadiiSquared);
 }
@@ -418,7 +431,7 @@ function checkProjForCollisions(proj) {
 	var collisionHappened = false;
 
 	//check projectile versus boss
-	if (collisionCheck(proj, boss)) {
+	if (collisionCheck(proj, proj.getHitboxRadius(), boss, boss.getHitboxRadius())) {
 		collisionHappened = true;
 		//proj.parent = boss;
 		boss.handleHitByProjectile(proj);
@@ -432,7 +445,7 @@ function checkProjForCollisions(proj) {
 //update player and object states
 function update(dt) {
 	//show results info
-	if ((!boss.isAlive() || !player.isAlive()) && !gameOver) {
+	if (gameStarted && (!boss.isAlive() || !player.isAlive()) && !gameOver) {
 		gameOver = true;
 		populateResultsReport();
 	}
@@ -441,11 +454,32 @@ function update(dt) {
 		return;
 	}
 
-	player.update(dt, mouseX, mouseY, wasdKeys, player, boss, ctx);
+	player.update(dt, mouseX, mouseY, wasdKeys, player, boss, gameStarted, ctx);
 	boss.update(dt, player, boss, ctx);
 
+	if (!gameStarted) {
+		if (collisionCheck(player, player.getHitboxRadius(), easyPosition, difficultySelectorRadius)) {
+			//EASY
+			player.setHealth(1000);
+			boss.setHealth(36000); //target dps: 150 over 4min
+			gameStarted = true;
+		} else if (collisionCheck(player, player.getHitboxRadius(), mediumPosition, difficultySelectorRadius)) {
+			//MEDIUM
+			player.setHealth(500);
+			boss.setHealth(48000); //target dps: 200 over 4min
+			gameStarted = true;
+		} else if (collisionCheck(player, player.getHitboxRadius(), hardPosition, difficultySelectorRadius)) {
+			//HARD
+			player.setHealth(300);
+			boss.setHealth(55200); //target dps: 230 over 4min
+			gameStarted = true;
+		}
+	}
+
 	if (skillSelectedID) {
-		player.attemptToActivateSkill(skillSelectedID);
+		if (gameStarted) {
+			player.attemptToActivateSkill(skillSelectedID);
+		}
 		skillSelectBufferTracker -= dt;
 		if (skillSelectBufferTracker <= 0) {
 			skillSelectedID = null;
@@ -489,6 +523,25 @@ function draw() {
 	//clear the board
 	ctx.fillStyle = "lightgray";
 	ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
+
+	//draw difficulty selector circles
+	if (!gameStarted) {
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillStyle = "green";
+		ctx.arc(easyPosition.getX(), easyPosition.getY(), difficultySelectorRadius, 0, 2 * Math.PI, true);
+		ctx.fill();
+
+		ctx.beginPath();
+		ctx.fillStyle = "orange";
+		ctx.arc(mediumPosition.getX(), mediumPosition.getY(), difficultySelectorRadius, 0, 2 * Math.PI, true);
+		ctx.fill();
+
+		ctx.beginPath();
+		ctx.fillStyle = "red";
+		ctx.arc(hardPosition.getX(), hardPosition.getY(), difficultySelectorRadius, 0, 2 * Math.PI, true);
+		ctx.fill();
+	}
 
 	//draw the Boss
 	boss.draw(ctx);

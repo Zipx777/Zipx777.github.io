@@ -95,6 +95,10 @@ class Player {
 		this.y = newY;
 	}
 
+	setHealth(newHealth) {
+		this.maxHealth = newHealth;
+		this.currentHealth = newHealth;
+	}
 	setControlMode(mode) {
 		this.controlMode = mode;
 	}
@@ -245,7 +249,7 @@ class Player {
 	}
 
 	//update Player position and skills
-	update(dt, targetX, targetY, keys, player, boss, ctx) {
+	update(dt, targetX, targetY, keys, player, boss, gameStarted, ctx) {
 
 		//track postgame stats
 		if (boss.fightStarted) {
@@ -383,7 +387,7 @@ class Player {
 		$.each(this.skills, function(i,skill) {
 			skill.update(dt, player, boss);
 			if (skill.autoActivate && !this.skillToCast) {
-				if (skill.inRange && !skill.onCooldown) {
+				if (gameStarted && skill.inRange && !skill.onCooldown) {
 					skill.activate(ctx, player, boss, projectiles);
 				}
 			}

@@ -50,6 +50,11 @@ class Boss {
 		this.y = newY;
 	}
 
+	setHealth(newHealth) {
+		this.maxHealth = newHealth;
+		this.currentHealth = newHealth;
+	}
+
 	//return value of radius
 	getRadius() {
 		return this.radius;
@@ -115,7 +120,7 @@ class Boss {
 	}
 
 	updateTimer() {
-		var fightDurationTotalSeconds = 210; //matches up with BossAttackSequence timing
+		var fightDurationTotalSeconds = 240; //matches up with BossAttackSequence timing
 		var secondsElapsed = Math.floor(this.timeElapsed);
 		var totalSecondsRemaining = fightDurationTotalSeconds - secondsElapsed;
 

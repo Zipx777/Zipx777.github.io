@@ -4,7 +4,7 @@ class Skill_Bloodlust extends Skill {
 		super(skillId);
 		this.name = "Bloodlust";
 		this.backgroundImageFilePath = "javascripts/raid/Skills/Bloodlust/icon_bloodlust.jpg";
-		this.cooldown = 600;
+		this.cooldown = 240;
 		this.playerStatusToApply = Status_Bloodlust;
 	}
 }

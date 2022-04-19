@@ -4,7 +4,7 @@ class Skill_Ascendance extends Skill {
 		super(skillId);
 		this.name = "Ascendance";
 		this.backgroundImageFilePath = "javascripts/raid/Skills/Ascendance/icon_ascendance.jpg";
-		this.cooldown = 180;
+		this.cooldown = 150;
 		this.playerStatusToApply = Status_Ascendance;
 	}
 }
