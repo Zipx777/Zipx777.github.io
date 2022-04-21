@@ -35,12 +35,14 @@ class DamageText {
 
 	draw(ctx) {
 		ctx.save();
+		ctx.beginPath();
 		ctx.font = '16px serif';
 		ctx.textAlign = "center";
 		if (this.isSmall) {
 			ctx.font = '12px serif';
 		} else {
 			ctx.shadowColor="black";
+			ctx.strokeStyle ="black";
 			ctx.shadowBlur=1;
 			ctx.lineWidth=2;
 			ctx.strokeText(Math.floor(this.value), this.x, this.y);

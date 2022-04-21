@@ -9,6 +9,7 @@ class Effect {
 		this.startRadius = this.radius;
 		this.maxRadiusPercent = 0.2;
 		this.maxRadiusMagnitude = 1.5;
+		this.fadeOut = false;
 		this.timeElapsed = 0;
 		this.duration = 0.3;
 		this.doesDamage = false;
@@ -98,7 +99,9 @@ class Effect {
 		ctx.translate(this.x,this.y);
 
 		ctx.fillStyle = this.color;
-
+		if (this.fadeOut) {
+			ctx.globalAlpha = Math.max(1 - (this.timeElapsed / this.duration), 0);
+		}
 		ctx.beginPath();
 		ctx.arc(0, 0, Math.max(0, this.radius), 0, 2 * Math.PI, true);
 		ctx.fill();

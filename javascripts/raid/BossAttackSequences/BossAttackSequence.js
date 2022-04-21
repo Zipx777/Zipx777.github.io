@@ -5,6 +5,7 @@
 class BossAttackSequence {
 	constructor() {
 		this.timeElapsed = 0;
+		this.difficulty = "medium";
 		this.lastCase = -1;
 		this.activeAttackPatterns = [];
 	}

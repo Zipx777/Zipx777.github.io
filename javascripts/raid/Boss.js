@@ -11,10 +11,19 @@ class Boss {
 		this.speed = 50;
 		this.targetDestination = new Vector(this.x,this.y);
 
+		this.teleportActivated = false;
+		this.targetTeleportDestination = null;
+		this.teleportTimeElapsed = 0;
+		this.initialTeleportEffectPlayed = false;
+		this.finalTeleportEffectPlayed = false;
+
 		this.color = "black";
 		this.radius = 20;
 		this.hitboxRadiusPercent = 1;
 		this.timeElapsed = 0;
+
+		this.difficulty = "medium";
+		this.difficultyColor = "orange";
 
 		this.statuses = [];
 		this.damageTexts = [];
@@ -55,6 +64,26 @@ class Boss {
 		this.currentHealth = newHealth;
 	}
 
+	setDifficulty(diff) {
+		if (!(diff == "easy" || diff == "medium" || diff == "hard")) {
+			alert("Difficulty passed to Boss was invalid");
+			return;
+		}
+		this.difficulty = diff;
+		this.bossAttackSequence.difficulty = diff;
+		switch (diff) {
+			case "easy":
+				this.difficultyColor = "green";
+				break;
+			case "medium":
+				this.difficultyColor = "orange";
+				break;
+			case "hard":
+				this.difficultyColor = "red";
+				break;
+		}
+	}
+
 	//return value of radius
 	getRadius() {
 		return this.radius;
@@ -66,6 +95,69 @@ class Boss {
 
 	isAlive() {
 		return this.alive;
+	}
+
+	triggerTeleport(destination) {
+		this.teleportActivated = true;
+		this.targetTeleportDestination = destination;
+	}
+
+	handleTeleportLogic(dt, effects) {
+		if (this.teleportActivated) {
+			if (!this.initialTeleportEffectPlayed) {
+				var initialTeleportEffect = new RingEffect(this.targetTeleportDestination.getX(), this.targetTeleportDestination.getY(), "black");
+				initialTeleportEffect.setRadius(this.radius / 10);
+				initialTeleportEffect.maxRadiusMagnitude = 15;
+				initialTeleportEffect.duration = 1.05;
+				initialTeleportEffect.maxRadiusPercent = 0.85;
+				effects.push(initialTeleportEffect);
+				this.initialTeleportEffectPlayed = true;
+			}
+
+			if (this.teleportTimeElapsed >= 1) {
+				if (!this.finalTeleportEffectPlayed) {
+					var finalTeleportEffect = new Effect(this.targetTeleportDestination.getX(), this.targetTeleportDestination.getY(), this.difficultyColor);
+					var effectSize = 40;
+					if (this.difficulty == "medium") {
+						effectSize = 60;
+					} else if (this.difficulty == "hard") {
+						effectSize = 80;
+					}
+					finalTeleportEffect.setRadius(effectSize);
+					finalTeleportEffect.maxRadiusPercent = 0.1;
+					finalTeleportEffect.duration = 0.5;
+					effects.push(finalTeleportEffect);
+
+					var finalTeleportRingEffect = new RingEffect(this.targetTeleportDestination.getX(), this.targetTeleportDestination.getY(), this.difficultyColor);
+					finalTeleportRingEffect.setRadius(this.radius);
+					finalTeleportRingEffect.maxRadiusPercent = 1;
+					finalTeleportRingEffect.maxRadiusMagnitude = 30;
+					finalTeleportRingEffect.duration = 3;
+					finalTeleportRingEffect.fadeOut = true;
+					effects.push(finalTeleportRingEffect);
+
+					var finalTeleportRingEffect2 = new RingEffect(this.targetTeleportDestination.getX(), this.targetTeleportDestination.getY(), this.difficultyColor);
+					finalTeleportRingEffect2.setRadius(effectSize);
+					finalTeleportRingEffect2.maxRadiusPercent = 1;
+					finalTeleportRingEffect2.maxRadiusMagnitude = 1.5;
+					finalTeleportRingEffect2.duration = 1;
+					finalTeleportRingEffect2.ringWidth = 2;
+					finalTeleportRingEffect2.fadeOut = true;
+					effects.push(finalTeleportRingEffect2);
+
+					this.finalTeleportEffectPlayed = true;
+				}
+			}
+
+			if (this.teleportTimeElapsed >= 1.1) {
+				this.x = this.targetTeleportDestination.getX();
+				this.y = this.targetTeleportDestination.getY();
+				this.teleportActivated = false;
+				this.targetTeleportDestination = null;
+			}
+
+			this.teleportTimeElapsed += dt;
+		}
 	}
 
 	getStatus(statusName) {
@@ -150,7 +242,9 @@ class Boss {
 	}
 
 	//update Boss position/atacks
-	update(dt, player, boss, ctx) {
+	update(dt, player, boss, effects, ctx) {
+		this.handleTeleportLogic(dt, effects);
+
 		if (!this.fightStarted || !this.isAlive()) {
 			return;
 		}
@@ -203,10 +297,15 @@ class Boss {
 		ctx.save();
 		this.bossAttackSequence.draw(ctx);
 
-
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
+		ctx.fill();
+		ctx.restore();
+
+		ctx.beginPath();
+		ctx.fillStyle = this.difficultyColor;
+		ctx.arc(this.x, this.y, this.radius * 0.2, 0, 2 * Math.PI, true);
 		ctx.fill();
 		ctx.restore();
 
