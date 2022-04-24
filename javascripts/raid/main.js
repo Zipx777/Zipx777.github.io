@@ -442,6 +442,45 @@ function checkProjForCollisions(proj) {
 	return collisionHappened;
 }
 
+function checkForDifficultySelected() {
+	if (collisionCheck(player, player.getHitboxRadius(), easyPosition, difficultySelectorRadius)) {
+		//EASY
+		player.setDifficulty("easy");
+		boss.setDifficulty("easy");
+		boss.triggerTeleport(new Vector(0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height));
+		var easySelectRingEffect = new DifficultySelectRingEffect(easyPosition.getX(), easyPosition.getY(), "green", difficultySelectorRadius);
+		effects.push(easySelectRingEffect);
+		gameStarted = true;
+	} else if (collisionCheck(player, player.getHitboxRadius(), mediumPosition, difficultySelectorRadius)) {
+		//MEDIUM
+		player.setDifficulty("medium");
+		boss.setDifficulty("medium");
+		boss.triggerTeleport(new Vector(0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height));
+		var mediumSelectRingEffect = new DifficultySelectRingEffect(mediumPosition.getX(), mediumPosition.getY(), "orange", difficultySelectorRadius);
+		effects.push(mediumSelectRingEffect);
+		gameStarted = true;
+	} else if (collisionCheck(player, player.getHitboxRadius(), hardPosition, difficultySelectorRadius)) {
+		//HARD
+		player.setDifficulty("hard");
+		boss.setDifficulty("hard");
+		boss.triggerTeleport(new Vector(0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height));
+		var hardSelectRingEffect = new DifficultySelectRingEffect(hardPosition.getX(), hardPosition.getY(), "red", difficultySelectorRadius);
+		effects.push(hardSelectRingEffect);
+		gameStarted = true;
+	}
+
+	if (gameStarted) {
+		var easyFadeEffect = new DifficultySelectFadeEffect(easyPosition.getX(), easyPosition.getY(), "green", difficultySelectorRadius);
+		effects.push(easyFadeEffect);
+
+		var mediumFadeEffect = new DifficultySelectFadeEffect(mediumPosition.getX(), mediumPosition.getY(), "orange", difficultySelectorRadius);
+		effects.push(mediumFadeEffect);
+
+		var hardFadeEffect = new DifficultySelectFadeEffect(hardPosition.getX(), hardPosition.getY(), "red", difficultySelectorRadius);
+		effects.push(hardFadeEffect);
+	}
+}
+
 //update player and object states
 function update(dt) {
 	//show results info
@@ -457,75 +496,9 @@ function update(dt) {
 	player.update(dt, mouseX, mouseY, wasdKeys, player, boss, gameStarted, ctx);
 	boss.update(dt, player, boss, effects, ctx);
 
-	//player picked a difficulty
+
 	if (!gameStarted) {
-		if (collisionCheck(player, player.getHitboxRadius(), easyPosition, difficultySelectorRadius)) {
-			//EASY
-			player.setHealth(1000);
-			boss.setHealth(36000); //target dps: 150 over 4min
-			gameStarted = true;
-			boss.setDifficulty("easy");
-			boss.triggerTeleport(new Vector(0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height));
-			var easySelectRingEffect = new RingEffect(easyPosition.getX(), easyPosition.getY(), "green");
-			easySelectRingEffect.setRadius(difficultySelectorRadius);
-			easySelectRingEffect.maxRadiusPercent = 1;
-			easySelectRingEffect.maxRadiusMagnitude = 2;
-			easySelectRingEffect.duration = 0.3;
-			easySelectRingEffect.fadeOut = true;
-			effects.push(easySelectRingEffect);
-		} else if (collisionCheck(player, player.getHitboxRadius(), mediumPosition, difficultySelectorRadius)) {
-			//MEDIUM
-			player.setHealth(500);
-			boss.setHealth(48000); //target dps: 200 over 4min
-			gameStarted = true;
-			boss.setDifficulty("medium");
-			boss.triggerTeleport(new Vector(0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height));
-			var mediumSelectRingEffect = new RingEffect(mediumPosition.getX(), mediumPosition.getY(), "orange");
-			mediumSelectRingEffect.setRadius(difficultySelectorRadius);
-			mediumSelectRingEffect.maxRadiusPercent = 1;
-			mediumSelectRingEffect.maxRadiusMagnitude = 2;
-			mediumSelectRingEffect.duration = 0.3;
-			mediumSelectRingEffect.fadeOut = true;
-			effects.push(mediumSelectRingEffect);
-		} else if (collisionCheck(player, player.getHitboxRadius(), hardPosition, difficultySelectorRadius)) {
-			//HARD
-			player.setHealth(300);
-			boss.setHealth(55200); //target dps: 230 over 4min
-			gameStarted = true;
-			boss.setDifficulty("hard");
-			boss.triggerTeleport(new Vector(0.5 * ctx.canvas.width, 0.3 * ctx.canvas.height));
-			var hardSelectRingEffect = new RingEffect(hardPosition.getX(), hardPosition.getY(), "red");
-			hardSelectRingEffect.setRadius(difficultySelectorRadius);
-			hardSelectRingEffect.maxRadiusPercent = 1;
-			hardSelectRingEffect.maxRadiusMagnitude = 2;
-			hardSelectRingEffect.duration = 0.3;
-			hardSelectRingEffect.fadeOut = true;
-			effects.push(hardSelectRingEffect);
-		}
-
-		if (gameStarted) {
-			var easyFadeEffect = new Effect(easyPosition.getX(), easyPosition.getY(), "green");
-			easyFadeEffect.setRadius(difficultySelectorRadius);
-			easyFadeEffect.duration = 0.1;
-			easyFadeEffect.maxRadiusPercent = 0;
-			easyFadeEffect.maxRadiusMagnitude = 1;
-			effects.push(easyFadeEffect);
-
-			var mediumFadeEffect = new Effect(mediumPosition.getX(), mediumPosition.getY(), "orange");
-			mediumFadeEffect.setRadius(difficultySelectorRadius);
-			mediumFadeEffect.duration = 0.1;
-			mediumFadeEffect.maxRadiusPercent = 0;
-			mediumFadeEffect.maxRadiusMagnitude = 1;
-			effects.push(mediumFadeEffect);
-
-			var hardFadeEffect = new Effect(hardPosition.getX(), hardPosition.getY(), "red");
-			hardFadeEffect.setRadius(difficultySelectorRadius);
-			hardFadeEffect.duration = 0.1;
-			hardFadeEffect.maxRadiusPercent = 0;
-			hardFadeEffect.maxRadiusMagnitude = 1;
-			effects.push(hardFadeEffect);
-
-		}
+		checkForDifficultySelected();
 	}
 
 	if (skillSelectedID) {

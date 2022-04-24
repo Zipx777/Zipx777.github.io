@@ -1,6 +1,7 @@
 //AttackPattern class
 class AttackPattern {
-	constructor() {
+	constructor(difficulty) {
+		this.difficulty = difficulty || "medium";
 		this.timeElapsed = 0;
 		this.duration = 2;
 		this.delayBetweenAttacks = 1;

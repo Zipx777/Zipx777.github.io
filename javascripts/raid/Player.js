@@ -99,6 +99,21 @@ class Player {
 		this.maxHealth = newHealth;
 		this.currentHealth = newHealth;
 	}
+
+	setDifficulty(diff) {
+		switch (diff) {
+			case "easy":
+				this.setHealth(1000); //target dps: 150 over 4min
+				break;
+			case "medium":
+				this.setHealth(500); //target dps: 200 over 4min
+				break;
+			case "hard":
+				this.setHealth(300); //target dps: 230 over 4min
+				break;
+		}
+	}
+
 	setControlMode(mode) {
 		this.controlMode = mode;
 	}
@@ -450,16 +465,7 @@ class Player {
 
 		//gcd
 		if (this.gcdTracker > 0) {
-			/*
-			//circle line sweep down clockwise
-			ctx.strokeStyle = this.gcdColor;
-			ctx.lineWidth = 2;
-			ctx.beginPath();
-			ctx.arc(this.x, this.y, this.radius - 3, -1 * Math.PI/2, 2 * Math.PI * ((gcdCooldown - gcdTracker) / gcdCooldown) - Math.PI/2, true);
-			ctx.stroke();
-			*/
-
-			//circle grow from center
+			//ring grow from center
 			ctx.beginPath();
 			ctx.strokeStyle = this.gcdColor;
 			ctx.globalAlpha = Math.min(1, Math.max(0, (this.gcdTracker / this.gcdCooldown)));

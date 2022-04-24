@@ -2,12 +2,19 @@
 
 //spawns a series of random rectangles throughout the arena
 class Pattern_SynchronizedMassacre extends AttackPattern {
-	constructor() {
-		super();
+	constructor(difficulty) {
+		super(difficulty);
 		this.attackColor = "pink";
 		this.attackType = Attack_Rectangle;
 		this.duration = 5;
-		this.delayBetweenAttacks = 0.2;
+		if (this.difficulty == "easy") {
+			this.delayBetweenAttacks = 0.33;
+		} else if (this.difficulty == "medium") {
+			this.delayBetweenAttacks = 0.25;
+		} else if (this.difficulty == "hard") {
+			this.delayBetweenAttacks = 0.2;
+		}
+
 		this.finalDelayForAll = 3;
 		this.attackDuration = 0.5;
 	}

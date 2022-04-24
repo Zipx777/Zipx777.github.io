@@ -2,13 +2,43 @@
 
 //spawns a series of circles targeted on the player's location
 class Pattern_PlayerTargetedCircles extends AttackPattern {
-	constructor() {
-		super();
-		this.duration = 7;
-		this.delayBetweenAttacks = 0.5;
+	constructor(difficulty) {
+		super(difficulty);
+
+		if (this.difficulty == "easy") {
+			this.duration = 6;
+		} else if (this.difficulty == "medium") {
+			this.duration = 6.5;
+		} else if (this.difficulty == "hard") {
+			this.duration = 7;
+		}
+
+		if (this.difficulty == "easy") {
+			this.delayBetweenAttacks = 1;
+		} else if (this.difficulty == "medium") {
+			this.delayBetweenAttacks = 0.75;
+		} else if (this.difficulty == "hard") {
+			this.delayBetweenAttacks = 0.5;
+		}
+
 		this.circlesRadii = 40;
-		this.attackDelay = 2.5;
-		this.attackDuration = 3.5;
+
+		if (this.difficulty == "easy") {
+			this.attackDelay = 3;
+		} else if (this.difficulty == "medium") {
+			this.attackDelay = 2.5;
+		} else if (this.difficulty == "hard") {
+			this.attackDelay = 2;
+		}
+
+		if (this.difficulty == "easy") {
+			this.attackDuration = 2.5;
+		} else if (this.difficulty == "medium") {
+			this.attackDuration = 3;
+		} else if (this.difficulty == "hard") {
+			this.attackDuration = 3.5;
+		}
+
 		this.attackColor = "crimson";
 	}
 

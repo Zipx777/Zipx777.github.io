@@ -74,12 +74,15 @@ class Boss {
 		switch (diff) {
 			case "easy":
 				this.difficultyColor = "green";
+				this.setHealth(36000); //target dps: 150 over 4min
 				break;
 			case "medium":
 				this.difficultyColor = "orange";
+				this.setHealth(48000); //target dps: 200 over 4min
 				break;
 			case "hard":
 				this.difficultyColor = "red";
+				this.setHealth(60000); //target dps: 250 over 4min
 				break;
 		}
 	}
