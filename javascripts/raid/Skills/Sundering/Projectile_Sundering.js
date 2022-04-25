@@ -5,4 +5,9 @@ class Projectile_Sundering extends Projectile {
 		this.damage = 400;
 		this.color = "peru";
 	}
+
+	extraExplodeEffects(effects) {
+		var extraExplodeRing = new PlayerProjectileImpactEffect(this, this.color);
+		effects.push(extraExplodeRing);
+	}
 }

@@ -11,4 +11,9 @@ class Skill_FeralSpirit extends Skill {
 	extraActivateLogic(player) {
 		player.addMaelstromStack();
 	}
+
+	triggerSkillActivatedEffect(player, effects) {
+		var newActivateEffect = new PlayerSkillActivatedEffect(player, "orange");
+		effects.push(newActivateEffect);
+	}
 }

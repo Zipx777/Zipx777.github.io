@@ -185,11 +185,17 @@ class Projectile {
 		}
 	}
 
+	extraExplodeEffects(effects) {
+
+	}
+
 	explode(effects) {
 		var projExplosion = new Effect(this.getX(), this.getY());
 		projExplosion.setColor(this.getColor());
 		projExplosion.setRadius(this.getRadius());
 		effects.push(projExplosion);
+
+		this.extraExplodeEffects(effects);
 
 		if (this.explosionSFXVolume > 0) {
 			var expSFX = new Audio(this.explosionSFXFilePath);

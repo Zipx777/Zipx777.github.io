@@ -5,5 +5,13 @@ class Projectile_AutoAttack extends Projectile {
 		this.damage = 30;
 		this.color = "blue";
 		this.radius = 3;
+		this.ascendanceBuff = false;
+	}
+
+	extraExplodeEffects(effects) {
+		if (this.ascendanceBuff) {
+			var buffedExplodeRing = new PlayerProjectileImpactEffect(this, this.color);
+			effects.push(buffedExplodeRing);
+		}
 	}
 }

@@ -7,4 +7,9 @@ class Skill_Ascendance extends Skill {
 		this.cooldown = 150;
 		this.playerStatusToApply = Status_Ascendance;
 	}
+
+	triggerSkillActivatedEffect(player, effects) {
+		var newActivateEffect = new PlayerSkillActivatedEffect(player, "blue");
+		effects.push(newActivateEffect);
+	}
 }

@@ -7,6 +7,7 @@ class Status_Ascendance extends Status {
 		this.stormstrikeCooldownMultiplier = 0.4;
 		this.stormstrikeDamageMultiplier = 1.5;
 		this.autoAttackDamageMultiplier = 1.5;
+		this.windfuryWeaponDamageMultiplier = 1.5;
 		this.meleeRange = 300;
 	}
 }

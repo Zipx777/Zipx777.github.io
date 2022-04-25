@@ -4,7 +4,7 @@
 //of attack patterns and trigger them at the appropriate times
 class BossAttackSequence {
 	constructor() {
-		this.timeElapsed = 0 + 120;
+		this.timeElapsed = 0;
 		this.difficulty = "medium";
 		this.lastCase = -1;
 		this.activeAttackPatterns = [];

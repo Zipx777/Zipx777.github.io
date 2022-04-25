@@ -6,5 +6,13 @@ class Projectile_WindfuryWeapon extends Projectile {
 		this.color = "blue";
 		this.radius = 2;
 		this.speed = 300;
+		this.ascendanceBuff = false;
+	}
+
+	extraExplodeEffects(effects) {
+		if (this.ascendanceBuff) {
+			var buffedExplodeRing = new PlayerProjectileImpactEffect(this, this.color);
+			effects.push(buffedExplodeRing);
+		}
 	}
 }

@@ -17,4 +17,12 @@ class Skill_WindfuryWeapon extends Skill {
 		newAngle += ((Math.random() * 0.2) - 0.1);
 		return newAngle;
 	}
+
+	extraProjectileLogic(newProj, player, isFinalProj) {
+		var ascendanceStatus = player.getStatus("Status_Ascendance");
+		if (ascendanceStatus) {
+			newProj.damage = newProj.damage * ascendanceStatus.windfuryWeaponDamageMultiplier;
+			newProj.ascendanceBuff = true;
+		}
+	}
 }

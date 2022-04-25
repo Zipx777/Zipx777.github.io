@@ -59,12 +59,17 @@ class Skill {
 
 	}
 
+	triggerSkillActivatedEffect(player, effects) {
+
+	}
+
 	//return true if skill successfully activates
-	activate(ctx, player, bosss, projectiles) {
+	activate(ctx, player, boss, projectiles, effects) {
 		if (this.readyToActivate()) {
 			this.extraActivateLogic(player);
 			//console.log(this.name + " activated");
 			this.cooldownActivated();
+			this.triggerSkillActivatedEffect(player, effects);
 			if (this.projectile) {
 				var vectorToBoss = new Vector(boss.getX() - player.getX(), boss.getY() - player.getY());
 				var newProj;
@@ -83,7 +88,7 @@ class Skill {
 					newProj = new this.projectile(player.getX(), player.getY(), spawnFacingVector);
 					newProj.skillOrigin = this.name;
 					newProj.isMelee = this.isMelee;
-					this.extraProjectileLogic(newProj, player);
+					this.extraProjectileLogic(newProj, player, i == projectilesToFire - 1);
 					projectiles.push(newProj);
 				}
 

@@ -436,7 +436,7 @@ function checkProjForCollisions(proj) {
 		//proj.parent = boss;
 		boss.handleHitByProjectile(proj);
 
-		player.handleProjectileImpactLogic(proj);
+		player.handleProjectileImpactLogic(proj, projectiles);
 	}
 
 	return collisionHappened;
@@ -493,7 +493,7 @@ function update(dt) {
 		return;
 	}
 
-	player.update(dt, mouseX, mouseY, wasdKeys, player, boss, gameStarted, ctx);
+	player.update(dt, mouseX, mouseY, wasdKeys, player, boss, projectiles, effects, gameStarted, ctx);
 	boss.update(dt, player, boss, effects, ctx);
 
 

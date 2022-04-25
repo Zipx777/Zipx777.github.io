@@ -3,6 +3,14 @@ class Projectile_StormStrike extends Projectile {
 	constructor(startX, startY, startFacingVector) {
 		super(startX, startY, startFacingVector);
 		this.damage = 130;
+		this.stormbringerBuff = false;
 		this.color = "orange";
+	}
+
+	extraExplodeEffects(effects) {
+		if (this.stormbringerBuff) {
+			var buffedExplodeRing = new PlayerProjectileImpactEffect(this, this.color);
+			effects.push(buffedExplodeRing);
+		}
 	}
 }

@@ -7,4 +7,9 @@ class Skill_Bloodlust extends Skill {
 		this.cooldown = 240;
 		this.playerStatusToApply = Status_Bloodlust;
 	}
+
+	triggerSkillActivatedEffect(player, effects) {
+		var newActivateEffect = new PlayerSkillActivatedEffect(player, "purple");
+		effects.push(newActivateEffect);
+	}
 }

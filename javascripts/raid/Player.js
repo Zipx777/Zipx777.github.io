@@ -59,6 +59,7 @@ class Player {
 		this.hasteMultiplier = 0.8; //speeds up auto attack and melee cooldowns
 
 		this.stormbringerChance = 0.05;
+		this.stormbringerDamageBonus = 1.25;
 		this.stormbringerBuff = false;
 
 		this.windfuryWeaponChance = 0.2;
@@ -205,7 +206,7 @@ class Player {
 		return null;
 	}
 
-	handleProjectileImpactLogic(proj) {
+	handleProjectileImpactLogic(proj, projectiles) {
 		if (proj.isMelee) {
 			//stormbringer
 			if (proj.skillOrigin != "Auto Attack") {
@@ -264,7 +265,7 @@ class Player {
 	}
 
 	//update Player position and skills
-	update(dt, targetX, targetY, keys, player, boss, gameStarted, ctx) {
+	update(dt, targetX, targetY, keys, player, boss, projectiles, effects, gameStarted, ctx) {
 
 		//track postgame stats
 		if (boss.fightStarted) {
@@ -403,14 +404,14 @@ class Player {
 			skill.update(dt, player, boss);
 			if (skill.autoActivate && !this.skillToCast) {
 				if (gameStarted && skill.inRange && !skill.onCooldown) {
-					skill.activate(ctx, player, boss, projectiles);
+					skill.activate(ctx, player, boss, projectiles, effects);
 				}
 			}
 		});
 
 		if (this.skillToCast) {
 			if (this.castingTimer <= 0) {
-				var skillActivated = this.skillToCast.activate(ctx, player, boss, projectiles);
+				var skillActivated = this.skillToCast.activate(ctx, player, boss, projectiles, effects);
 				if (skillActivated) {
 					if (this.skillToCast.shock) {
 						$.each(this.skills, function(i,skill) {

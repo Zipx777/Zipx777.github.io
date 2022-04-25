@@ -25,6 +25,14 @@ class Skill_AutoAttack extends Skill {
 		return extraProjectilesToFire;
 	}
 
+	extraProjectileLogic(newProj, player, isFinalProj) {
+		var ascendanceStatus = player.getStatus("Status_Ascendance");
+		if (ascendanceStatus) {
+			newProj.damage = newProj.damage * ascendanceStatus.autoAttackDamageMultiplier;
+			newProj.ascendanceBuff = true;
+		}
+	}
+
 	extraUpdateLogic(dt, player) {
 		this.range = this.baseRange;
 		var ascendanceStatus = player.getStatus("Status_Ascendance");

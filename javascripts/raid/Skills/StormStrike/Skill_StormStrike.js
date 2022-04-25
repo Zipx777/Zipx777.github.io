@@ -15,16 +15,19 @@ class Skill_StormStrike extends Skill {
 		this.projectile = Projectile_StormStrike;
 	}
 
-	extraProjectileLogic(newProj, player) {
+	extraProjectileLogic(newProj, player, isFinalProj) {
 		var ascendanceStatus = player.getStatus("Status_Ascendance");
 		if (ascendanceStatus) {
 			newProj.damage = newProj.damage * ascendanceStatus.stormstrikeDamageMultiplier;
 		}
 
 		if (player.stormbringerBuff) {
-			newProj.damage = newProj.damage * 1.25;
-			player.stormbringerBuff = false;
-			this.skillButtonElement.removeClass("skillProcced");
+			newProj.damage = newProj.damage * player.stormbringerDamageBonus
+			newProj.stormbringerBuff = true;;
+			if (isFinalProj) {
+				player.stormbringerBuff = false;
+				this.skillButtonElement.removeClass("skillProcced");
+			}
 		}
 	}
 
