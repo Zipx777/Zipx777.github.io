@@ -151,6 +151,9 @@ function setEventHandlers() {
 	$("#mouseButton").click(mouseButtonClick);
 	$(".skillButton").click(skillButtonClick);
 
+	$("#testButton").click(testButtonClick);
+	$("#test2Button").click(test2ButtonClick);
+
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
 	$(document).mousedown(mouseDownHandler);
@@ -167,6 +170,54 @@ function setEventHandlers() {
 	$(window).contextmenu(function() {
 		wasdKeys.reset();
 	});
+}
+
+var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
+var ACCESS_TOKEN = "ya29.A0ARrdaM_jkiPZ9eNY2d5vN4pP4EGfQFCa9xfQf4UhZrMd-3F2C9yM7aR67vA_WuxhDwK7Y9F7mJKUp0MLvGtGp1NuwL7DFHGZbpZABIEvjSEhNH2tIzGEHviGU-_CwJERB2pb72bz24caqCYQ-RuyRR8ZEKzv";
+
+function testButtonClick() {
+	fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + ":batchUpdate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //update this token with yours.
+        Authorization: "Bearer " + ACCESS_TOKEN,
+      },
+      body: JSON.stringify({
+
+        requests: [{
+          repeatCell: {
+            range: {
+              startColumnIndex: 0,
+              endColumnIndex: 1,
+              startRowIndex: 0,
+              endRowIndex: 1,
+              sheetId: 0
+            },
+            cell: {
+              userEnteredValue: {
+                "numberValue": 10
+              },
+            },
+            fields: "*"
+          }
+        }]
+
+      })
+    });
+}
+
+test2ButtonClick = async() => {
+	const request = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:B5`,
+  {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${ACCESS_TOKEN}`
+  }
+  });
+  const data = await request.json();
+  console.log(data);
+  return data;
 }
 
 function raidAreaMouseMove(e) {
