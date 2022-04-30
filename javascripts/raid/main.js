@@ -151,8 +151,7 @@ function setEventHandlers() {
 	$("#mouseButton").click(mouseButtonClick);
 	$(".skillButton").click(skillButtonClick);
 
-	$("#testButton").click(testButtonClick);
-	$("#test2Button").click(test2ButtonClick);
+	$("#test3Button").click(test3ButtonClick);
 
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
@@ -173,51 +172,145 @@ function setEventHandlers() {
 }
 
 var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.A0ARrdaM_jkiPZ9eNY2d5vN4pP4EGfQFCa9xfQf4UhZrMd-3F2C9yM7aR67vA_WuxhDwK7Y9F7mJKUp0MLvGtGp1NuwL7DFHGZbpZABIEvjSEhNH2tIzGEHviGU-_CwJERB2pb72bz24caqCYQ-RuyRR8ZEKzv";
+var ACCESS_TOKEN = "ya29.A0ARrdaM8TZRlhDDbbOaNtEfRMqWHfUQKgMs_N2fBgqxifMNyv13SV-sVLoFYtejnUCc_lz22OA1129IAreETlwrUnPaJBjzgYygrlNlf2JyJ07swBY9LTMBWX_rmtj4jpBcYoycLC8YrvfBomQeNUNovePxnh";
+var maxLeaderboardEntries = 20;
+var testCounter = 1;
+var submitting = false;
 
-function testButtonClick() {
-	fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + ":batchUpdate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        //update this token with yours.
-        Authorization: "Bearer " + ACCESS_TOKEN,
-      },
-      body: JSON.stringify({
+//adds new name/score to leaderboard
+//also does some data verification/cleanup just in case
+function addNewScoreToLeaderboard(leaderboardData, newName, newScore) {
+	if (!leaderboardData) {
+		leaderboardData = [[newName,newScore]];
+		return leaderboardData;
+	}
+	//verify data is good, no blanks, delete leading/trailing whitespace
+	for (var i = 0; i < leaderboardData.length; i++) {
+		if (leaderboardData[i][0] && leaderboardData[i][1]) {
+			leaderboardData[i][0] = leaderboardData[i][0].trim();
+			leaderboardData[i][1] = Number(leaderboardData[i][1].trim());
+		} else {
+			//shift array up one, overwriting current index (bad/missing data, should never happen)
+		}
+	}
 
-        requests: [{
-          repeatCell: {
-            range: {
-              startColumnIndex: 0,
-              endColumnIndex: 1,
-              startRowIndex: 0,
-              endRowIndex: 1,
-              sheetId: 0
-            },
-            cell: {
-              userEnteredValue: {
-                "numberValue": 10
-              },
-            },
-            fields: "*"
-          }
-        }]
+	//add new name/value onto the end of the array
+	leaderboardData[leaderboardData.length] = [];
+	leaderboardData[leaderboardData.length - 1][0] = newName;
+	leaderboardData[leaderboardData.length - 1][1] = newScore;
 
-      })
-    });
+	//sort names/values into decreasing order (first cell has highest value)
+	var valuesOrdered = false;
+
+	//used for unnecessary optimization of sorting algorithm
+	var iterationDepth = leaderboardData.length - 1;
+
+	while (!valuesOrdered) {
+		valuesOrdered = true;
+		for (var i = 0; i < iterationDepth; i++) {
+			if (leaderboardData[i][1] < leaderboardData[i+1][1]) {
+				valuesOrdered = false;
+				//swap values and names
+				var tempStoreName = leaderboardData[i][0];
+				var tempStoreValue = leaderboardData[i][1];
+
+				leaderboardData[i][0] = leaderboardData[i+1][0];
+				leaderboardData[i][1] = leaderboardData[i+1][1];
+
+				leaderboardData[i+1][0] = tempStoreName;
+				leaderboardData[i+1][1] = tempStoreValue;
+			}
+		}
+		iterationDepth--;
+	}
+
+	return leaderboardData;
 }
 
-test2ButtonClick = async() => {
-	const request = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:B5`,
+//populate leaderboard data into html element
+function displayLeaderboard(leaderboardData) {
+	console.log("displayLeaderboard");
+
+	for (var i = 0; i < leaderboardData.length; i++) {
+		console.log("row " + (i + 1));
+		console.log(leaderboardData[i][0]); //name
+		console.log(leaderboardData[i][1]); //value
+	}
+}
+
+//pushes new leaderboard data to the sheet, overwriting anything currently there
+//only want to use this after pulling the existing data and updating it
+function submitLeaderboardData(leaderboardData) {
+	var leaderboardDataRequestObject = [];
+	for (var i = 0; i < Math.min(leaderboardData.length, maxLeaderboardEntries); i++) {
+
+		var newRow =
+		{
+			values: [
+				{
+					userEnteredValue: {
+						"stringValue": leaderboardData[i][0]
+					}
+				},
+				{
+					userEnteredValue: {
+						"numberValue": leaderboardData[i][1]
+					}
+				}
+			]
+		}
+		leaderboardDataRequestObject.push(newRow);
+	}
+
+	fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + ":batchUpdate", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + ACCESS_TOKEN,
+			},
+			body: JSON.stringify({
+
+				requests: [{
+					updateCells: {
+						range: {
+							startColumnIndex: 0,
+							endColumnIndex: 2,
+							startRowIndex: 0,
+							endRowIndex: leaderboardData.length,
+							sheetId: 0
+						},
+						rows: leaderboardDataRequestObject,
+						fields: "*"
+					}
+				}]
+
+			})
+		});
+}
+
+test3ButtonClick = async() => {
+	if (submitting) {
+		return;
+	}
+	submitting = true;
+	const request = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:B` + maxLeaderboardEntries,
   {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${ACCESS_TOKEN}`
   }
   });
-  const data = await request.json();
-  console.log(data);
-  return data;
+  const fetchRequestObject = await request.json();
+  console.log(fetchRequestObject);
+	var sheetValues = fetchRequestObject.values;
+	var newScore = 1000 * Math.random();
+	console.log(newScore);
+	var updatedLeaderboard = addNewScoreToLeaderboard(sheetValues, "test" + testCounter, newScore);
+	//displayLeaderboard(updatedLeaderboard);
+	submitLeaderboardData(updatedLeaderboard);
+	submitting = false;
+	testCounter++;
+  return fetchRequestObject;
 }
 
 function raidAreaMouseMove(e) {
