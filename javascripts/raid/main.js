@@ -172,7 +172,7 @@ function setEventHandlers() {
 }
 
 var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.A0ARrdaM8TZRlhDDbbOaNtEfRMqWHfUQKgMs_N2fBgqxifMNyv13SV-sVLoFYtejnUCc_lz22OA1129IAreETlwrUnPaJBjzgYygrlNlf2JyJ07swBY9LTMBWX_rmtj4jpBcYoycLC8YrvfBomQeNUNovePxnh";
+var ACCESS_TOKEN = "ya29.A0ARrdaM_9gig9s0Q4uy75Ug6qz5_BFyHl18xV-cHf_FrupQOPsV7JnraBlC2Oxic74Z-sxq3q1VQ1Hbeqi4x6mmazK07q3XI4LnTt4fLrt66xAUQkZlblHsc-c3draSIBy1QF0HJfKL0nPatUfp0e406Hd1DV";
 var maxLeaderboardEntries = 20;
 var testCounter = 1;
 var submitting = false;
