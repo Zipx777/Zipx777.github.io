@@ -27,7 +27,10 @@ var canvas,
 	changeKeybindState,
 	buttonIdBeingChanged,
 
+	playerName,
+	maxPlayerNameLength,
 	gameStarted,
+
 	easyPosition,
 	mediumPosition,
 	hardPosition,
@@ -45,8 +48,10 @@ $(function() {
 });
 
 function initializeVariables() {
+	playerName = null;
+	maxPlayerNameLength = 15;
+
 	gameStarted = false;
-	difficultySelected = null;
 	difficultySelectorRadius = 30;
 	easyPosition = new Vector(100,200);
 	mediumPosition = new Vector(300,300);
@@ -143,6 +148,47 @@ function initializeVariables() {
 	windowFocus = true;
 
 	timeElapsed = 0;
+
+	playerName = persistentStorage.getItem("savedPlayerName");
+	if (!playerName) {
+		changePlayerName();
+	} else {
+		setPlayerName(playerName);
+	}
+}
+
+function setPlayerName(name) {
+	playerName = name;
+	persistentStorage.setItem("savedPlayerName", name);
+ 	$("#playerNameDiv").text("Player: " + name);
+}
+
+function changePlayerName() {
+	var newPlayerName = null;
+	var loopCounter = 1;
+	var nameEnterBasePrompt = "Enter a name/initials";
+	var nameEnterPrompt = nameEnterBasePrompt;
+	var nameEnteredIsEmpty = false;
+	var nameEnteredIsTooLong = false;
+	while (!newPlayerName || newPlayerName.length > maxPlayerNameLength) {
+		if (loopCounter > 1) {
+			if (nameEnteredIsEmpty) {
+				nameEnterPrompt = nameEnterBasePrompt + "\nName/Initials cannot be empty."
+			} else if (nameEnteredIsTooLong) {
+				nameEnterPrompt = nameEnterBasePrompt + "\nName/Initials cannot be more than " + maxPlayerNameLength + " characters long";
+			}
+		}
+		newPlayerName = prompt(nameEnterPrompt, "").trim();
+		var nameEnteredIsEmpty = false;
+		var nameEnteredIsTooLong = false;
+		if (!newPlayerName) {
+			nameEnteredIsEmpty = true;
+		} else if (newPlayerName.length > maxPlayerNameLength) {
+			nameEnteredIsTooLong = true;
+		}
+		loopCounter++
+	}
+	setPlayerName(newPlayerName);
 }
 
 function setEventHandlers() {
@@ -151,7 +197,7 @@ function setEventHandlers() {
 	$("#mouseButton").click(mouseButtonClick);
 	$(".skillButton").click(skillButtonClick);
 
-	$("#test3Button").click(test3ButtonClick);
+	$("#playerNameDiv").click(changePlayerName);
 
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
@@ -171,11 +217,14 @@ function setEventHandlers() {
 	});
 }
 
+//--------------------------------------
+//---------LEADERBOARD LOGIC------------
+//--------------------------------------
+
 var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.A0ARrdaM_9gig9s0Q4uy75Ug6qz5_BFyHl18xV-cHf_FrupQOPsV7JnraBlC2Oxic74Z-sxq3q1VQ1Hbeqi4x6mmazK07q3XI4LnTt4fLrt66xAUQkZlblHsc-c3draSIBy1QF0HJfKL0nPatUfp0e406Hd1DV";
-var maxLeaderboardEntries = 20;
-var testCounter = 1;
-var submitting = false;
+var ACCESS_TOKEN = "ya29.A0ARrdaM_ZWPZNuXMFTTkCzopdkvzIs3odJukpfau3wsFJPZWX0SV_ae0bg03bkq_dGPW6Bud2ooay6sKemwmUMxxWa18qxYt51JkagAmkNAE_jABqQhEaa1cyWbeIVNVNmVE0VcKhOCjjqI6fJCodALVzyvDtdw";
+var maxLeaderboardEntries = 500;
+var submittingFetchRequest = false;
 
 //adds new name/score to leaderboard
 //also does some data verification/cleanup just in case
@@ -229,12 +278,44 @@ function addNewScoreToLeaderboard(leaderboardData, newName, newScore) {
 
 //populate leaderboard data into html element
 function displayLeaderboard(leaderboardData) {
-	console.log("displayLeaderboard");
-
 	for (var i = 0; i < leaderboardData.length; i++) {
-		console.log("row " + (i + 1));
-		console.log(leaderboardData[i][0]); //name
-		console.log(leaderboardData[i][1]); //value
+		var leaderboardRowElement = $(document.createElement("tr"));
+		if (i%2 == 0) {
+			leaderboardRowElement.addClass("leaderboardRowEven");
+		} else {
+			leaderboardRowElement.addClass("leaderboardRowOdd");
+		}
+		var leaderboardRankElement = $(document.createElement("td"));
+		leaderboardRankElement.addClass("leaderboardRank");
+		var rank = Math.floor(((leaderboardData.length - i) / leaderboardData.length) * 100);
+		leaderboardRankElement.text(rank);
+		if (rank == 100) {
+			leaderboardRankElement.addClass("goldParse");
+		} else if (rank >= 99) {
+			leaderboardRankElement.addClass("pinkParse");
+		} else if (rank >= 95) {
+			leaderboardRankElement.addClass("orangeParse");
+		} else if (rank >= 75) {
+			leaderboardRankElement.addClass("purpleParse");
+		} else if (rank >= 50) {
+			leaderboardRankElement.addClass("blueParse");
+		} else if (rank >= 25) {
+			leaderboardRankElement.addClass("greenParse");
+		} else {
+			leaderboardRankElement.addClass("grayParse");
+		}
+		var leaderboardNameElement = $(document.createElement("td"));
+		leaderboardNameElement.text(leaderboardData[i][0]);
+		var leaderboardDPSElement = $(document.createElement("td"));
+		leaderboardDPSElement.addClass("leaderboardDPS");
+		var prettyNumber = (Math.floor(leaderboardData[i][1] * 100)) / 100;
+		leaderboardDPSElement.text(prettyNumber);
+		leaderboardRowElement.append(leaderboardRankElement);
+		leaderboardRowElement.append(leaderboardNameElement);
+		leaderboardRowElement.append(leaderboardDPSElement);
+
+		$("#leaderboardTable").append(leaderboardRowElement);
+		$("#leaderboardDiv").show();
 	}
 }
 
@@ -244,6 +325,7 @@ function submitLeaderboardData(leaderboardData) {
 	var leaderboardDataRequestObject = [];
 	for (var i = 0; i < Math.min(leaderboardData.length, maxLeaderboardEntries); i++) {
 
+		//construct row object to submit in the batchUpdate request
 		var newRow =
 		{
 			values: [
@@ -269,7 +351,6 @@ function submitLeaderboardData(leaderboardData) {
 				Authorization: "Bearer " + ACCESS_TOKEN,
 			},
 			body: JSON.stringify({
-
 				requests: [{
 					updateCells: {
 						range: {
@@ -283,35 +364,43 @@ function submitLeaderboardData(leaderboardData) {
 						fields: "*"
 					}
 				}]
-
 			})
 		});
 }
 
-test3ButtonClick = async() => {
-	if (submitting) {
+submitNewScoreToLeaderboard = async(newScore) => {
+	var fetchRequestError = false;
+	if (submittingFetchRequest) {
 		return;
 	}
-	submitting = true;
+	submittingFetchRequest = true;
 	const request = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:B` + maxLeaderboardEntries,
   {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${ACCESS_TOKEN}`
-  }
-  });
+  	}
+	}).then(function(response) {
+		if (!response.ok) {
+	    console.log(response.statusText);
+			fetchRequestError = true;
+	  }
+		return response;
+	});
   const fetchRequestObject = await request.json();
-  console.log(fetchRequestObject);
-	var sheetValues = fetchRequestObject.values;
-	var newScore = 1000 * Math.random();
-	console.log(newScore);
-	var updatedLeaderboard = addNewScoreToLeaderboard(sheetValues, "test" + testCounter, newScore);
-	//displayLeaderboard(updatedLeaderboard);
-	submitLeaderboardData(updatedLeaderboard);
-	submitting = false;
-	testCounter++;
+	if (fetchRequestError) {
+		$("#leaderboardErrorMessage").show();
+	} else {
+		var sheetValues = fetchRequestObject.values;
+		var updatedLeaderboard = addNewScoreToLeaderboard(sheetValues, playerName, newScore);
+		displayLeaderboard(updatedLeaderboard);
+		submitLeaderboardData(updatedLeaderboard);
+	}
+	submittingFetchRequest = false;
   return fetchRequestObject;
 }
+
+//-------END LEADERBOARD LOGIC----------
 
 function raidAreaMouseMove(e) {
 	var canvasElementOffset = $("#raidCanvas").offset();
@@ -436,6 +525,11 @@ function populateResultsReport() {
 		totalDamage += boss.damageReport[key];
 	}
 	var totalDps = totalDamage / boss.timeElapsed;
+
+	if (boss.difficulty == "hard") {
+		submitNewScoreToLeaderboard(totalDps);
+	}
+
 	var damageTaken = player.maxHealth - player.currentHealth;
 	var damageTakenQuip = "Umm healers? Hello?!";
 	if (damageTaken == 0) {
@@ -633,7 +727,7 @@ function update(dt) {
 		populateResultsReport();
 	}
 
-	if (gameOver || changeKeybindState) {
+	if (gameOver || changeKeybindState || !playerName) {
 		return;
 	}
 
