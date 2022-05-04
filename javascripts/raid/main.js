@@ -222,7 +222,7 @@ function setEventHandlers() {
 //--------------------------------------
 
 var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.A0ARrdaM_ZWPZNuXMFTTkCzopdkvzIs3odJukpfau3wsFJPZWX0SV_ae0bg03bkq_dGPW6Bud2ooay6sKemwmUMxxWa18qxYt51JkagAmkNAE_jABqQhEaa1cyWbeIVNVNmVE0VcKhOCjjqI6fJCodALVzyvDtdw";
+var ACCESS_TOKEN = "ya29.A0ARrdaM-fxd38rvo-OEGVdH8vPJ07cDAQYIxHlivvIDwWQgykIg2oyMf-VHB-OxGWgZ8I_T2cPlfqiGvvPugbiLJSAfO5bj_OG-s-u_z261Ny-rqqTMjoyPoIU6BTEvGFptQFILfnPLyPeFg1mFDelQXHJ1ud";
 var maxLeaderboardEntries = 500;
 var submittingFetchRequest = false;
 
@@ -273,7 +273,24 @@ function addNewScoreToLeaderboard(leaderboardData, newName, newScore) {
 		iterationDepth--;
 	}
 
+	var currentRunLeaderboardRank = 100;
+	for (var i = 0; i < leaderboardData.length; i++) {
+		if (leaderboardData[i][1] == newScore) {
+			currentRunLeaderboardRank = Math.floor(((leaderboardData.length - i) / leaderboardData.length) * 100);
+			break;
+		}
+	}
+	console.log(currentRunLeaderboardRank);
+	displayCurrentRunParse(currentRunLeaderboardRank);
 	return leaderboardData;
+}
+
+function displayCurrentRunParse(currentRunRank) {
+	//console.log(currentRunRank);
+	var parseElement = $("#currentRunParse");
+	addRankColorToElement(parseElement, currentRunRank);
+	parseElement.text(currentRunRank);
+	$("#currentRunParseLine").show();
 }
 
 //populate leaderboard data into html element
@@ -281,34 +298,20 @@ function displayLeaderboard(leaderboardData) {
 	for (var i = 0; i < leaderboardData.length; i++) {
 		var leaderboardRowElement = $(document.createElement("tr"));
 		if (i%2 == 0) {
-			leaderboardRowElement.addClass("leaderboardRowEven");
+			leaderboardRowElement.addClass("tableRowEven");
 		} else {
-			leaderboardRowElement.addClass("leaderboardRowOdd");
+			leaderboardRowElement.addClass("tableRowOdd");
 		}
 		var leaderboardRankElement = $(document.createElement("td"));
 		leaderboardRankElement.addClass("leaderboardRank");
 		var rank = Math.floor(((leaderboardData.length - i) / leaderboardData.length) * 100);
 		leaderboardRankElement.text(rank);
-		if (rank == 100) {
-			leaderboardRankElement.addClass("goldParse");
-		} else if (rank >= 99) {
-			leaderboardRankElement.addClass("pinkParse");
-		} else if (rank >= 95) {
-			leaderboardRankElement.addClass("orangeParse");
-		} else if (rank >= 75) {
-			leaderboardRankElement.addClass("purpleParse");
-		} else if (rank >= 50) {
-			leaderboardRankElement.addClass("blueParse");
-		} else if (rank >= 25) {
-			leaderboardRankElement.addClass("greenParse");
-		} else {
-			leaderboardRankElement.addClass("grayParse");
-		}
+		addRankColorToElement(leaderboardRankElement, rank);
 		var leaderboardNameElement = $(document.createElement("td"));
 		leaderboardNameElement.text(leaderboardData[i][0]);
 		var leaderboardDPSElement = $(document.createElement("td"));
 		leaderboardDPSElement.addClass("leaderboardDPS");
-		var prettyNumber = (Math.floor(leaderboardData[i][1] * 100)) / 100;
+		var prettyNumber = Math.floor(leaderboardData[i][1]);
 		leaderboardDPSElement.text(prettyNumber);
 		leaderboardRowElement.append(leaderboardRankElement);
 		leaderboardRowElement.append(leaderboardNameElement);
@@ -316,6 +319,24 @@ function displayLeaderboard(leaderboardData) {
 
 		$("#leaderboardTable").append(leaderboardRowElement);
 		$("#leaderboardDiv").show();
+	}
+}
+
+function addRankColorToElement(element, rank) {
+	if (rank == 100) {
+		element.addClass("goldParse");
+	} else if (rank >= 99) {
+		element.addClass("pinkParse");
+	} else if (rank >= 95) {
+		element.addClass("orangeParse");
+	} else if (rank >= 75) {
+		element.addClass("purpleParse");
+	} else if (rank >= 50) {
+		element.addClass("blueParse");
+	} else if (rank >= 25) {
+		element.addClass("greenParse");
+	} else {
+		element.addClass("grayParse");
 	}
 }
 
@@ -391,6 +412,7 @@ submitNewScoreToLeaderboard = async(newScore) => {
 	if (fetchRequestError) {
 		$("#leaderboardErrorMessage").show();
 	} else {
+		console.log("success");
 		var sheetValues = fetchRequestObject.values;
 		var updatedLeaderboard = addNewScoreToLeaderboard(sheetValues, playerName, newScore);
 		displayLeaderboard(updatedLeaderboard);
@@ -565,8 +587,14 @@ function populateResultsReport() {
 		"GCD Uptime": gcdUptime
 	};
 
+	var statRowCounter = 0;
 	for (var stat in statsArray) {
 		var statTrackRowElement = $(document.createElement("tr"));
+		if (statRowCounter%2 == 0) {
+			statTrackRowElement.addClass("tableRowEven");
+		} else {
+			statTrackRowElement.addClass("tableRowOdd");
+		}
 		var statTrackNameElement = $(document.createElement("td"));
 		statTrackNameElement.addClass("statTrackerNameCell");
 		statTrackNameElement.text(stat);
@@ -595,6 +623,7 @@ function populateResultsReport() {
 		statTrackRowElement.append(statTrackBarContainerElement);
 
 		$("#statTrackers").append(statTrackRowElement);
+		statRowCounter++;
 	}
 
 	//damage breakdown
@@ -602,6 +631,7 @@ function populateResultsReport() {
 	var nextDamage = 0;
 	var maxDamage = 0;
 	var continuing = true;
+	var damageRowCounter = 0;
 	while (continuing) {
 		for (var key in boss.damageReport) {
 			if (boss.damageReport[key] > nextDamage) {
@@ -617,6 +647,11 @@ function populateResultsReport() {
 		} else {
 			var barWidth = (nextDamage / maxDamage) * 320;
 			var nextRowElement = $(document.createElement("tr"));
+			if (damageRowCounter%2 == 0) {
+				nextRowElement.addClass("tableRowEven");
+			} else {
+				nextRowElement.addClass("tableRowOdd");
+			}
 			var skillNameElement = $(document.createElement("td"));
 			skillNameElement.text(nextKey);
 			var skillDamageElement = $(document.createElement("td"));
@@ -633,6 +668,7 @@ function populateResultsReport() {
 			$("#damageBreakdown").append(nextRowElement);
 			boss.damageReport[nextKey] = 0;
 			nextDamage = 0;
+			damageRowCounter++;
 		}
 	}
 	$("#resultsReport").show();

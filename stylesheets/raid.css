@@ -1,8 +1,4 @@
-/*Turret*/
-
-td {
-	vertical-align: middle;
-}
+/*Raid*/
 
 #raidArea {
 	clear:right;
@@ -137,17 +133,43 @@ td {
 
 #resultsReport {
 	margin-top: 10px;
-	padding-left: 10px;
 	border: 5px solid gray;
+	color: #e1f2f5;
+	background-color: black;
+	padding-bottom: 10px;
 	display: none;
 }
 
-#statTrackers {
-	border: 2px solid black;
+#resultsReport h1 {
+	color: #e1f2f5;
 }
 
-#damageBreakdown {
-	border: 2px solid black;
+#resultsReport h2 {
+	color: #e1f2f5;
+	background: none;
+	text-align: center;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#resultsReport h3 {
+	color: #e1f2f5;
+}
+
+#resultsReport h4 {
+	color: #e1f2f5;
+}
+
+#currentParseLine {
+	display: none;
+}
+
+#damageTakenQuip {
+	margin-top: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+	text-align: center;
 }
 
 .statTrackerNameCell {
@@ -171,11 +193,13 @@ td {
 }
 
 .damageBreakdownBar {
-	background-color: black;
+	background-color: #e1f2f5;
 	height: 20px;
 }
 
 #leaderboardErrorMessage {
+	color: #e1f2f5;
+	background-color: black;
 	margin-top: 10px;
 	border: 5px solid gray;
 	text-align: center;
@@ -196,7 +220,7 @@ td {
 	display: none;
 }
 
-#leaderboardDiv h1 {
+h1 {
 	background-color: #001520;
 	border-bottom: 1px solid #555555;
 	border-top: 1px solid #555555;
@@ -208,13 +232,13 @@ td {
 	text-align: center;
 }
 
-#leaderboardTable {
+table {
 	margin: auto;
 	color: #e1f2f5;
 	border: 1px solid #333;
 }
 
-#leaderboardTable th {
+th {
 	background-color: #222222;
 	border: 1px solid #444444;
 	font-size: 13px;
@@ -224,8 +248,9 @@ td {
 	padding: 2px 6px 2px;
 }
 
-#leaderboardTable td {
+td {
 	padding: 2px 6px 2px;
+	vertical-align: middle;
 }
 
 .leaderboardRank {
@@ -236,11 +261,11 @@ td {
 	text-align: right;
 }
 
-.leaderboardRowEven {
+.tableRowEven {
 	background-color: black;
 }
 
-.leaderboardRowOdd {
+.tableRowOdd {
 	background-color: #101010;
 }
 

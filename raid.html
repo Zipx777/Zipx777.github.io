@@ -165,14 +165,28 @@
       </div>
     </div>
 
-    <div id="resultsReport" display="hide">
-      <h1>Overall DPS: <span id="overallDpsResult"></span></h1>
-      <h1>Damage Taken: <span id="damageTakenResult"></span></h1>
-      <h3 id="damageTakenQuip"></h3>
-      <h2>Stat Tracker</h2>
-      <table id="statTrackers"></table>
-      <h2>Damage Breakdown</h2>
-      <table id="damageBreakdown"></table>
+    <div id="resultsReport">
+      <h1>Results</h1>
+      <h2>DPS: <span id="overallDpsResult"></span></h2>
+      <h2 id="currentRunParseLine" style="display: none;">Parse: <span id="currentRunParse"></span></h2>
+      <h2>Damage Taken: <span id="damageTakenResult"></span></h2>
+      <h4 id="damageTakenQuip"></h4>
+      <h1>Stat Tracker</h1>
+      <table id="statTrackers">
+        <tr>
+          <th>Stat</th>
+          <th>%</th>
+          <th>Bar</th>
+        </tr>
+      </table>
+      <h1>Damage Breakdown</h1>
+      <table id="damageBreakdown">
+        <tr>
+          <th>Attack</th>
+          <th>Damage</th>
+          <th>Bar</th>
+        </tr>
+      </table>
     </div>
     <div id="leaderboardErrorMessage">
       <h2>Leaderboard connection error</h2>
@@ -190,11 +204,13 @@
         </tr>
       </table>
     </div>
+    <br />
     <div id="skillDescriptions">
-      <h1>Skill Descriptions</h1>
+      <h2>Skill Descriptions</h2>
       <p>(names and functionality and art shamelessly stolen from WoW)</p>
+      <p>Default keybinds are listed here, but you can change the keybinds by clicking on skills.</p>
 
-      <h2>Core Skills</h2>
+      <h1>Core Skills</h1>
 
       <h4>Q - Lightning Bolt</h4>
       <img src="javascripts/raid/Skills/LightningBolt/icon_lightningBolt.jpg">
@@ -220,7 +236,7 @@
       <img src="javascripts/raid/Skills/CrashLightning/icon_crashLightning.jpg">
       <p>Low melee damage. 9-sec CD.</p>
 
-      <h2>DPS Cooldowns</h2>
+      <h1>DPS Cooldowns</h1>
 
       <h4>Z - Bloodlust</h4>
       <img src="javascripts/raid/Skills/Bloodlust/icon_bloodlust.jpg">
@@ -242,7 +258,7 @@
       <img src="javascripts/raid/Skills/Sundering/icon_sundering.jpg">
       <p>High melee damage. 40-sec CD.</p>
 
-      <h2>Utility Skills</h2>
+      <h1>Utility Skills</h1>
 
       <h4>C - Spirit Walk</h4>
       <img src="javascripts/raid/Skills/SpiritWalk/icon_spiritWalk.jpg">
