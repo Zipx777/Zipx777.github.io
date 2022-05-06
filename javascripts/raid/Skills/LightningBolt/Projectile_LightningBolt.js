@@ -5,6 +5,8 @@ class Projectile_LightningBolt extends Projectile {
 		this.damage = 200;
 		this.color = "orange";
 		this.maxMaelstromStacksApplied = false;
+
+		this.impactSoundFilePath = "javascripts/raid/Skills/LightningBolt/lightningBoltImpact.wav";
 	}
 
 	modifyDamage(maelstromStacks) {

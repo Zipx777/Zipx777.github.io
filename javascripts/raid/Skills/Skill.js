@@ -19,6 +19,9 @@ class Skill {
 		this.autoActivate = false; //used to let AutoAttack fire at will
 		this.playerStatusToApply = null; //applies a status (probably a buff) to player when activated
 		this.objectToSpawn = null;
+
+		this.activateSoundFilePath = null;
+		this.activateSoundVolume = 1;
 	}
 
 	resetCooldown() {
@@ -101,6 +104,13 @@ class Skill {
 			if (this.totemToSpawn) {
 				player.spawnTotem(new this.totemToSpawn);
 			}
+
+			if (this.activateSoundFilePath && this.activateSoundVolume > 0) {
+				var activateSFX = new Audio(this.activateSoundFilePath);
+				activateSFX.volume = this.activateSoundVolume;
+				activateSFX.play();
+			}
+
 			return true;
 		}
 		return false;

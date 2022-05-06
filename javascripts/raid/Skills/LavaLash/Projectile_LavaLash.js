@@ -4,5 +4,7 @@ class Projectile_LavaLash extends Projectile {
 		super(startX, startY, startFacingVector);
 		this.damage = 150;
 		this.color = "red";
+
+		this.impactSoundFilePath = "javascripts/raid/Skills/LavaLash/lavaLashImpact.wav";
 	}
 }

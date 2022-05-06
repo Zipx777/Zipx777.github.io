@@ -5,5 +5,7 @@ class Projectile_FlameShock extends Projectile {
 		this.damage = 50;
 		this.color = "red";
 		this.statusToApply = Status_FlameShock;
+
+		this.impactSoundFilePath = "javascripts/raid/Skills/FlameShock/flameShockImpact.wav";
 	}
 }

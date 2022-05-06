@@ -6,5 +6,7 @@ class Skill_SpiritWalk extends Skill {
 		this.backgroundImageFilePath = "javascripts/raid/Skills/SpiritWalk/icon_spiritWalk.jpg";
 		this.cooldown = 60;
 		this.playerStatusToApply = Status_SpiritWalk;
+
+		this.activateSoundFilePath = "javascripts/raid/Skills/SpiritWalk/spiritWalkActivate.wav";
 	}
 }

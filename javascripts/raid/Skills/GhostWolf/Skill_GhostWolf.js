@@ -6,5 +6,7 @@ class Skill_GhostWolf extends Skill {
 		this.backgroundImageFilePath = "javascripts/raid/Skills/GhostWolf/icon_ghostWolf.jpg";
 		this.cooldown = 0.5;
 		this.playerStatusToApply = Status_GhostWolf;
+
+		this.activateSoundFilePath = "javascripts/raid/Skills/GhostWolf/ghostWolfActivate.wav";
 	}
 }

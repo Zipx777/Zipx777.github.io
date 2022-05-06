@@ -6,6 +6,8 @@ class Skill_FeralSpirit extends Skill {
 		this.backgroundImageFilePath = "javascripts/raid/Skills/FeralSpirit/icon_feralSpirit.jpg";
 		this.cooldown = 120;
 		this.playerStatusToApply = Status_FeralSpirit;
+
+		this.activateSoundFilePath = "javascripts/raid/Skills/FeralSpirit/feralSpiritActivate.wav";
 	}
 
 	extraActivateLogic(player) {

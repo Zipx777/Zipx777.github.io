@@ -4,5 +4,7 @@ class Projectile_CrashLightning extends Projectile {
 		super(startX, startY, startFacingVector);
 		this.damage = 50;
 		this.color = "orange";
+
+		this.impactSoundFilePath = "javascripts/raid/Skills/CrashLightning/crashLightningImpact.wav";
 	}
 }

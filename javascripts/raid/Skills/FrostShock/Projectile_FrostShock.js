@@ -4,5 +4,7 @@ class Projectile_FrostShock extends Projectile {
 		super(startX, startY, startFacingVector);
 		this.damage = 125;
 		this.color = "aqua";
+
+		this.impactSoundFilePath = "javascripts/raid/Skills/FrostShock/frostShockImpact.wav";
 	}
 }

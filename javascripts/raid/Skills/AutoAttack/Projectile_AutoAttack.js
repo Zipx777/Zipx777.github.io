@@ -6,6 +6,8 @@ class Projectile_AutoAttack extends Projectile {
 		this.color = "blue";
 		this.radius = 3;
 		this.ascendanceBuff = false;
+		this.impactSoundFilePath = "javascripts/raid/Skills/AutoAttack/autoAttackImpact.wav";
+		this.impactSoundVolume = 0.5;
 	}
 
 	extraExplodeEffects(effects) {

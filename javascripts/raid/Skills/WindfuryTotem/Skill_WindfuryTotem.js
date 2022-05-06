@@ -7,5 +7,7 @@ class Skill_WindfuryTotem extends Skill {
 		this.cooldown = 50;
 		this.playerStatusToApply = Status_Doomwinds;
 		this.totemToSpawn = Totem_WindfuryTotem;
+
+		this.activateSoundFilePath = "javascripts/raid/Skills/WindfuryTotem/windfuryTotemActivate.wav";
 	}
 }

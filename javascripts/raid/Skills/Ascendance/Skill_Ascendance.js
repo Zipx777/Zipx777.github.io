@@ -6,6 +6,8 @@ class Skill_Ascendance extends Skill {
 		this.backgroundImageFilePath = "javascripts/raid/Skills/Ascendance/icon_ascendance.jpg";
 		this.cooldown = 150;
 		this.playerStatusToApply = Status_Ascendance;
+
+		this.activateSoundFilePath = "javascripts/raid/Skills/Ascendance/ascendanceActivate.wav";
 	}
 
 	triggerSkillActivatedEffect(player, effects) {

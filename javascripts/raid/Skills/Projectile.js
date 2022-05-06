@@ -30,6 +30,9 @@ class Projectile {
 		this.explosionSFXVolume = 0;
 
 		this.alive = true;
+
+		this.impactSoundFilePath = null;
+		this.impactSoundVolume = 1;
 	}
 	//return value of x
 	getX() {
@@ -197,10 +200,10 @@ class Projectile {
 
 		this.extraExplodeEffects(effects);
 
-		if (this.explosionSFXVolume > 0) {
-			var expSFX = new Audio(this.explosionSFXFilePath);
-			expSFX.volume = this.explosionSFXVolume;
-			expSFX.play();
+		if (this.impactSoundFilePath && this.impactSoundVolume > 0) {
+			var impactSFX = new Audio(this.impactSoundFilePath);
+			impactSFX.volume = this.impactSoundVolume;
+			impactSFX.play();
 		}
 
 		this.alive = false;
