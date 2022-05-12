@@ -22,6 +22,9 @@ class Attack_Rectangle {
 		this.damage = 50;
 		this.triggered = false;
 
+		this.attackSoundFilePath = "javascripts/raid/Attacks/rectangleAttack.wav";
+		this.attackSoundVolume = 0.5;
+
 		this.finished = false;
 	}
 
@@ -108,6 +111,12 @@ class Attack_Rectangle {
 			//check for player getting hit and taking damage
 			if (this.checkIfPlayerWithinArea(player)) {
 				player.takeDamage(this.damage);
+			}
+
+			if (this.attackSoundFilePath && this.attackSoundVolume > 0) {
+				var attackSFX = new Audio(this.attackSoundFilePath);
+				attackSFX.volume = this.attackSoundVolume;
+				attackSFX.play();
 			}
 		}
 

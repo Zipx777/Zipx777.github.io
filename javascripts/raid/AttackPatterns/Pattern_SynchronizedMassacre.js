@@ -28,6 +28,11 @@ class Pattern_SynchronizedMassacre extends AttackPattern {
 		var newAttack = new Attack_Rectangle(newX, newY, newWidth, newHeight, newAngle);
 		newAttack.delay = this.duration - this.timeElapsed + this.finalDelayForAll;
 		newAttack.duration = this.attackDuration;
+		if (this.timeElapsed > 0) {
+			newAttack.attackSoundFilePath = null;
+		} else {
+			newAttack.attackSoundFilePath = "javascripts/raid/AttackPatterns/synchronizedMassacre.wav";
+		}
 		return newAttack;
 	}
 }

@@ -24,6 +24,7 @@ class Pattern_TargetedDotCircle extends AttackPattern {
 		newAttack.damage = this.attackDamage;
 		newAttack.delay = this.attackDelay;
 		newAttack.duration = this.attackDuration;
+		newAttack.attackSoundFilePath = null;
 		return newAttack;
 	}
 }

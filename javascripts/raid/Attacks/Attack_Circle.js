@@ -12,6 +12,10 @@ class Attack_Circle {
 		this.duration = 1;
 		this.damage = 60;
 
+		this.attackSoundFilePath = "javascripts/raid/Attacks/circleAttack.wav";
+		this.attackSoundVolume = 0.5;
+
+		this.triggered = false;
 		this.finished = false;
 	}
 
@@ -31,6 +35,15 @@ class Attack_Circle {
 		if (this.timeElapsed > this.delay) {
 			if (distBetweenSquared < Math.pow(this.radius, 2)) {
 				player.takeDamage(this.damage * dt);
+			}
+
+			if (!this.triggered) {
+				if (this.attackSoundFilePath && this.attackSoundVolume > 0) {
+					var attackSFX = new Audio(this.attackSoundFilePath);
+					attackSFX.volume = this.attackSoundVolume;
+					attackSFX.play();
+				}
+				this.triggered = true;
 			}
 		}
 

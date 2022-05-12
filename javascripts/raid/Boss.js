@@ -29,11 +29,11 @@ class Boss {
 		this.damageTexts = [];
 
 		this.bossAttackSequence = startBossAttackSequence;
-		this.explosionSFXFilePath = "sounds/turrets/playerDeath.wav";
-		this.explosionSFXVolume = 1;
+
+		this.bossDeathSFXFilePath = "javascripts/raid/BossSounds/bossDeath.wav";
+		this.bossDeathSFXVolume = 0.5;
 
 		this.timeElapsed = 0;
-
 		this.fightStarted = false;
 
 		this.damageReport = {};
@@ -78,11 +78,11 @@ class Boss {
 				break;
 			case "medium":
 				this.difficultyColor = "orange";
-				this.setHealth(48000); //target dps: 200 over 4min
+				this.setHealth(42000); //target dps: 175 over 4min
 				break;
 			case "hard":
 				this.difficultyColor = "red";
-				this.setHealth(60000); //target dps: 250 over 4min
+				this.setHealth(48000); //target dps: 200 over 4min
 				break;
 		}
 	}
@@ -276,6 +276,12 @@ class Boss {
 
 		if (this.currentHealth <= 0) {
 			this.alive = false;
+
+			if (this.bossDeathSFXFilePath && this.bossDeathSFXVolume > 0) {
+				var bossDeathSFX = new Audio(this.bossDeathSFXFilePath);
+				bossDeathSFX.volume = this.bossDeathSFXVolume;
+				bossDeathSFX.play();
+			}
 		}
 
 		var xDiff = this.targetDestination.getX() - this.x;

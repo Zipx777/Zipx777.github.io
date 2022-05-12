@@ -2,7 +2,7 @@
 class Projectile_Sundering extends Projectile {
 	constructor(startX, startY, startFacingVector) {
 		super(startX, startY, startFacingVector);
-		this.damage = 400000;
+		this.damage = 400;
 		this.color = "peru";
 		this.impactSoundFilePath = "javascripts/raid/Skills/Sundering/sunderingImpact.wav";
 	}

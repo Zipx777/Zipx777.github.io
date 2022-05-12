@@ -548,7 +548,7 @@ function populateResultsReport() {
 	}
 	var totalDps = totalDamage / boss.timeElapsed;
 
-	if (boss.difficulty == "hard") {
+	if (boss.difficulty == "hard" && !boss.isAlive()) {
 		submitNewScoreToLeaderboard(totalDps);
 	}
 

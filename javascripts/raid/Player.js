@@ -10,10 +10,12 @@ class Player {
 		this.radius = 15;
 		this.hitboxRadiusPercent = 0.5;
 		this.isMoving = false;
-		this.tookDamageThisFrame = false;
+
+		this.timeSinceLastDamage = -1;
+		this.timeBetweenDamageTicks = 0.1;
 
 		this.baseGcdCooldown = 1.5;
-		this.gcdCooldown - 1.5;
+		this.gcdCooldown = this.baseGcdCooldown;
 		this.gcdTracker = 0;
 
 		this.skillToCast = null;
@@ -70,8 +72,11 @@ class Player {
 		this.flameShockTotalUptime = 0;
 		this.gcdUptime = 0;
 
-		this.explosionSFXFilePath = "sounds/turrets/playerDeath.wav";
-		this.explosionSFXVolume = 1;
+		this.playerDamagedSFXFilePath = "javascripts/raid/PlayerSounds/playerDamaged.wav";
+		this.playerDamagedSFXVolume = 1;
+
+		this.playerDeathSFXFilePath = "javascripts/raid/PlayerSounds/playerDeath.wav";
+		this.playerDeathSFXVolume = 1;
 
 		this.controlMode = 2; //1 = mouse, 2 = wasd
 	}
@@ -182,7 +187,24 @@ class Player {
 	takeDamage(damageAmount) {
 		if (this.isAlive()) {
 			this.currentHealth -= damageAmount;
-			this.tookDamageThisFrame = true;
+			if (this.timeSinceLastDamage < 0) {
+				this.timeSinceLastDamage = 0;
+
+				if (this.isAlive()) {
+					if (this.playerDamagedSFXFilePath && this.playerDamagedSFXVolume > 0) {
+						var playerDamagedSFX = new Audio(this.playerDamagedSFXFilePath);
+						playerDamagedSFX.volume = this.playerDamagedSFXVolume;
+						playerDamagedSFX.play();
+					}
+				}
+			}
+			if (!this.isAlive()) {
+				if (this.playerDeathSFXFilePath && this.playerDeathSFXVolume > 0) {
+					var playerDeathSFX = new Audio(this.playerDeathSFXFilePath);
+					playerDeathSFX.volume = this.playerDeathSFXVolume;
+					playerDeathSFX.play();
+				}
+			}
 		}
 	}
 
@@ -206,17 +228,27 @@ class Player {
 		return null;
 	}
 
+	stormbringerProc() {
+		var stormStrikeSkill = this.getSkillByName("Storm Strike");
+		if (stormStrikeSkill) {
+			stormStrikeSkill.resetCooldown();
+			stormStrikeSkill.skillButtonElement.removeClass("skillProced");
+			stormStrikeSkill.skillButtonElement.addClass("skillProcced");
+			this.stormbringerBuff = true;
+
+			var procSFX = new Audio("javascripts/raid/Skills/StormStrike/stormbringerProc.wav");
+			procSFX.volume = 1;
+			procSFX.play();
+		}
+	}
+
 	handleProjectileImpactLogic(proj, projectiles) {
 		if (proj.isMelee) {
 			//stormbringer
 			if (proj.skillOrigin != "Auto Attack") {
 				if (Math.random() <= this.stormbringerChance) {
-					var stormStrikeSkill = this.getSkillByName("Storm Strike");
-					if (stormStrikeSkill) {
-						stormStrikeSkill.resetCooldown();
-						stormStrikeSkill.skillButtonElement.removeClass("skillProced");
-						stormStrikeSkill.skillButtonElement.addClass("skillProcced");
-						this.stormbringerBuff = true;
+					if (!this.stormbringerBuff) {
+						this.stormbringerProc();
 					}
 				}
 			}
@@ -283,7 +315,6 @@ class Player {
 			}
 		}
 
-		this.tookDamageThisFrame = false;
 		this.currentMana = Math.min(this.currentMana + this.manaRegenPerTick, this.maxMana);
 
 		this.hasteMultiplier = this.baseHasteMultiplier;
@@ -428,6 +459,13 @@ class Player {
 				this.skillToCast.skillButtonElement.addClass("skillCasting");
 			}
 		}
+
+		if (this.timeSinceLastDamage >= 0) {
+			this.timeSinceLastDamage += dt;
+			if (this.timeSinceLastDamage > this.timeBetweenDamageTicks) {
+				this.timeSinceLastDamage = -1;
+			}
+		}
 	}
 
 	//draws player on canvas context passed to it
@@ -456,7 +494,7 @@ class Player {
 		ctx.restore();
 
 		ctx.save();
-		if (this.tookDamageThisFrame) {
+		if (this.timeSinceLastDamage >= 0) {
 			ctx.beginPath();
 			ctx.fillStyle = "red";
 			ctx.arc(this.x, this.y, tempRadius/1.1, 0, 2 * Math.PI, true);

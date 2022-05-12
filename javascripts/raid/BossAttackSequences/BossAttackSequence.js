@@ -53,16 +53,17 @@ class BossAttackSequence {
 						if (randomDirectionPersistent == 0) {
 							randomDirectionPersistent = 1;
 						}
-						randomDirectionPersistent = 1;
 						break;
 					case 2:
 						if (loopNumber == 2 || loopNumber == 4) {
 							//circle stays out for entire loop duration
 							newAttackPattern = new Pattern_BossTargetedCircle(this.difficulty);
 							this.activeAttackPatterns.push(newAttackPattern);
-							if (this.difficulty == "hard") {
-								var halfWidth = ctx.canvas.width / 2;
-								var halfHeight = ctx.canvas.height / 2;
+
+							var halfWidth = ctx.canvas.width / 2;
+							var halfHeight = ctx.canvas.height / 2;
+
+							if (this.difficulty == "medium" || this.difficulty == "hard") {
 								var randomDirection = Math.sign(Math.random() - 0.5);
 								if (randomDirection == 0) {
 									randomDirection = 1;
@@ -72,6 +73,14 @@ class BossAttackSequence {
 								this.activeAttackPatterns.push(newAttackPattern);
 
 								newAttackPattern = new Pattern_TargetedDotCircle(halfWidth + (halfWidth / 2), halfHeight - (randomDirection * halfHeight / 2), this.difficulty);
+								this.activeAttackPatterns.push(newAttackPattern);
+							}
+
+							if (this.difficulty == "hard") {
+								newAttackPattern = new Pattern_TargetedDotCircle(halfWidth, 0, this.difficulty);
+								this.activeAttackPatterns.push(newAttackPattern);
+
+								newAttackPattern = new Pattern_TargetedDotCircle(halfWidth, ctx.canvas.height, this.difficulty);
 								this.activeAttackPatterns.push(newAttackPattern);
 							}
 						}
