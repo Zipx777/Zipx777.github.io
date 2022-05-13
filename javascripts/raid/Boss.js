@@ -30,6 +30,18 @@ class Boss {
 
 		this.bossAttackSequence = startBossAttackSequence;
 
+		this.bossAttack1SFX = new Audio("javascripts/raid/BossSounds/bossWarning1.wav");
+		this.bossAttack1SFX.volume = 0.5;
+
+		this.bossAttack2SFX = new Audio("javascripts/raid/BossSounds/bossWarning2.wav");
+		this.bossAttack2SFX.volume = 0.5;
+
+		this.bossAttack3SFX = new Audio("javascripts/raid/BossSounds/bossWarning3.wav");
+		this.bossAttack3SFX.volume = 0.5;
+
+		this.bossAttack4SFX = new Audio("javascripts/raid/BossSounds/bossWarning4.wav");
+		this.bossAttack4SFX.volume = 0.5;
+
 		this.bossDeathSFXFilePath = "javascripts/raid/BossSounds/bossDeath.wav";
 		this.bossDeathSFXVolume = 0.5;
 
@@ -214,6 +226,62 @@ class Boss {
 		}
 	}
 
+	//trigger one of various predefined effects to telegraph boss actions
+	triggerEffect(effectNum, effects) {
+		switch (effectNum) {
+			case 1:
+				var bossEffect = new BossRingEffect(this, "black");
+				effects.push(bossEffect);
+				this.bossAttack1SFX.play();
+				return;
+			case 2:
+				var bossEffect = new BossRingEffect(boss, "black");
+				bossEffect.ringWidth = 3;
+				bossEffect.duration = 8;
+				bossEffect.setRadius(ctx.canvas.width * 5);
+				bossEffect.maxRadiusMagnitude = 0;
+				effects.push(bossEffect);
+
+				this.bossAttack2SFX.play();
+				return;
+			case 3:
+				var bossEffect = new BossRingEffect(boss, "black");
+				bossEffect.maxRadiusMagnitude = 4;
+				effects.push(bossEffect);
+
+				bossEffect = new BossRingEffect(boss, "black");
+				bossEffect.maxRadiusMagnitude = 6;
+				bossEffect.duration = 0.5;
+				effects.push(bossEffect);
+
+				this.bossAttack3SFX.play();
+				return;
+			case 4:
+				var bossEffect = new BossRingEffect(boss, "black");
+				bossEffect.maxRadiusMagnitude = 3;
+				bossEffect.duration = 1.5;
+				effects.push(bossEffect);
+
+				bossEffect = new BossRingEffect(boss, "black");
+				bossEffect.maxRadiusMagnitude = 5;
+				bossEffect.duration = 1.1;
+				effects.push(bossEffect);
+
+				bossEffect = new BossRingEffect(boss, "black");
+				bossEffect.maxRadiusMagnitude = 6;
+				bossEffect.duration = 0.9;
+				effects.push(bossEffect);
+
+				bossEffect = new BossRingEffect(boss, "black");
+				bossEffect.maxRadiusMagnitude = 10;
+				bossEffect.duration = 0.7;
+				effects.push(bossEffect);
+
+				this.bossAttack4SFX.play();
+				return;
+		}
+	}
+
 	updateTimer() {
 		var fightDurationTotalSeconds = 240; //matches up with BossAttackSequence timing
 		var secondsElapsed = Math.floor(this.timeElapsed);
@@ -254,7 +322,7 @@ class Boss {
 
 		this.updateTimer();
 
-		this.bossAttackSequence.update(dt, player, boss, ctx);
+		this.bossAttackSequence.update(dt, player, boss, effects, ctx);
 
 		var tempStatuses = [];
 		for (var i = 0; i < this.statuses.length; i++) {

@@ -15,6 +15,7 @@ class Effect {
 		this.doesDamage = false;
 
 		this.turretToSpawn = null;
+		this.followTarget = null;
 
 		this.alive = true;
 	}
@@ -75,12 +76,18 @@ class Effect {
 		return this.alive;
 	}
 
+	updatePosition() {
+
+	}
+	
 	//update projectile position
 	update(dt) {
 		this.timeElapsed += dt;
 		if (this.timeElapsed >= this.duration) {
 			this.alive = false;
 		}
+
+		this.updatePosition();
 
 		var newRadius = this.radius;
 		if (this.timeElapsed/this.duration < this.maxRadiusPercent) {

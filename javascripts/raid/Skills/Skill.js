@@ -21,7 +21,7 @@ class Skill {
 		this.objectToSpawn = null;
 
 		this.activateSoundFilePath = null;
-		this.activateSoundVolume = 1;
+		this.activateSoundVolume = 0.5;
 	}
 
 	resetCooldown() {

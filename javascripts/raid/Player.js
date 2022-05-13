@@ -12,7 +12,7 @@ class Player {
 		this.isMoving = false;
 
 		this.timeSinceLastDamage = -1;
-		this.timeBetweenDamageTicks = 0.1;
+		this.timeBetweenDamageTicks = 0.25;
 
 		this.baseGcdCooldown = 1.5;
 		this.gcdCooldown = this.baseGcdCooldown;
@@ -237,7 +237,7 @@ class Player {
 			this.stormbringerBuff = true;
 
 			var procSFX = new Audio("javascripts/raid/Skills/StormStrike/stormbringerProc.wav");
-			procSFX.volume = 1;
+			procSFX.volume = 0.3;
 			procSFX.play();
 		}
 	}

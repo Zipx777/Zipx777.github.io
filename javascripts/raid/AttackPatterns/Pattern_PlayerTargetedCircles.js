@@ -21,7 +21,14 @@ class Pattern_PlayerTargetedCircles extends AttackPattern {
 			this.delayBetweenAttacks = 0.5;
 		}
 
-		this.circlesRadii = 40;
+
+		if (this.difficulty == "easy") {
+			this.circlesRadii = 35;
+		} else if (this.difficulty == "medium") {
+			this.circlesRadii = 40;
+		} else if (this.difficulty == "hard") {
+			this.circlesRadii = 45;
+		}
 
 		if (this.difficulty == "easy") {
 			this.attackDelay = 3;
@@ -47,6 +54,7 @@ class Pattern_PlayerTargetedCircles extends AttackPattern {
 		var newAttack = new this.attackType(player.getX(), player.getY(), this.attackColor);
 		newAttack.delay = this.attackDelay;
 		newAttack.duration = this.attackDuration;
+		newAttack.radius = this.circlesRadii;
 		return newAttack;
 	}
 }

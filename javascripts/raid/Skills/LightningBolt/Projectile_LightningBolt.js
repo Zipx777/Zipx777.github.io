@@ -8,7 +8,7 @@ class Projectile_LightningBolt extends Projectile {
 
 		this.impactSoundFilePath = "javascripts/raid/Skills/LightningBolt/lightningBoltImpact.wav";
 		this.buffedImpactSoundFilePath = "javascripts/raid/Skills/LightningBolt/lightningBoltBuffedImpact.wav";
-		this.impactSoundVolume = 0.5;
+		this.impactSoundVolume = 0.3;
 	}
 
 	modifyDamage(maelstromStacks) {

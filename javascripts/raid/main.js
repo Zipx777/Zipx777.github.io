@@ -529,7 +529,13 @@ function mouseButtonClick() {
 
 function wasdButtonClick() {
 	player.setControlMode(2);
+}
+
+//for manual use in case saved settings get messed up.
+//Could make switching to the more persistent setting safe
+function clearPersistentStorage() {
 	alert(persistentStorage.clear());
+	changePlayerName();
 }
 
 function collisionCheck(target1, target1Radius, target2, target2Radius) {

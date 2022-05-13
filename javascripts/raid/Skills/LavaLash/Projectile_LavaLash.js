@@ -6,5 +6,6 @@ class Projectile_LavaLash extends Projectile {
 		this.color = "red";
 
 		this.impactSoundFilePath = "javascripts/raid/Skills/LavaLash/lavaLashImpact.wav";
+		this.impactSoundVolume = 0.8;
 	}
 }
