@@ -237,7 +237,7 @@ class Player {
 			this.stormbringerBuff = true;
 
 			var procSFX = new Audio("javascripts/raid/Skills/StormStrike/stormbringerProc.wav");
-			procSFX.volume = 0.3;
+			procSFX.volume = 0.5;
 			procSFX.play();
 		}
 	}

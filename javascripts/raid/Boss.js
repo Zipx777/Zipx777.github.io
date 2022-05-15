@@ -126,6 +126,11 @@ class Boss {
 				initialTeleportEffect.duration = 1.05;
 				initialTeleportEffect.maxRadiusPercent = 0.85;
 				effects.push(initialTeleportEffect);
+
+				var teleportSFX = new Audio("javascripts/raid/BossSounds/teleportStart.wav");
+				teleportSFX.volume = 0.1;
+				teleportSFX.play();
+
 				this.initialTeleportEffectPlayed = true;
 			}
 
@@ -159,6 +164,10 @@ class Boss {
 					finalTeleportRingEffect2.ringWidth = 2;
 					finalTeleportRingEffect2.fadeOut = true;
 					effects.push(finalTeleportRingEffect2);
+
+					var teleportSFX = new Audio("javascripts/raid/BossSounds/teleportEnd.wav");
+					teleportSFX.volume = 0.3;
+					teleportSFX.play();
 
 					this.finalTeleportEffectPlayed = true;
 				}

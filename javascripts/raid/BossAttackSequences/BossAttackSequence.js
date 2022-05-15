@@ -5,9 +5,13 @@
 class BossAttackSequence {
 	constructor() {
 		this.timeElapsed = 0;
-		this.difficulty = "medium";
+		this.difficulty = "medium"; //should always be overwritten by difficulty selection
 		this.lastCase = -1;
 		this.activeAttackPatterns = [];
+		this.randomDirectionPersistent = Math.sign(Math.random() - 0.5);
+		if (this.randomDirectionPersistent == 0) {
+			this.randomDirectionPersistent = 1;
+		}
 	}
 
 	//update BossAttackSequence
@@ -52,15 +56,14 @@ class BossAttackSequence {
 				}
 				//end ENRAGE
 			} else {
-				var randomDirectionPersistent = 1;
 				switch (nextCase % loopDuration) {
 					case 0:
 						//boss.triggerPhase(0, effects);
 						boss.speed = 50;
 						boss.targetDestination.setCoords(ctx.canvas.width / 2, ctx.canvas.height / 2);
-						randomDirectionPersistent = Math.sign(Math.random() - 0.5);
-						if (randomDirectionPersistent == 0) {
-							randomDirectionPersistent = 1;
+						this.randomDirectionPersistent = Math.sign(Math.random() - 0.5);
+						if (this.randomDirectionPersistent == 0) {
+							this.randomDirectionPersistent = 1;
 						}
 						break;
 					case 2:
@@ -131,7 +134,7 @@ class BossAttackSequence {
 					case 18:
 						//boss.triggerPhase(2, effects);
 						boss.speed = 150;
-						boss.targetDestination.setCoords(ctx.canvas.width / 2 + (randomDirectionPersistent * ctx.canvas.width / 4), ctx.canvas.height / 2);
+						boss.targetDestination.setCoords(ctx.canvas.width / 2 + (this.randomDirectionPersistent * ctx.canvas.width / 4), ctx.canvas.height / 2);
 						break;
 					case 20:
 						if (loopNumber == 3 || loopNumber == 4) {
@@ -141,7 +144,7 @@ class BossAttackSequence {
 						break;
 					case 21:
 						boss.speed = (ctx.canvas.width / 2) / 5;
-						boss.targetDestination.setCoords(ctx.canvas.width / 2 - (randomDirectionPersistent * ctx.canvas.width / 4), ctx.canvas.height / 2);
+						boss.targetDestination.setCoords(ctx.canvas.width / 2 - (this.randomDirectionPersistent * ctx.canvas.width / 4), ctx.canvas.height / 2);
 						newAttackPattern = new Pattern_SynchronizedMassacre(this.difficulty);
 						this.activeAttackPatterns.push(newAttackPattern);
 
@@ -149,7 +152,7 @@ class BossAttackSequence {
 						break;
 					case 29:
 						boss.speed = 2000;
-						boss.targetDestination.setCoords(ctx.canvas.width / 2 + (randomDirectionPersistent * ctx.canvas.width / 4), ctx.canvas.height / 2);
+						boss.targetDestination.setCoords(ctx.canvas.width / 2 + (this.randomDirectionPersistent * ctx.canvas.width / 4), ctx.canvas.height / 2);
 						break;
 					case 33:
 						//boss.triggerPhase(3, effects);

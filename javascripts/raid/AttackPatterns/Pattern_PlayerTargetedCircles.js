@@ -50,11 +50,11 @@ class Pattern_PlayerTargetedCircles extends AttackPattern {
 	}
 
 	createAttack(player, boss, ctx) {
-		var borderMargin = 10;
 		var newAttack = new this.attackType(player.getX(), player.getY(), this.attackColor);
 		newAttack.delay = this.attackDelay;
 		newAttack.duration = this.attackDuration;
 		newAttack.radius = this.circlesRadii;
+		newAttack.attackSoundVolume = 0.3;
 		return newAttack;
 	}
 }

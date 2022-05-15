@@ -222,7 +222,7 @@ function setEventHandlers() {
 //--------------------------------------
 
 var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.A0ARrdaM-fxd38rvo-OEGVdH8vPJ07cDAQYIxHlivvIDwWQgykIg2oyMf-VHB-OxGWgZ8I_T2cPlfqiGvvPugbiLJSAfO5bj_OG-s-u_z261Ny-rqqTMjoyPoIU6BTEvGFptQFILfnPLyPeFg1mFDelQXHJ1ud";
+var ACCESS_TOKEN = "ya29.A0ARrdaM--6vX3V3Vf72iG7z2C107jSpoxJVnNQhk5M_KwlvAdmlCXXXPhzsHkNOLvoLpROYevM3QFNw5ywpd2fJZow8rXlaLDK1TGF-4IZCHNap4uHD2t-DBqZO1Zg2bAnheO49oI4XThsGaF8UlRhh_y-zq8";
 var maxLeaderboardEntries = 500;
 var submittingFetchRequest = false;
 
