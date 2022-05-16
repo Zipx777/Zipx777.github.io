@@ -54,7 +54,7 @@ class Pattern_PlayerTargetedCircles extends AttackPattern {
 		newAttack.delay = this.attackDelay;
 		newAttack.duration = this.attackDuration;
 		newAttack.radius = this.circlesRadii;
-		newAttack.attackSoundVolume = 0.3;
+		newAttack.attackSoundVolume = 0.15;
 		return newAttack;
 	}
 }

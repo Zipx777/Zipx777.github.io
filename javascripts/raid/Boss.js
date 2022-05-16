@@ -31,19 +31,19 @@ class Boss {
 		this.bossAttackSequence = startBossAttackSequence;
 
 		this.bossAttack1SFX = new Audio("javascripts/raid/BossSounds/bossWarning1.wav");
-		this.bossAttack1SFX.volume = 0.5;
+		this.bossAttack1SFX.volume = 0.25;
 
 		this.bossAttack2SFX = new Audio("javascripts/raid/BossSounds/bossWarning2.wav");
-		this.bossAttack2SFX.volume = 0.5;
+		this.bossAttack2SFX.volume = 0.25;
 
 		this.bossAttack3SFX = new Audio("javascripts/raid/BossSounds/bossWarning3.wav");
-		this.bossAttack3SFX.volume = 0.5;
+		this.bossAttack3SFX.volume = 0.25;
 
 		this.bossAttack4SFX = new Audio("javascripts/raid/BossSounds/bossWarning4.wav");
-		this.bossAttack4SFX.volume = 0.5;
+		this.bossAttack4SFX.volume = 0.25;
 
 		this.bossDeathSFXFilePath = "javascripts/raid/BossSounds/bossDeath.wav";
-		this.bossDeathSFXVolume = 0.5;
+		this.bossDeathSFXVolume = 0.25;
 
 		this.timeElapsed = 0;
 		this.fightStarted = false;
@@ -128,7 +128,7 @@ class Boss {
 				effects.push(initialTeleportEffect);
 
 				var teleportSFX = new Audio("javascripts/raid/BossSounds/teleportStart.wav");
-				teleportSFX.volume = 0.1;
+				teleportSFX.volume = 0.05;
 				teleportSFX.play();
 
 				this.initialTeleportEffectPlayed = true;
@@ -166,7 +166,7 @@ class Boss {
 					effects.push(finalTeleportRingEffect2);
 
 					var teleportSFX = new Audio("javascripts/raid/BossSounds/teleportEnd.wav");
-					teleportSFX.volume = 0.3;
+					teleportSFX.volume = 0.15;
 					teleportSFX.play();
 
 					this.finalTeleportEffectPlayed = true;

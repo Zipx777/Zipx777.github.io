@@ -13,7 +13,7 @@ class Attack_Circle {
 		this.damage = 60;
 
 		this.attackSoundFilePath = "javascripts/raid/Attacks/circleAttack.wav";
-		this.attackSoundVolume = 0.5;
+		this.attackSoundVolume = 0.25;
 
 		this.triggered = false;
 		this.finished = false;

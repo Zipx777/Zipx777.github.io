@@ -23,7 +23,7 @@ class Attack_Rectangle {
 		this.triggered = false;
 
 		this.attackSoundFilePath = "javascripts/raid/Attacks/rectangleAttack.wav";
-		this.attackSoundVolume = 0.3;
+		this.attackSoundVolume = 0.15;
 
 		this.finished = false;
 	}

@@ -8,7 +8,7 @@ class Projectile_WindfuryWeapon extends Projectile {
 		this.speed = 300;
 		this.ascendanceBuff = false;
 		this.impactSoundFilePath = "javascripts/raid/Skills/WindfuryWeapon/windfuryWeaponImpact.wav";
-		this.impactSoundVolume = 0.1;
+		this.impactSoundVolume = 0.05;
 	}
 
 	extraExplodeEffects(effects) {

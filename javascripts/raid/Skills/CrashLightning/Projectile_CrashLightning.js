@@ -6,6 +6,6 @@ class Projectile_CrashLightning extends Projectile {
 		this.color = "orange";
 
 		this.impactSoundFilePath = "javascripts/raid/Skills/CrashLightning/crashLightningImpact.wav";
-		this.impactSoundVolume = 0.4;
+		this.impactSoundVolume = 0.2;
 	}
 }

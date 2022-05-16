@@ -32,7 +32,7 @@ class Projectile {
 		this.alive = true;
 
 		this.impactSoundFilePath = null;
-		this.impactSoundVolume = 0.5;
+		this.impactSoundVolume = 0.25;
 	}
 	//return value of x
 	getX() {

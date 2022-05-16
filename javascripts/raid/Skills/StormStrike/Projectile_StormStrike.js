@@ -6,7 +6,7 @@ class Projectile_StormStrike extends Projectile {
 		this.stormbringerBuff = false;
 		this.color = "orange";
 		this.impactSoundFilePath = "javascripts/raid/Skills/StormStrike/stormStrikeImpact.wav";
-		this.impactSoundVolume = 0.3;
+		this.impactSoundVolume = 0.15;
 	}
 
 	extraExplodeEffects(effects) {

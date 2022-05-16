@@ -73,10 +73,10 @@ class Player {
 		this.gcdUptime = 0;
 
 		this.playerDamagedSFXFilePath = "javascripts/raid/PlayerSounds/playerDamaged.wav";
-		this.playerDamagedSFXVolume = 1;
+		this.playerDamagedSFXVolume = 0.5;
 
 		this.playerDeathSFXFilePath = "javascripts/raid/PlayerSounds/playerDeath.wav";
-		this.playerDeathSFXVolume = 1;
+		this.playerDeathSFXVolume = 0.5;
 
 		this.controlMode = 2; //1 = mouse, 2 = wasd
 	}
@@ -237,7 +237,7 @@ class Player {
 			this.stormbringerBuff = true;
 
 			var procSFX = new Audio("javascripts/raid/Skills/StormStrike/stormbringerProc.wav");
-			procSFX.volume = 0.5;
+			procSFX.volume = 0.25;
 			procSFX.play();
 		}
 	}
