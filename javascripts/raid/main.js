@@ -276,7 +276,7 @@ testGetData = async() => {
 //--------------------------------------
 
 var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.a0ARrdaM9OTq87aGZ-6sK6J9zftnlYfKgD6qmLfCbF18DYtQWTKCgFLjllwdvD2epjZcAD0pDHGcvsYeQkRaJYkgl8Wl52km_mY-VNYnX942XbXLdwvgXiOgjRZ6EXCzb-xHfiZosjD-oOD6YbABOjCUfYJemH";
+var ACCESS_TOKEN = "ya29.a0ARrdaM8oQ7hioyrd_A9IT3fgqdKIVDMqWo-DXQJGFI_i-azEqus9v5vb1R7luGWkMIGhv_TCt6Ohb2M1GIJ0B2dXJlmxb_mNEgw4LrijHXOMOV90xo9M1ff2yhfaLeL13a430C0OJIw5SqAs04sMMUzOvoYo";
 var maxLeaderboardEntries = 500;
 var submittingFetchRequest = false;
 
