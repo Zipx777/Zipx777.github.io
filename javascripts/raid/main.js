@@ -221,7 +221,7 @@ function setEventHandlers() {
 }
 
 var GIST_ID = "03b25df1f19a0b7a3bae95e1df13419e";
-var GIST_ACCESS_TOKEN = "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";
+var GIST_ACCESS_TOKEN = "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";
 var GIST_FILE_NAME = "test.csv";
 
 function testButtonClick() {
