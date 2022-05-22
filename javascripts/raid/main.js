@@ -199,6 +199,9 @@ function setEventHandlers() {
 
 	$("#playerNameDiv").click(changePlayerName);
 
+	$("#testButton").click(testButtonClick);
+	$("#test2Button").click(test2ButtonClick);
+
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
 	$(document).mousedown(mouseDownHandler);
@@ -217,12 +220,63 @@ function setEventHandlers() {
 	});
 }
 
+var GIST_ID = "03b25df1f19a0b7a3bae95e1df13419e";
+var GIST_ACCESS_TOKEN = "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";
+var GIST_FILE_NAME = "test.csv";
+
+function testButtonClick() {
+	var newContent = "name,score\nzippy,999\nelephant,100\n";
+
+	fetch("https://api.github.com/gists/" + GIST_ID, {
+	  method: 'PATCH',
+	  headers: {
+	    "Content-Type": "application/json",
+	    "Authorization": "token " + GIST_ACCESS_TOKEN
+	  },
+	  body: JSON.stringify({
+	    "files": {
+	      "this_value_is_irrelevant_so_why_does_it_exist???": {
+	        "filename": GIST_FILE_NAME,
+	        "content": newContent
+		      }
+		    }
+		  })
+	});
+}
+
+function test2ButtonClick() {
+	testGetData();
+}
+
+testGetData = async() => {
+	var fetchRequestError = false;
+	const request = await fetch("https://api.github.com/gists/" + GIST_ID,
+  {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "token " + GIST_ACCESS_TOKEN
+  	}
+	}).then(function(response) {
+		if (!response.ok) {
+	    console.log(response.statusText);
+			fetchRequestError = true;
+	  }
+		return response;
+	});
+  const fetchRequestObject = await request.json();
+	console.log("Received Data");
+	var testContent = fetchRequestObject.files[GIST_FILE_NAME].content
+	console.log(testContent);
+	var testContentSplit = testContent.split("\n");
+	console.log(testContentSplit);
+}
+
 //--------------------------------------
 //---------LEADERBOARD LOGIC------------
 //--------------------------------------
 
 var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.a0ARrdaM8uNxIEnxTzN2DjW1-wfQTNtoE5w8z7SWdQppd3bEFCoI-2kxAUX_Fr_wM7eMvwgj-EOvi06wTDGR93f9eg75fDc-i_I1rOG7e-A8lEQGITenwxFWoPhfp0CZR_XBf5W_m0xHCDkhxcOSGeSeZINhjH";
+var ACCESS_TOKEN = "ya29.a0ARrdaM9OTq87aGZ-6sK6J9zftnlYfKgD6qmLfCbF18DYtQWTKCgFLjllwdvD2epjZcAD0pDHGcvsYeQkRaJYkgl8Wl52km_mY-VNYnX942XbXLdwvgXiOgjRZ6EXCzb-xHfiZosjD-oOD6YbABOjCUfYJemH";
 var maxLeaderboardEntries = 500;
 var submittingFetchRequest = false;
 
