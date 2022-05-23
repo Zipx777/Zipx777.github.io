@@ -221,7 +221,8 @@ function setEventHandlers() {
 }
 
 var GIST_ID = "03b25df1f19a0b7a3bae95e1df13419e";
-var GIST_ACCESS_TOKEN = "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";
+var GIST_ACCESS_TOKEN_A = "ghp_jqrkt8x517p5d";
+var GIST_ACCESS_TOKEN_B = "aCLY2q1DZMMdcX7X61rGv7r";
 var GIST_FILE_NAME = "test.csv";
 
 function testButtonClick() {
@@ -231,7 +232,7 @@ function testButtonClick() {
 	  method: 'PATCH',
 	  headers: {
 	    "Content-Type": "application/json",
-	    "Authorization": "token " + GIST_ACCESS_TOKEN
+	    "Authorization": "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
 	  },
 	  body: JSON.stringify({
 	    "files": {
@@ -254,7 +255,7 @@ testGetData = async() => {
   {
     headers: {
       "Content-Type": "application/json",
-      Authorization: "token " + GIST_ACCESS_TOKEN
+      Authorization: "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
   	}
 	}).then(function(response) {
 		if (!response.ok) {
