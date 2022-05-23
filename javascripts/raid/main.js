@@ -199,9 +199,6 @@ function setEventHandlers() {
 
 	$("#playerNameDiv").click(changePlayerName);
 
-	$("#testButton").click(testButtonClick);
-	$("#test2Button").click(test2ButtonClick);
-
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
 	$(document).mousedown(mouseDownHandler);
@@ -220,64 +217,10 @@ function setEventHandlers() {
 	});
 }
 
-var GIST_ID = "03b25df1f19a0b7a3bae95e1df13419e";
-var GIST_ACCESS_TOKEN_A = "ghp_jqrkt8x517p5d";
-var GIST_ACCESS_TOKEN_B = "aCLY2q1DZMMdcX7X61rGv7r";
-var GIST_FILE_NAME = "test.csv";
-
-function testButtonClick() {
-	var newContent = "name,score\nzippy,999\nelephant,100\n";
-
-	fetch("https://api.github.com/gists/" + GIST_ID, {
-	  method: 'PATCH',
-	  headers: {
-	    "Content-Type": "application/json",
-	    "Authorization": "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
-	  },
-	  body: JSON.stringify({
-	    "files": {
-	      "this_value_is_irrelevant_so_why_does_it_exist???": {
-	        "filename": GIST_FILE_NAME,
-	        "content": newContent
-		      }
-		    }
-		  })
-	});
-}
-
-function test2ButtonClick() {
-	testGetData();
-}
-
-testGetData = async() => {
-	var fetchRequestError = false;
-	const request = await fetch("https://api.github.com/gists/" + GIST_ID,
-  {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
-  	}
-	}).then(function(response) {
-		if (!response.ok) {
-	    console.log(response.statusText);
-			fetchRequestError = true;
-	  }
-		return response;
-	});
-  const fetchRequestObject = await request.json();
-	console.log("Received Data");
-	var testContent = fetchRequestObject.files[GIST_FILE_NAME].content
-	console.log(testContent);
-	var testContentSplit = testContent.split("\n");
-	console.log(testContentSplit);
-}
-
 //--------------------------------------
 //---------LEADERBOARD LOGIC------------
 //--------------------------------------
 
-var SHEET_ID = "16MNot4PUq1zYVDGhHYxI_nrlRlQ77hdl4i2at6OpwGY";
-var ACCESS_TOKEN = "ya29.a0ARrdaM8oQ7hioyrd_A9IT3fgqdKIVDMqWo-DXQJGFI_i-azEqus9v5vb1R7luGWkMIGhv_TCt6Ohb2M1GIJ0B2dXJlmxb_mNEgw4LrijHXOMOV90xo9M1ff2yhfaLeL13a430C0OJIw5SqAs04sMMUzOvoYo";
 var maxLeaderboardEntries = 500;
 var submittingFetchRequest = false;
 
@@ -335,7 +278,6 @@ function addNewScoreToLeaderboard(leaderboardData, newName, newScore) {
 			break;
 		}
 	}
-	console.log(currentRunLeaderboardRank);
 	displayCurrentRunParse(currentRunLeaderboardRank);
 	return leaderboardData;
 }
@@ -395,53 +337,31 @@ function addRankColorToElement(element, rank) {
 	}
 }
 
+var GIST_ID = "6a361d54c3124969fb151a3f5f4a31b9";
+var GIST_ACCESS_TOKEN_A = "ghp_jqrkt8x517p5d";
+var GIST_ACCESS_TOKEN_B = "aCLY2q1DZMMdcX7X61rGv7r";
+var GIST_FILE_NAME = "raidLeaderboard.csv";
+
 //pushes new leaderboard data to the sheet, overwriting anything currently there
 //only want to use this after pulling the existing data and updating it
 function submitLeaderboardData(leaderboardData) {
-	var leaderboardDataRequestObject = [];
-	for (var i = 0; i < Math.min(leaderboardData.length, maxLeaderboardEntries); i++) {
+	var newContent = arrayToCSV(leaderboardData);
 
-		//construct row object to submit in the batchUpdate request
-		var newRow =
-		{
-			values: [
-				{
-					userEnteredValue: {
-						"stringValue": leaderboardData[i][0]
-					}
-				},
-				{
-					userEnteredValue: {
-						"numberValue": leaderboardData[i][1]
-					}
-				}
-			]
-		}
-		leaderboardDataRequestObject.push(newRow);
-	}
-
-	fetch("https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + ":batchUpdate", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: "Bearer " + ACCESS_TOKEN,
-			},
-			body: JSON.stringify({
-				requests: [{
-					updateCells: {
-						range: {
-							startColumnIndex: 0,
-							endColumnIndex: 2,
-							startRowIndex: 0,
-							endRowIndex: leaderboardData.length,
-							sheetId: 0
-						},
-						rows: leaderboardDataRequestObject,
-						fields: "*"
-					}
-				}]
-			})
-		});
+	fetch("https://api.github.com/gists/" + GIST_ID, {
+	  method: 'PATCH',
+	  headers: {
+	    "Content-Type": "application/json",
+	    "Authorization": "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
+	  },
+	  body: JSON.stringify({
+	    "files": {
+	      "this_value_is_irrelevant_so_why_does_it_exist???": {
+	        "filename": GIST_FILE_NAME,
+	        "content": newContent
+		      }
+		    }
+		  })
+	});
 }
 
 submitNewScoreToLeaderboard = async(newScore) => {
@@ -450,11 +370,14 @@ submitNewScoreToLeaderboard = async(newScore) => {
 		return;
 	}
 	submittingFetchRequest = true;
-	const request = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/A1:B` + maxLeaderboardEntries,
+
+	console.log("Fetching current leaderboard data...");
+
+	const request = await fetch("https://api.github.com/gists/" + GIST_ID,
   {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ACCESS_TOKEN}`
+      Authorization: "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
   	}
 	}).then(function(response) {
 		if (!response.ok) {
@@ -464,12 +387,15 @@ submitNewScoreToLeaderboard = async(newScore) => {
 		return response;
 	});
   const fetchRequestObject = await request.json();
+	var csvData = fetchRequestObject.files[GIST_FILE_NAME].content;
+	var arrayFromCSV = csvToArray(csvData);
+
 	if (fetchRequestError) {
 		$("#leaderboardErrorMessage").show();
 	} else {
-		console.log("success");
+		console.log("Received data successfully");
 		var sheetValues = fetchRequestObject.values;
-		var updatedLeaderboard = addNewScoreToLeaderboard(sheetValues, playerName, newScore);
+		var updatedLeaderboard = addNewScoreToLeaderboard(arrayFromCSV, playerName, newScore);
 		displayLeaderboard(updatedLeaderboard);
 		submitLeaderboardData(updatedLeaderboard);
 	}
@@ -477,6 +403,30 @@ submitNewScoreToLeaderboard = async(newScore) => {
   return fetchRequestObject;
 }
 
+//takes a CSV from the gist and converts it to an array
+//      name,score\nzippy,999\nelephant,100\n
+//skips over the header row
+function csvToArray(csvInput) {
+	var newArray = [];
+	var splitCSV = csvInput.split("\n");
+	for (var i = 1; i < splitCSV.length; i++) { //skip header row
+		var nextRow = splitCSV[i].split(",");
+		if (nextRow[0] != "") {
+			newArray[i - 1] = [nextRow[0], nextRow[1]];
+		}
+	}
+	return newArray;
+}
+
+//takes the leaderboard data array and converts it to csv to be submitted to the gist
+//adds header row to it
+function arrayToCSV(arrayInput) {
+	var csvToExport = "name,score\n";
+	for (var i = 0; i < arrayInput.length; i++) {
+		csvToExport += (arrayInput[i][0] + "," + arrayInput[i][1] + "\n");
+	}
+	return csvToExport;
+}
 //-------END LEADERBOARD LOGIC----------
 
 function raidAreaMouseMove(e) {
