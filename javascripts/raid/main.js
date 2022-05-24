@@ -221,7 +221,6 @@ function setEventHandlers() {
 //---------LEADERBOARD LOGIC------------
 //--------------------------------------
 
-var maxLeaderboardEntries = 500;
 var submittingFetchRequest = false;
 
 //adds new name/score to leaderboard
@@ -252,9 +251,13 @@ function addNewScoreToLeaderboard(leaderboardData, newName, newScore) {
 	//used for unnecessary optimization of sorting algorithm
 	var iterationDepth = leaderboardData.length - 1;
 
+	var minScore = newScore;
+	var maxScore = newScore;
 	while (!valuesOrdered) {
 		valuesOrdered = true;
 		for (var i = 0; i < iterationDepth; i++) {
+			minScore = Math.min(minScore, leaderboardData[i][1]);
+			maxScore = Math.max(maxScore, leaderboardData[i][1]);
 			if (leaderboardData[i][1] < leaderboardData[i+1][1]) {
 				valuesOrdered = false;
 				//swap values and names
@@ -271,13 +274,10 @@ function addNewScoreToLeaderboard(leaderboardData, newName, newScore) {
 		iterationDepth--;
 	}
 
-	var currentRunLeaderboardRank = 100;
-	for (var i = 0; i < leaderboardData.length; i++) {
-		if (leaderboardData[i][1] == newScore) {
-			currentRunLeaderboardRank = Math.floor(((leaderboardData.length - i) / leaderboardData.length) * 100);
-			break;
-		}
-	}
+	var currentRunLeaderboardRank = getParseRank(newScore, leaderboardData);
+
+
+
 	displayCurrentRunParse(currentRunLeaderboardRank);
 	return leaderboardData;
 }
@@ -288,6 +288,36 @@ function displayCurrentRunParse(currentRunRank) {
 	addRankColorToElement(parseElement, currentRunRank);
 	parseElement.text(currentRunRank);
 	$("#currentRunParseLine").show();
+}
+
+//takes a score in the leaderboard, and the leaderboard
+//returns the parse rank as a percent 0-100
+function getParseRank(score, leaderboardData) {
+	var parseRank = 100;
+
+	//---1st method---
+	//purely based on leaderboard position
+	//decided against doing it this way, results were getting skewed towards the upper end
+	/*
+	for (var i = 0; i < leaderboardData.length; i++) {
+		if (leaderboardData[i][1] == score) {
+			parseRank = Math.floor(((leaderboardData.length - i) / leaderboardData.length) * 100);
+			break;
+		}
+	}
+	*/
+
+	//---2nd method---
+	//goes off of actual score value as a % between min and max scores
+	var maxScore = score;
+	var minScore = score;
+	for (var i = 0; i < leaderboardData.length; i++) {
+		maxScore = Math.max(maxScore, leaderboardData[i][1]);
+		minScore = Math.min(minScore, leaderboardData[i][1]);
+	}
+	var scoreDifferential = maxScore - minScore;
+	parseRank = Math.floor(((score - minScore) / scoreDifferential) * 100);
+	return parseRank;
 }
 
 //populate leaderboard data into html element
@@ -301,7 +331,7 @@ function displayLeaderboard(leaderboardData) {
 		}
 		var leaderboardRankElement = $(document.createElement("td"));
 		leaderboardRankElement.addClass("leaderboardRank");
-		var rank = Math.floor(((leaderboardData.length - i) / leaderboardData.length) * 100);
+		var rank = getParseRank(leaderboardData[i][1], leaderboardData);
 		leaderboardRankElement.text(rank);
 		addRankColorToElement(leaderboardRankElement, rank);
 		var leaderboardNameElement = $(document.createElement("td"));
