@@ -167,7 +167,7 @@
     </div>
     <div id="test" style="display: none;">
       <button id="testButton">Test</button>
-      <button id="test2Button">Test20</button>
+      <button id="test2Button">Test2</button>
     </div>
     <div id="resultsReport">
       <h1>Results</h1>
@@ -192,6 +192,9 @@
         </tr>
       </table>
     </div>
+    <div>
+      <button id="showLeaderboardButton">Show "Harder" Leaderboard</button>
+    </div>
     <div id="leaderboardErrorMessage">
       <h2>Leaderboard connection error</h2>
       <p>Error retrieving data from the "server", unable to display
@@ -200,13 +203,12 @@
     </div>
     <div id="leaderboardDiv">
       <h1>"HARDER" Leaderboard</h1>
-      <table id="leaderboardTable">
-        <tr>
-          <th>Rank</th>
-          <th>Name</th>
-          <th>DPS</th>
-        </tr>
-      </table>
+      <h3>Top Results per Player</h3>
+      <div id="condensedLeaderboardTableContainer">
+      </div>
+      <h3>Full Leaderboard Results</h3>
+      <div id="fullLeaderboardTableContainer">
+      </div>
     </div>
     <br />
     <div id="skillDescriptions">

@@ -199,6 +199,11 @@ function setEventHandlers() {
 
 	$("#playerNameDiv").click(changePlayerName);
 
+	$("#showLeaderboardButton").click(showLeaderboard);
+
+	$("#testButton").click(testButtonClick);
+	$("#test2Button").click(test2ButtonClick);
+
 	$(document).keydown(keyDownHandler);
 	$(document).keyup(keyUpHandler);
 	$(document).mousedown(mouseDownHandler);
@@ -215,6 +220,14 @@ function setEventHandlers() {
 	$(window).contextmenu(function() {
 		wasdKeys.reset();
 	});
+}
+
+function testButtonClick() {
+	console.log("test button click");
+}
+
+function test2ButtonClick() {
+	console.log("test button 2 click");
 }
 
 //--------------------------------------
@@ -298,6 +311,7 @@ function getParseRank(score, leaderboardData) {
 	//---1st method---
 	//purely based on leaderboard position
 	//decided against doing it this way, results were getting skewed towards the upper end
+	//with more users and more diverse results, this method would be preferred
 	/*
 	for (var i = 0; i < leaderboardData.length; i++) {
 		if (leaderboardData[i][1] == score) {
@@ -309,6 +323,7 @@ function getParseRank(score, leaderboardData) {
 
 	//---2nd method---
 	//goes off of actual score value as a % between min and max scores
+	//this is "nicer" for newer players while the user base is very small
 	var maxScore = score;
 	var minScore = score;
 	for (var i = 0; i < leaderboardData.length; i++) {
@@ -317,36 +332,90 @@ function getParseRank(score, leaderboardData) {
 	}
 	var scoreDifferential = maxScore - minScore;
 	parseRank = Math.floor(((score - minScore) / scoreDifferential) * 100);
+
 	return parseRank;
 }
 
 //populate leaderboard data into html element
 function displayLeaderboard(leaderboardData) {
-	for (var i = 0; i < leaderboardData.length; i++) {
-		var leaderboardRowElement = $(document.createElement("tr"));
-		if (i%2 == 0) {
-			leaderboardRowElement.addClass("tableRowEven");
-		} else {
-			leaderboardRowElement.addClass("tableRowOdd");
-		}
-		var leaderboardRankElement = $(document.createElement("td"));
-		leaderboardRankElement.addClass("leaderboardRank");
-		var rank = getParseRank(leaderboardData[i][1], leaderboardData);
-		leaderboardRankElement.text(rank);
-		addRankColorToElement(leaderboardRankElement, rank);
-		var leaderboardNameElement = $(document.createElement("td"));
-		leaderboardNameElement.text(leaderboardData[i][0]);
-		var leaderboardDPSElement = $(document.createElement("td"));
-		leaderboardDPSElement.addClass("leaderboardDPS");
-		var prettyNumber = Math.floor(leaderboardData[i][1]);
-		leaderboardDPSElement.text(prettyNumber);
-		leaderboardRowElement.append(leaderboardRankElement);
-		leaderboardRowElement.append(leaderboardNameElement);
-		leaderboardRowElement.append(leaderboardDPSElement);
+	var condensedLeaderboardTableContainerElement = $("#condensedLeaderboardTableContainer");
+	condensedLeaderboardTableContainerElement.text("");
+	var fullLeaderboardTableContainerElement = $("#fullLeaderboardTableContainer");
+	fullLeaderboardTableContainerElement.text("");
 
-		$("#leaderboardTable").append(leaderboardRowElement);
-		$("#leaderboardDiv").show();
+	//shows just each player's best result
+	var condensedLeaderboard = constructLeaderboard(leaderboardData, true);
+	condensedLeaderboardTableContainerElement.append(condensedLeaderboard);
+
+
+	//shows every entry in the leaderboard
+	var fullLeaderboard = constructLeaderboard(leaderboardData, false);
+	fullLeaderboardTableContainerElement.append(fullLeaderboard);
+
+	$("#leaderboardDiv").show();
+	$("#showLeaderboardButton").hide();
+}
+
+//constructs html table element to display leaderboard based on passed array
+//takes a bool that will cut the result down to just unique entries if true
+function constructLeaderboard(leaderboardData, onlyUniqueEntries) {
+	var leaderboardTableElement = $(document.createElement("table"));
+	var leaderboardHeaderRowElement = $(document.createElement("tr"));
+	var leaderboardHeaderRowRank = $(document.createElement("th"));
+	leaderboardHeaderRowRank.text("Rank");
+	var leaderboardHeaderRowName = $(document.createElement("th"));
+	leaderboardHeaderRowName.text("Name");
+	var leaderboardHeaderRowDPS = $(document.createElement("th"));
+	leaderboardHeaderRowDPS.text("DPS");
+
+	leaderboardHeaderRowElement.append(leaderboardHeaderRowRank);
+	leaderboardHeaderRowElement.append(leaderboardHeaderRowName);
+	leaderboardHeaderRowElement.append(leaderboardHeaderRowDPS);
+
+	leaderboardTableElement.append(leaderboardHeaderRowElement);
+
+	//used when "onlyUniqueEntries" is true
+	var namesAddedToLeaderboard = [];
+
+	for (var i = 0; i < leaderboardData.length; i++) {
+		var addEntry = true;
+		if (onlyUniqueEntries) {
+			for (var j = 0; j < namesAddedToLeaderboard.length; j++) {
+				if (namesAddedToLeaderboard[j] == leaderboardData[i][0]) {
+					addEntry = false;
+				}
+			}
+			if (addEntry) {
+				namesAddedToLeaderboard.push(leaderboardData[i][0]);
+			}
+		}
+
+		if (addEntry) {
+			var leaderboardRowElement = $(document.createElement("tr"));
+			if (i%2 == 0) {
+				leaderboardRowElement.addClass("tableRowEven");
+			} else {
+				leaderboardRowElement.addClass("tableRowOdd");
+			}
+			var leaderboardRankElement = $(document.createElement("td"));
+			leaderboardRankElement.addClass("leaderboardRank");
+			var rank = getParseRank(leaderboardData[i][1], leaderboardData);
+			leaderboardRankElement.text(rank);
+			addRankColorToElement(leaderboardRankElement, rank);
+			var leaderboardNameElement = $(document.createElement("td"));
+			leaderboardNameElement.text(leaderboardData[i][0]);
+			var leaderboardDPSElement = $(document.createElement("td"));
+			leaderboardDPSElement.addClass("leaderboardDPS");
+			var prettyNumber = Math.floor(leaderboardData[i][1]);
+			leaderboardDPSElement.text(prettyNumber);
+			leaderboardRowElement.append(leaderboardRankElement);
+			leaderboardRowElement.append(leaderboardNameElement);
+			leaderboardRowElement.append(leaderboardDPSElement);
+
+			leaderboardTableElement.append(leaderboardRowElement);
+		}
 	}
+	return leaderboardTableElement;
 }
 
 function addRankColorToElement(element, rank) {
@@ -372,6 +441,47 @@ var GIST_ACCESS_TOKEN_A = "ghp_jqrkt8x517p5d";
 var GIST_ACCESS_TOKEN_B = "aCLY2q1DZMMdcX7X61rGv7r";
 var GIST_FILE_NAME = "raidLeaderboard.csv";
 
+//used to show leaderboard without submitting a score
+showLeaderboard = async() => {
+	var result = await getCurrentLeaderboard();
+	if (result) {
+		console.log("Received leaderboard data successfully");
+		displayLeaderboard(result);
+	}
+}
+
+//get csv data of current leaderboard
+//return array converted from csv
+getCurrentLeaderboard = async() => {
+	var fetchRequestError = false;
+
+	console.log("Fetching current leaderboard data...");
+
+	const request = await fetch("https://api.github.com/gists/" + GIST_ID,
+  {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
+  	}
+	}).then(function(response) {
+		if (!response.ok) {
+	    console.log(response.statusText);
+			fetchRequestError = true;
+	  }
+		return response;
+	});
+  const fetchRequestObject = await request.json();
+
+	if (fetchRequestError) {
+		$("#leaderboardErrorMessage").show();
+		return null;
+	}
+
+	var csvData = fetchRequestObject.files[GIST_FILE_NAME].content;
+	var arrayFromCSV = csvToArray(csvData);
+	return arrayFromCSV;
+}
+
 //pushes new leaderboard data to the sheet, overwriting anything currently there
 //only want to use this after pulling the existing data and updating it
 function submitLeaderboardData(leaderboardData) {
@@ -395,42 +505,20 @@ function submitLeaderboardData(leaderboardData) {
 }
 
 submitNewScoreToLeaderboard = async(newScore) => {
-	var fetchRequestError = false;
 	if (submittingFetchRequest) {
 		return;
 	}
 	submittingFetchRequest = true;
 
-	console.log("Fetching current leaderboard data...");
+	var currentLeaderboard = await getCurrentLeaderboard();
 
-	const request = await fetch("https://api.github.com/gists/" + GIST_ID,
-  {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "token " + GIST_ACCESS_TOKEN_A + GIST_ACCESS_TOKEN_B
-  	}
-	}).then(function(response) {
-		if (!response.ok) {
-	    console.log(response.statusText);
-			fetchRequestError = true;
-	  }
-		return response;
-	});
-  const fetchRequestObject = await request.json();
-	var csvData = fetchRequestObject.files[GIST_FILE_NAME].content;
-	var arrayFromCSV = csvToArray(csvData);
-
-	if (fetchRequestError) {
-		$("#leaderboardErrorMessage").show();
-	} else {
-		console.log("Received data successfully");
-		var sheetValues = fetchRequestObject.values;
-		var updatedLeaderboard = addNewScoreToLeaderboard(arrayFromCSV, playerName, newScore);
+	if (currentLeaderboard != null) {
+		console.log("Received leaderboard data successfully");
+		var updatedLeaderboard = addNewScoreToLeaderboard(currentLeaderboard, playerName, newScore);
 		displayLeaderboard(updatedLeaderboard);
 		submitLeaderboardData(updatedLeaderboard);
 	}
 	submittingFetchRequest = false;
-  return fetchRequestObject;
 }
 
 //takes a CSV from the gist and converts it to an array
