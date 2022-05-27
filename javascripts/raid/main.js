@@ -296,7 +296,6 @@ function addNewScoreToLeaderboard(leaderboardData, newName, newScore) {
 }
 
 function displayCurrentRunParse(currentRunRank) {
-	//console.log(currentRunRank);
 	var parseElement = $("#currentRunParse");
 	addRankColorToElement(parseElement, currentRunRank);
 	parseElement.text(currentRunRank);
@@ -671,9 +670,16 @@ function collisionCheck(target1, target1Radius, target2, target2Radius) {
 }
 
 function populateResultsReport() {
+
+	/*
+	-----------------------------------------
+	------------DPS/Damage taken-------------
+	-----------------------------------------
+	*/
+
 	var totalDamage = 0;
 	for (var key in boss.damageReport) {
-		totalDamage += boss.damageReport[key];
+		totalDamage += boss.damageReport[key][1];
 	}
 	var totalDps = totalDamage / boss.timeElapsed;
 
@@ -700,10 +706,11 @@ function populateResultsReport() {
 	$("#damageTakenResult").text(Math.floor(damageTaken));
 	$("#damageTakenQuip").text(damageTakenQuip);
 
-	//main stats bars
-	//console.log("Auto Attack uptime: " + (player.autoAttackTotalUptime / boss.timeElapsed));
-	//console.log("Maelstrom Stacks not wasted: " + ((player.maelstromStacksGenerated - player.maelstromStacksWasted) / player.maelstromStacksGenerated));
-	//console.log("Flame Shock uptime: " + (player.flameShockTotalUptime / boss.timeElapsed));
+	/*
+	-----------------------------------------
+	-------------Main Stat Bars--------------
+	-----------------------------------------
+	*/
 
 	var autoAttackUptime = player.autoAttackTotalUptime / boss.timeElapsed;
 	var maelstromStacksNotWasted = (Math.max(player.maelstromStacksGenerated, 1) - player.maelstromStacksWasted) / Math.max(player.maelstromStacksGenerated, 1);
@@ -755,25 +762,100 @@ function populateResultsReport() {
 		statRowCounter++;
 	}
 
+	/*
+	-----------------------------------------
+	------------Cooldown Usage-------------
+	-----------------------------------------
+	*/
+
+	var cooldownsToDisplay = [
+		"Ascendance",
+		"Windfury Totem",
+		"Sundering",
+		"Feral Spirit",
+		"Bloodlust"
+	];
+	var cooldownUseRowCounter = 0;
+	for (var i = 0; i < cooldownsToDisplay.length; i++) {
+		var cooldownUsesCount = player.skillUses[cooldownsToDisplay[i]];
+		if (!cooldownUsesCount) {
+			cooldownUsesCount = 0;
+		}
+		var skillCooldown = player.getSkillByName(cooldownsToDisplay[i]).cooldown;
+		var maxCooldownlUses = Math.floor(boss.timeElapsed / skillCooldown) + 1;
+		var cooldownUsePercentage = cooldownUsesCount / maxCooldownlUses;
+		var cooldownUsesMissed = maxCooldownlUses - cooldownUsesCount;
+
+		var nextRowElement = $(document.createElement("tr"));
+		if (cooldownUseRowCounter%2 == 0) {
+			nextRowElement.addClass("tableRowEven");
+		} else {
+			nextRowElement.addClass("tableRowOdd");
+		}
+		var cooldownUsesNameElement = $(document.createElement("td"));
+		cooldownUsesNameElement.text(cooldownsToDisplay[i]);
+		var cooldownUsesCountElement = $(document.createElement("td"));
+		cooldownUsesCountElement.text(cooldownUsesCount + "/" + maxCooldownlUses);
+
+		var barWidth = cooldownUsePercentage * 350;
+		var cooldownUsesBarContainerElement = $(document.createElement("td"));
+		cooldownUsesBarContainerElement.addClass("statTrackerBarCell");
+		var cooldownUsesBarElement = $(document.createElement("div"));
+		cooldownUsesBarElement.addClass("statTrackerBar");
+
+		if (cooldownUsePercentage >= 1) {
+			cooldownUsesBarElement.css("background-color", "lime");
+		} else if (cooldownUsePercentage >= 0.8) {
+			cooldownUsesBarElement.css("background-color", "green");
+		} else if (cooldownUsePercentage >= 0.6) {
+			cooldownUsesBarElement.css("background-color", "orange");
+		} else {
+			cooldownUsesBarElement.css("background-color", "firebrick");
+		}
+		cooldownUsesBarElement.width(Math.max(1, barWidth));
+		cooldownUsesBarContainerElement.append(cooldownUsesBarElement);
+
+		nextRowElement.append(cooldownUsesNameElement);
+		nextRowElement.append(cooldownUsesCountElement);
+		nextRowElement.append(cooldownUsesBarContainerElement);
+		//$("#damageBreakdown").append("<tr><td>" + nextKey + "</td><td>" + Math.floor(boss.damageReport[nextKey]) + "</td><td><div class=\"damageBreakdownBar\" width=\"10px\"></div></td></tr>");
+		$("#cooldownUsageTable").append(nextRowElement);
+		cooldownUseRowCounter++;
+	}
+	/*
+	-----------------------------------------
+	------------Damage Breakdown-------------
+	-----------------------------------------
+	*/
+
 	//damage breakdown
-	var nextKey = "";
-	var nextDamage = 0;
 	var maxDamage = 0;
-	var continuing = true;
+	for (var key in boss.damageReport) {
+		maxDamage = Math.max(maxDamage, boss.damageReport[key][1]);
+	}
+
+	//populate table with results in descending order of damage done
 	var damageRowCounter = 0;
+	var continuing = true;
+	var nextName = "";
+	var nextNum = 0;
+	var nextDamage = 0;
+	var prevDamage = maxDamage + 1;
 	while (continuing) {
-		for (var key in boss.damageReport) {
-			if (boss.damageReport[key] > nextDamage) {
-				nextDamage = boss.damageReport[key];
-				nextKey = key;
+		continuing = false;
+		nextDamage = 0;
+		//get next highest damage done in the boss' damage report
+		for (var damageSourceName in boss.damageReport) {
+			if (boss.damageReport[damageSourceName][1] > nextDamage &&
+				boss.damageReport[damageSourceName][1] < prevDamage) {
+				nextName = damageSourceName;
+				nextNumInstances = boss.damageReport[damageSourceName][0];
+				nextDamage = boss.damageReport[damageSourceName][1];
+				continuing = true;
 			}
 		}
-		if (maxDamage == 0) {
-			maxDamage = nextDamage;
-		}
-		if (nextDamage == 0) {
-			continuing = false;
-		} else {
+
+		if (nextDamage > 0) {
 			var barWidth = (nextDamage / maxDamage) * 320;
 			var nextRowElement = $(document.createElement("tr"));
 			if (damageRowCounter%2 == 0) {
@@ -782,7 +864,9 @@ function populateResultsReport() {
 				nextRowElement.addClass("tableRowOdd");
 			}
 			var skillNameElement = $(document.createElement("td"));
-			skillNameElement.text(nextKey);
+			skillNameElement.text(nextName);
+			var skillInstancesElement = $(document.createElement("td"));
+			skillInstancesElement.text(nextNumInstances);
 			var skillDamageElement = $(document.createElement("td"));
 			skillDamageElement.text(Math.floor(nextDamage));
 			var skillDamageBarContainerElement = $(document.createElement("td"));
@@ -791,13 +875,14 @@ function populateResultsReport() {
 			skillDamageBarElement.width(Math.max(1, barWidth));
 			skillDamageBarContainerElement.append(skillDamageBarElement);
 			nextRowElement.append(skillNameElement);
+			nextRowElement.append(skillInstancesElement);
 			nextRowElement.append(skillDamageElement);
 			nextRowElement.append(skillDamageBarContainerElement);
-			//$("#damageBreakdown").append("<tr><td>" + nextKey + "</td><td>" + Math.floor(boss.damageReport[nextKey]) + "</td><td><div class=\"damageBreakdownBar\" width=\"10px\"></div></td></tr>");
+
 			$("#damageBreakdown").append(nextRowElement);
-			boss.damageReport[nextKey] = 0;
-			nextDamage = 0;
 			damageRowCounter++;
+
+			prevDamage = nextDamage;
 		}
 	}
 	$("#resultsReport").show();

@@ -222,11 +222,13 @@ class Boss {
 			this.fightStarted = true;
 			this.currentHealth = Math.max(0, this.currentHealth - adjustedDamageValue);
 			if (!this.damageReport[damageSourceName]) {
-				this.damageReport[damageSourceName] = adjustedDamageValue;
+				this.damageReport[damageSourceName] = [];
+				this.damageReport[damageSourceName][0] = 1;
+				this.damageReport[damageSourceName][1] = adjustedDamageValue;
 			} else {
-				this.damageReport[damageSourceName] += adjustedDamageValue;
+				this.damageReport[damageSourceName][0] += 1;
+				this.damageReport[damageSourceName][1] += adjustedDamageValue;
 			}
-			//console.log("Damage from " + damageSourceName + ": " + Math.floor(adjustedDamageValue));
 			var newDamageText = new DamageText(damageSourceName, this.x, this.y - this.radius, adjustedDamageValue, damageColor);
 			if (damageSourceName == "Status_FlameShock" || damageSourceName == "Windfury Weapon" || damageSourceName == "Auto Attack") {
 				newDamageText.isSmall = true;

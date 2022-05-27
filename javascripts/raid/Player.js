@@ -72,6 +72,8 @@ class Player {
 		this.flameShockTotalUptime = 0;
 		this.gcdUptime = 0;
 
+		this.skillUses = {};
+
 		this.playerDamagedSFXFilePath = "javascripts/raid/PlayerSounds/playerDamaged.wav";
 		this.playerDamagedSFXVolume = 0.5;
 
@@ -109,13 +111,13 @@ class Player {
 	setDifficulty(diff) {
 		switch (diff) {
 			case "easy":
-				this.setHealth(1000); //target dps: 150 over 4min
+				this.setHealth(1000);
 				break;
 			case "medium":
-				this.setHealth(500); //target dps: 200 over 4min
+				this.setHealth(500);
 				break;
 			case "hard":
-				this.setHealth(300); //target dps: 230 over 4min
+				this.setHealth(300);
 				break;
 		}
 	}
@@ -296,6 +298,15 @@ class Player {
 		}
 	}
 
+	countSkillUse(skillName) {
+		if (!this.skillUses[skillName]) {
+			this.skillUses[skillName] = [];
+			this.skillUses[skillName] = 1;
+		} else {
+			this.skillUses[skillName] += 1;
+		}
+	}
+
 	//update Player position and skills
 	update(dt, targetX, targetY, keys, player, boss, projectiles, effects, gameStarted, ctx) {
 
@@ -444,6 +455,7 @@ class Player {
 			if (this.castingTimer <= 0) {
 				var skillActivated = this.skillToCast.activate(ctx, player, boss, projectiles, effects);
 				if (skillActivated) {
+					this.countSkillUse(this.skillToCast.name);
 					if (this.skillToCast.shock) {
 						$.each(this.skills, function(i,skill) {
 							if (skill.shock && skill.name != skillActivated.name) {
