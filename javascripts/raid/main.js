@@ -669,6 +669,81 @@ function collisionCheck(target1, target1Radius, target2, target2Radius) {
 	return (distBetweenSquared <= combinedRadiiSquared);
 }
 
+function getDPSArrayFromDamageEvents(damageEvents) {
+	var timeBetweenDataPoints = 1;
+	var nextDataPointTime = 0;
+	var timeSpanToSample = 10; //goes half this in either direction
+
+	var dpsArray = [];
+
+	var continueCheck = true;
+	while (continueCheck) {
+		var startSampleTime = Math.max(nextDataPointTime - (timeSpanToSample/2), 0);
+		var endSampleTime = Math.min(nextDataPointTime + (timeSpanToSample/2), boss.timeElapsed);
+
+		//count up damage that happened in range of data point
+		var damageInPeriod = 0;
+		for (var i = 0; i < damageEvents.length; i++) {
+			if (damageEvents[i][0] > endSampleTime) {
+				break;
+			}
+			if (damageEvents[i][0] >= startSampleTime) {
+				damageInPeriod += damageEvents[i][1];
+			}
+		}
+
+		var dpsInLastPeriod = damageInPeriod / (endSampleTime - startSampleTime);
+		dpsArray.push([nextDataPointTime, dpsInLastPeriod]);
+
+		//end if we're beyond the end of the list of damage events
+		if (nextDataPointTime >= boss.timeElapsed) {
+			continueCheck = false;
+		}
+
+		nextDataPointTime += timeBetweenDataPoints;
+	}
+	return dpsArray;
+}
+
+function showDPSGraph() {
+	var dpsArray = getDPSArrayFromDamageEvents(boss.damageTimelineEvents);
+
+	var dpsTimestamps = [];
+	var dpsValuesArray = [];
+	for (var i = 0; i < dpsArray.length; i++) {
+		dpsTimestamps.push(dpsArray[i][0]);
+		dpsValuesArray.push(dpsArray[i][1]);
+	}
+	var chartCtx = document.getElementById('chart').getContext('2d');
+	var chart = new Chart(chartCtx, {
+	  type: 'line',
+	  data: {
+	    labels: dpsTimestamps,
+	    datasets: [{
+				label: "Estimated DPS",
+	      data: dpsValuesArray,
+				borderColor: "white",
+	    }]
+	  },
+		options: {
+	    scales: {
+				y: {
+					min: 0,
+	        grid: {
+	          color: '#0a0a0a',
+	        }
+	      },
+	    },
+			plugins: {
+            legend: {
+                display: false,
+            }
+        }
+	  }
+	});
+}
+
+//calculate and show results for this run
 function populateResultsReport() {
 
 	/*
@@ -822,6 +897,7 @@ function populateResultsReport() {
 		$("#cooldownUsageTable").append(nextRowElement);
 		cooldownUseRowCounter++;
 	}
+
 	/*
 	-----------------------------------------
 	------------Damage Breakdown-------------
@@ -885,7 +961,9 @@ function populateResultsReport() {
 			prevDamage = nextDamage;
 		}
 	}
+
 	$("#resultsReport").show();
+	showDPSGraph();//needs to happen after the containing div is shown
 }
 
 function startAnimating() {

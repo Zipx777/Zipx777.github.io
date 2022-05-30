@@ -49,6 +49,7 @@ class Boss {
 		this.fightStarted = false;
 
 		this.damageReport = {};
+		this.damageTimelineEvents = [];
 	}
 
 	//return value of x
@@ -229,6 +230,9 @@ class Boss {
 				this.damageReport[damageSourceName][0] += 1;
 				this.damageReport[damageSourceName][1] += adjustedDamageValue;
 			}
+
+			this.damageTimelineEvents.push([this.timeElapsed, adjustedDamageValue]);
+
 			var newDamageText = new DamageText(damageSourceName, this.x, this.y - this.radius, adjustedDamageValue, damageColor);
 			if (damageSourceName == "Status_FlameShock" || damageSourceName == "Windfury Weapon" || damageSourceName == "Auto Attack") {
 				newDamageText.isSmall = true;

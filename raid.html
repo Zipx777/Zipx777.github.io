@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/raid.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 	<script src="javascripts/shared/requestAnimationFrame.js"></script>
 	<script src="javascripts/shared/Vector.js"></script>
@@ -191,6 +192,8 @@
           <th>Bar</th>
         </tr>
       </table>
+      <h1>DPS Timeline</h1>
+      <canvas id="chart" width="350" height="200"></canvas>
       <h1>Damage Breakdown</h1>
       <table id="damageBreakdown">
         <tr>
