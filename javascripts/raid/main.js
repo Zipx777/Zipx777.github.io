@@ -59,10 +59,10 @@ function initializeVariables() {
 	mediumPosition = new Vector(300,300);
 	hardPosition = new Vector(500,200);
 
-	//can be local or session
+	//can be localStorage or sessionStorage
 	//local persists after browser close, but if something breaks, someone can be blocked without external help
 	//session is safer cause they can just close and relaunch to unblock
-	persistentStorage = window.sessionStorage;
+	persistentStorage = window.localStorage;
 
 	canvas = $("#raidCanvas");
 	ctx = canvas[0].getContext("2d");
@@ -100,6 +100,7 @@ function initializeVariables() {
 	};
 
 	controlKeys = new RaidKeyTracker("arrows");
+	setPlayerControlMode("arrows", false);
 
 	//check for locally saved control setting
 	var savedControlSetting = JSON.parse(persistentStorage.getItem("savedControlSetting"));
@@ -185,21 +186,32 @@ function changePlayerName() {
 	var nameEnterPrompt = nameEnterBasePrompt;
 	var nameEnteredIsEmpty = false;
 	var nameEnteredIsTooLong = false;
+	var cancelledOutOfPrompt = false;
 	while (!newPlayerName || newPlayerName.length > maxPlayerNameLength) {
 		if (loopCounter > 1) {
 			if (nameEnteredIsEmpty) {
 				nameEnterPrompt = nameEnterBasePrompt + "\nName/Initials cannot be empty."
 			} else if (nameEnteredIsTooLong) {
-				nameEnterPrompt = nameEnterBasePrompt + "\nName/Initials cannot be more than " + maxPlayerNameLength + " characters long";
+				nameEnterPrompt = nameEnterBasePrompt + "\nName/Initials cannot be more than " + maxPlayerNameLength + " characters long.";
+			} else if (cancelledOutOfPrompt) {
+				nameEnterPrompt = nameEnterBasePrompt + "\nYou cannot cancel passed this prompt.";
 			}
 		}
-		newPlayerName = prompt(nameEnterPrompt, "").trim();
-		var nameEnteredIsEmpty = false;
-		var nameEnteredIsTooLong = false;
-		if (!newPlayerName) {
-			nameEnteredIsEmpty = true;
-		} else if (newPlayerName.length > maxPlayerNameLength) {
-			nameEnteredIsTooLong = true;
+
+		cancelledOutOfPrompt = false;
+		nameEnteredIsEmpty = false;
+		nameEnteredIsTooLong = false;
+
+		var promptResult = prompt(nameEnterPrompt, "");
+		if (promptResult == null) {
+			cancelledOutOfPrompt = true;
+		} else {
+			newPlayerName = promptResult.trim();
+			if (newPlayerName == "") {
+				nameEnteredIsEmpty = true;
+			} else if (newPlayerName.length > maxPlayerNameLength) {
+				nameEnteredIsTooLong = true;
+			}
 		}
 		loopCounter++
 	}
@@ -217,6 +229,8 @@ function setEventHandlers() {
 	$("#playerNameDiv").click(changePlayerName);
 
 	$("#showLeaderboardButton").click(showLeaderboard);
+
+	$("#clearStorageButton").click(clearPersistentStorage);
 
 	$("#testButton").click(testButtonClick);
 	$("#test2Button").click(test2ButtonClick);
@@ -681,11 +695,16 @@ function arrowKeysButtonClick() {
 	setPlayerControlMode("arrows");
 }
 
-function setPlayerControlMode(mode) {
+function setPlayerControlMode(mode, storePersistentData) {
 	if (mode != "arrows" && mode != "wasd" && mode != "mouse") {
 		console.log("Tried to set bad player control mode: " + mode)
 		return;
 	}
+
+	if (storePersistentData == null) {
+		storePersistentData = true;
+	}
+
 	$("#controlSelect button").removeClass("controlModeSelected");
 	switch (mode) {
 		case "wasd":
@@ -703,13 +722,18 @@ function setPlayerControlMode(mode) {
 			player.setControlMode(1);
 			break;
 	}
-	persistentStorage.setItem("savedControlSetting", JSON.stringify(mode));
 	playerMoved = false;
+
+	if (storePersistentData) {
+		persistentStorage.setItem("savedControlSetting", JSON.stringify(mode));
+	}
 }
 //for manual use in case saved settings get messed up.
 //Could make switching to the more persistent setting safe
 function clearPersistentStorage() {
-	alert(persistentStorage.clear());
+	alert("Clearing stored persistent data (keybinds, control setting, name).");
+	persistentStorage.clear();
+	setPlayerControlMode("arrows", false);
 	changePlayerName();
 }
 
