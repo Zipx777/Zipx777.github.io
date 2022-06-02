@@ -467,7 +467,7 @@ function addRankColorToElement(element, rank) {
 }
 
 var GIST_ID = "6a361d54c3124969fb151a3f5f4a31b9";
-var GIST_ACCESS_TOKEN_A = "ghp_jqrkt 8x517p5d";
+var GIST_ACCESS_TOKEN_A = "ghp_jqrkt8x517p5d";
 var GIST_ACCESS_TOKEN_B = "aCLY2q1DZMMdcX7X61rGv7r";
 var GIST_FILE_NAME = "raidLeaderboard.csv";
 
