@@ -14,7 +14,7 @@
 
 	<script src="javascripts/shared/requestAnimationFrame.js"></script>
 	<script src="javascripts/shared/Vector.js"></script>
-  <script src="javascripts/shared/Keys.js"></script>
+  <script src="javascripts/shared/RaidKeyTracker.js"></script>
   <script src="javascripts/raid/Player.js"></script>
   <script src="javascripts/raid/Boss.js"></script>
   <script src="javascripts/raid/Effects/Effect.js"></script>
@@ -130,6 +130,14 @@
       <section id="main_content" class="inner">
         <h3><a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Chalmers' Raid</h3>
 		<p>Dodge attacks and do the dps.</p>
+
+    <div id="controlSelect">
+      <div>Optional: change movement control</div>
+      <button id="arrowKeysButton">Arrow Keys</button>
+      <button id="wasdButton">WASD</button>
+      <button id="mouseButton">Mouse</button>
+    </div>
+    <br />
     <div id="playerNameDiv">Player Name: </div>
     <div id="timerDiv">0:00</div>
 		<div id="raidArea">
@@ -160,12 +168,6 @@
 
     </div>
 
-    <div id="controlSelect">
-      <div>
-        <button id="mouseButton">Mouse</button>
-        <button id="wasdButton">WASD</button>
-      </div>
-    </div>
     <div id="test" style="display: none;">
       <button id="testButton">Test</button>
       <button id="test2Button">Test2</button>
@@ -204,6 +206,7 @@
         </tr>
       </table>
     </div>
+    <br />
     <div>
       <button id="showLeaderboardButton">Show "Harder" Leaderboard</button>
     </div>

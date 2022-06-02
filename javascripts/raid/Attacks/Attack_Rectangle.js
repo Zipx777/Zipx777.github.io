@@ -142,6 +142,18 @@ class Attack_Rectangle {
 		var averageY = totalY / this.points.length;
 
 		if (this.timeElapsed <= this.delay) {
+			//light rectangle background during fill
+			ctx.fillStyle = this.color;
+			ctx.globalAlpha = Math.min(0.2, Math.max(0, (this.timeElapsed / this.delay) * 1));
+			ctx.beginPath();
+			ctx.moveTo(this.points[0].getX(), this.points[0].getY());
+			for (var i = 1; i < this.points.length; i++) {
+				ctx.lineTo(this.points[i].getX(), this.points[i].getY());
+			}
+			ctx.lineTo(this.points[0].getX(), this.points[0].getY());
+			ctx.fill();
+
+			//border outline
 			ctx.strokeStyle = this.color;
 			ctx.globalAlpha = Math.min(1, Math.max(0.5, (this.timeElapsed / this.delay)));
 			ctx.beginPath();
@@ -152,6 +164,7 @@ class Attack_Rectangle {
 			ctx.lineTo(this.points[0].getX(), this.points[0].getY());
 			ctx.stroke();
 
+			//rectangle dynamic fill
 			ctx.fillStyle = this.color;
 			ctx.globalAlpha = Math.min(1, Math.max(0, (this.timeElapsed / this.delay)));
 			ctx.beginPath();

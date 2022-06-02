@@ -7,7 +7,7 @@ var canvas,
 
 	mouseX,
 	mouseY,
-	wasdKeys,
+	controlKeys,
 
 	gameOver,
 	now,
@@ -30,6 +30,7 @@ var canvas,
 	playerName,
 	maxPlayerNameLength,
 	gameStarted,
+	playerMoved,
 
 	easyPosition,
 	mediumPosition,
@@ -51,6 +52,7 @@ function initializeVariables() {
 	playerName = null;
 	maxPlayerNameLength = 15;
 
+	playerMoved = false;
 	gameStarted = false;
 	difficultySelectorRadius = 30;
 	easyPosition = new Vector(100,200);
@@ -97,6 +99,21 @@ function initializeVariables() {
 		"skill_13": 53
 	};
 
+	controlKeys = new RaidKeyTracker("arrows");
+
+	//check for locally saved control setting
+	var savedControlSetting = JSON.parse(persistentStorage.getItem("savedControlSetting"));
+	if (savedControlSetting) {
+		try {
+			console.log("Setting saved control setting");
+			setPlayerControlMode(savedControlSetting);
+		} catch(error) {
+			console.log(error);
+		}
+	} else {
+		console.log("No saved control setting detected");
+	}
+
 	//check for locally saved keybinds and apply if found
 	var savedKeybinds = JSON.parse(persistentStorage.getItem("savedKeybinds"));
 	var savedHotkeyTextForChangedKeybinds = JSON.parse(persistentStorage.getItem("savedHotkeyTextForChangedKeybinds"));
@@ -139,8 +156,6 @@ function initializeVariables() {
 	//set initial mouse position to the player so the player doesn't immediately start traveling somewhere
 	mouseX = player.getX();
 	mouseY = player.getY();
-
-	wasdKeys = new Keys("wasd");
 
 	changeKeybindState = false;
 	buttonIdKeybindBeingChanged = null;
@@ -194,6 +209,8 @@ function changePlayerName() {
 function setEventHandlers() {
 	$("body").mousemove(raidAreaMouseMove);
 	$("#wasdButton").click(wasdButtonClick);
+	$("#arrowKeysButton").click(arrowKeysButtonClick);
+
 	$("#mouseButton").click(mouseButtonClick);
 	$(".skillButton").click(skillButtonClick);
 
@@ -218,7 +235,7 @@ function setEventHandlers() {
 
 	//$(document). bind("contextmenu",function(e){ return false; });
 	$(window).contextmenu(function() {
-		wasdKeys.reset();
+		controlKeys.reset();
 	});
 }
 
@@ -436,7 +453,7 @@ function addRankColorToElement(element, rank) {
 }
 
 var GIST_ID = "6a361d54c3124969fb151a3f5f4a31b9";
-var GIST_ACCESS_TOKEN_A = "ghp_jqrkt8x517p5d";
+var GIST_ACCESS_TOKEN_A = "ghp_jqrkt 8x517p5d";
 var GIST_ACCESS_TOKEN_B = "aCLY2q1DZMMdcX7X61rGv7r";
 var GIST_FILE_NAME = "raidLeaderboard.csv";
 
@@ -591,6 +608,13 @@ function setPersistentStorageKeyValueInItem(item, key, value) {
 	persistentStorage.setItem(item, JSON.stringify(savedItem));
 }
 
+//prevent keys from triggering default browser actions
+window.addEventListener("keydown", function(e) {
+    if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+}, false);
+
 //handler when a key is pressed
 function keyDownHandler(e) {
 	keyOrMousePressed(e, "key");
@@ -619,7 +643,7 @@ function keyOrMousePressed(e, source) {
 		buttonIdBeingChanged = null;
 		changeKeybindState = false;
 	} else {
-		wasdKeys.onKeyDown(e);
+		controlKeys.onKeyDown(e);
 		$.each(keybinds, function(buttonID,keyNum) {
 			if (keyNum == keycode) {
 				skillSelectedID = buttonID;
@@ -632,7 +656,7 @@ function keyOrMousePressed(e, source) {
 
 //handler for when a key is released
 function keyUpHandler(e) {
-	wasdKeys.onKeyUp(e);
+	controlKeys.onKeyUp(e);
 }
 
 function skillButtonClick() {
@@ -646,13 +670,42 @@ function skillButtonClick() {
 }
 
 function mouseButtonClick() {
-	player.setControlMode(1);
+	setPlayerControlMode("mouse");
 }
 
 function wasdButtonClick() {
-	player.setControlMode(2);
+	setPlayerControlMode("wasd");
 }
 
+function arrowKeysButtonClick() {
+	setPlayerControlMode("arrows");
+}
+
+function setPlayerControlMode(mode) {
+	if (mode != "arrows" && mode != "wasd" && mode != "mouse") {
+		console.log("Tried to set bad player control mode: " + mode)
+		return;
+	}
+	$("#controlSelect button").removeClass("controlModeSelected");
+	switch (mode) {
+		case "wasd":
+			$("#wasdButton").addClass("controlModeSelected");
+			controlKeys.setType("wasd");
+			player.setControlMode(2);
+			break;
+		case "arrows":
+			$("#arrowKeysButton").addClass("controlModeSelected");
+			controlKeys.setType("arrows");
+			player.setControlMode(2);
+			break;
+		case "mouse":
+			$("#mouseButton").addClass("controlModeSelected");
+			player.setControlMode(1);
+			break;
+	}
+	persistentStorage.setItem("savedControlSetting", JSON.stringify(mode));
+	playerMoved = false;
+}
 //for manual use in case saved settings get messed up.
 //Could make switching to the more persistent setting safe
 function clearPersistentStorage() {
@@ -1059,9 +1112,12 @@ function update(dt) {
 		return;
 	}
 
-	player.update(dt, mouseX, mouseY, wasdKeys, player, boss, projectiles, effects, gameStarted, ctx);
+	player.update(dt, mouseX, mouseY, controlKeys, player, boss, projectiles, effects, gameStarted, ctx);
 	boss.update(dt, player, boss, effects, ctx);
 
+	if (player.isMoving) {
+		playerMoved = true;
+	}
 
 	if (!gameStarted) {
 		checkForDifficultySelected();
@@ -1114,6 +1170,24 @@ function draw() {
 	//clear the board
 	ctx.fillStyle = "lightgray";
 	ctx.clearRect(0, 0, canvas[0].width, canvas[0].height);
+
+	if (!playerMoved) {
+		ctx.save();
+		ctx.font = '24px Verdana';
+		ctx.fillStyle = "blue";
+		ctx.textAlign = "center";
+		ctx.lineWidth = 2;
+		var movePrompt = "";
+		if (player.getControlMode() == 1) {
+			movePrompt = "Mouse to move";
+		} else if (controlKeys.getType() == "wasd") {
+			movePrompt = "WASD to move";
+		} else if (controlKeys.getType() == "arrows") {
+			movePrompt = "Arrow Keys to move";
+		}
+		ctx.fillText(movePrompt, ctx.canvas.width/2, 80);
+		ctx.restore();
+	}
 
 	//draw difficulty selector circles
 	if (!gameStarted) {
@@ -1178,8 +1252,9 @@ function draw() {
 	}
 
 	//player health bar
+	var healthBarWidth = 560;
 	ctx.beginPath();
-	ctx.rect(20,ctx.canvas.height - 15,Math.max(0,560 * (player.currentHealth / player.maxHealth)),10);
+	ctx.rect(20,ctx.canvas.height - 15,Math.max(0,healthBarWidth * (player.currentHealth / player.maxHealth)),10);
 	ctx.fillStyle = "blue";
 	if (player.currentHealth < player.maxHealth) {
 		ctx.fillStyle = "green";
@@ -1198,8 +1273,20 @@ function draw() {
 	ctx.beginPath();
 	ctx.lineWidth = 2;
 	ctx.strokeStyle = "black";
-	ctx.rect(20,ctx.canvas.height - 15,560,10);
+	ctx.rect(20,ctx.canvas.height - 15,healthBarWidth,10);
 	ctx.stroke();
+
+	//ctx.arc(this.x, this.y, (this.radius) * ((this.gcdCooldown - this.gcdTracker) / this.gcdCooldown), 0, 2 * Math.PI, true);
+	//gcd
+	var gcdBarWidth = healthBarWidth + 2;
+	ctx.beginPath();
+	ctx.fillStyle = "black";
+	if (player.getStatus("Status_Bloodlust")) {
+		ctx.fillStyle = "purple";
+	}
+	var gcdPercent = (player.gcdCooldown - player.gcdTracker) / player.gcdCooldown;
+	ctx.rect(19 + gcdBarWidth * ((1 - gcdPercent) / 2), ctx.canvas.height - 18, gcdPercent * gcdBarWidth,2);
+	ctx.fill();
 
 	//game over messages
 	if (!boss.isAlive()) { //You Win!

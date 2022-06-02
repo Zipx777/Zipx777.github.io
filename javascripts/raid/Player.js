@@ -439,7 +439,7 @@ class Player {
 		}
 
 		if (this.gcdTracker > 0) {
-			this.gcdTracker = Math.min(this.gcdTracker - dt, this.gcdCooldown);
+			this.gcdTracker = Math.max(Math.min(this.gcdTracker - dt, this.gcdCooldown), 0);
 		}
 
 		$.each(this.skills, function(i,skill) {
@@ -513,19 +513,6 @@ class Player {
 			ctx.fill();
 		}
 		ctx.restore();
-
-		//gcd
-		if (this.gcdTracker > 0) {
-			//ring grow from center
-			ctx.beginPath();
-			ctx.strokeStyle = this.gcdColor;
-			ctx.globalAlpha = Math.min(1, Math.max(0, (this.gcdTracker / this.gcdCooldown)));
-			ctx.lineWidth = 1;
-			ctx.arc(this.x, this.y, (this.radius) * ((this.gcdCooldown - this.gcdTracker) / this.gcdCooldown), 0, 2 * Math.PI, true);
-			ctx.stroke();
-		}
-		ctx.restore();
-		ctx.globalAlpha = 1;
 
 		//stormbringer
 		if (this.stormbringerBuff) {

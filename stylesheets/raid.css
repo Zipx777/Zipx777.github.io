@@ -35,6 +35,11 @@
 	clear: left;
 }
 
+.controlModeSelected {
+	background-color: gray;
+	color: white;
+}
+
 .skillButton {
 	height: 50px;
 	width: 50px;
