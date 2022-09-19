@@ -467,8 +467,8 @@ function addRankColorToElement(element, rank) {
 }
 
 var GIST_ID = "6a361d54c3124969fb151a3f5f4a31b9";
-var GIST_ACCESS_TOKEN_A = "ghp_5OFfpcX12d1rvdP";
-var GIST_ACCESS_TOKEN_B = "Emoapzz203kHvrx4fRsas";
+var GIST_ACCESS_TOKEN_A = "ghp_6OaKzU8qYpkOYP";
+var GIST_ACCESS_TOKEN_B = "fwRW5u1TgtqIT9hY3obTN4";
 var GIST_FILE_NAME = "raidLeaderboard.csv";
 
 //used to show leaderboard without submitting a score
