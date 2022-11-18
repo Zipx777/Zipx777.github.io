@@ -1,6 +1,6 @@
-var rows,
-		columns,
-		del,
+var ROWS,
+		COLUMNS,
+		DEL,
 		boardState_horizontalLines,
 		boardState_verticalLines,
 		boardState_tiles;
@@ -15,11 +15,11 @@ $(function() {
 });
 
 function initializeVariables() {
-	rows = 7;
-	columns = 7;
+	ROWS = 7;
+	COLUMNS = 7;
 
-	//deliniator for element IDs on the grid
-	del = "_";
+	//DELiniator for element IDs on the grid
+	DEL = "_";
 
 	boardState_tiles = [
 		[ , , , , , , ,],
@@ -41,20 +41,20 @@ function initializeVariables() {
 		[3, , , , ,1, ]
 	];
 */
-	boardState_horizontalLines = new Array(rows + 1);
-	for (var i = 0; i < rows + 1; i++) {
-		boardState_horizontalLines[i] = new Array(columns);
+	boardState_horizontalLines = new Array(ROWS + 1);
+	for (var i = 0; i < ROWS + 1; i++) {
+		boardState_horizontalLines[i] = new Array(COLUMNS);
 	}
 
-	boardState_verticalLines = new Array(rows);
-	for (var i = 0; i < rows; i++) {
-		boardState_verticalLines[i] = new Array(columns + 1);
+	boardState_verticalLines = new Array(ROWS);
+	for (var i = 0; i < ROWS; i++) {
+		boardState_verticalLines[i] = new Array(COLUMNS + 1);
 	}
 }
 
 function initializeBoard() {
 	//top
-	for (var i = 0; i < columns; i++) {
+	for (var i = 0; i < COLUMNS; i++) {
 		var newConnector = $("<div></div>");
 		newConnector.addClass("connector-square");
 		$("#loopyBoard").append(newConnector);
@@ -62,7 +62,7 @@ function initializeBoard() {
 		var newHorizLine = $("<div></div>");
 		newHorizLine.addClass("horizontal-line");
 		newHorizLine.addClass("line-dormant");
-		var idStr = "h" + del + "0" + del + i;
+		var idStr = "h" + DEL + "0" + DEL + i;
 		newHorizLine.attr('id', idStr);
 		$("#loopyBoard").append(newHorizLine);
 
@@ -73,12 +73,12 @@ function initializeBoard() {
 	$("#loopyBoard").append(newConnector);
 
 	//repeated body + bottom
-	for (var i = 0; i < columns; i++) {
-		for (var j = 0; j < rows; j++) {
+	for (var i = 0; i < COLUMNS; i++) {
+		for (var j = 0; j < ROWS; j++) {
 			var newVertLine = $("<div></div>");
 			newVertLine.addClass("vertical-line");
 			newVertLine.addClass("line-dormant");
-			var idStr = "v" + del + i + del + j;
+			var idStr = "v" + DEL + i + DEL + j;
 			newVertLine.attr('id', idStr);
 			$("#loopyBoard").append(newVertLine);
 
@@ -86,19 +86,19 @@ function initializeBoard() {
 
 			var newTile = $("<div></div>");
 			newTile.addClass("tile");
-			newTile.attr("id", "t" + del + i + del + j);
+			newTile.attr("id", "t" + DEL + i + DEL + j);
 			newTile.text(boardState_tiles[i][j]);
 			$("#loopyBoard").append(newTile);
 		}
 		var newVertLine = $("<div></div>");
 		newVertLine.addClass("vertical-line");
 		newVertLine.addClass("line-dormant");
-		newVertLine.attr('id', "v" + del + i + del + rows);
+		newVertLine.attr('id', "v" + DEL + i + DEL + ROWS);
 		$("#loopyBoard").append(newVertLine);
 
-		boardState_verticalLines[i][rows] = 0;
+		boardState_verticalLines[i][ROWS] = 0;
 
-		for (var j = 0; j < rows; j++) {
+		for (var j = 0; j < ROWS; j++) {
 			var newConnector = $("<div></div>");
 			newConnector.addClass("connector-square");
 			$("#loopyBoard").append(newConnector);
@@ -106,7 +106,7 @@ function initializeBoard() {
 			var newHorizLine = $("<div></div>");
 			newHorizLine.addClass("horizontal-line");
 			newHorizLine.addClass("line-dormant");
-			newHorizLine.attr('id', "h" + del + (i + 1) + del + j);
+			newHorizLine.attr('id', "h" + DEL + (i + 1) + DEL + j);
 			$("#loopyBoard").append(newHorizLine);
 
 			boardState_horizontalLines[i + 1][j] = 0;
@@ -129,24 +129,26 @@ function setEventHandlers() {
 	$(".tile").mousedown(tileClick);
 }
 
-//if tile is a zero, QoL set all lines to off
+//if tile is not yet revealed, reveal it and add one to score
 function tileClick(event) {
-		var tileNum = parseInt($(this).text());
-		if (tileNum == 0) {
-			var tileEdges = getTileEdges($(this));
-			for (var i = 0; i < tileEdges.length; i++) {
-				setLineState(tileEdges[i], "off");
-			}
-		}
+	var id = $(this).attr('id');
+	var idValues = id.split(DEL);
+	var tileRow = parseInt(idValues[1]);
+	var tileCol = parseInt(idValues[2]);
+
+	if (!$(this).hasClass("revealed")) {
+		$(this).addClass("revealed");
+		$(this).text(boardState_tiles[tileRow][tileCol]);
+	}
 }
 
 function lineClick(event) {
 
 	var id = $(this).attr('id');
-	var idValues = id.split(del);
+	var idValues = id.split(DEL);
 	var lineType = idValues[0];
-	var lineX = parseInt(idValues[1]);
-	var lineY = parseInt(idValues[2]);
+	var lineRow = parseInt(idValues[1]);
+	var lineCol = parseInt(idValues[2]);
 
 	var lineArray;
 	if (lineType == "h") {
@@ -179,22 +181,22 @@ function lineClick(event) {
 	var tile2EdgesAreValid = false;
 
 	if (lineType == "h") {
-		var tile1ToCheck = [lineX, lineY];
-		var tile2ToCheck = [lineX - 1, lineY];
-		if (lineX == 0) {
+		var tile1ToCheck = [lineRow, lineCol];
+		var tile2ToCheck = [lineRow - 1, lineCol];
+		if (lineRow == 0) {
 			tile1EdgesAreValid = tileEdgeCountIsValid(tile1ToCheck[0], tile1ToCheck[1]);
-		} else if (lineX == rows) {
+		} else if (lineRow == COLUMNS) {
 			tile2EdgesAreValid = tileEdgeCountIsValid(tile2ToCheck[0], tile2ToCheck[1]);
 		} else {
 			tile1EdgesAreValid = tileEdgeCountIsValid(tile1ToCheck[0], tile1ToCheck[1]);
 			tile2EdgesAreValid = tileEdgeCountIsValid(tile2ToCheck[0], tile2ToCheck[1]);
 		}
 	} else if (lineType == "v") {
-		var tile1ToCheck = [lineX, lineY];
-		var tile2ToCheck = [lineX, lineY - 1];
-		if (lineY == 0) {
+		var tile1ToCheck = [lineRow, lineCol];
+		var tile2ToCheck = [lineRow, lineCol - 1];
+		if (lineCol == 0) {
 			tile1EdgesAreValid = tileEdgeCountIsValid(tile1ToCheck[0], tile1ToCheck[1]);
-		} else if (lineY == columns) {
+		} else if (lineCol == ROWS) {
 			tile2EdgesAreValid = tileEdgeCountIsValid(tile2ToCheck[0], tile2ToCheck[1]);
 		} else {
 			tile1EdgesAreValid = tileEdgeCountIsValid(tile1ToCheck[0], tile1ToCheck[1]);
@@ -204,8 +206,8 @@ function lineClick(event) {
 		alert("ahhhhhhhhhhhhhhhh");
 	}
 
-	var tile1ID = "#t" + del + tile1ToCheck[0] + del + tile1ToCheck[1];
-	var tile2ID = "#t" + del + tile2ToCheck[0] + del + tile2ToCheck[1];
+	var tile1ID = "#t" + DEL + tile1ToCheck[0] + DEL + tile1ToCheck[1];
+	var tile2ID = "#t" + DEL + tile2ToCheck[0] + DEL + tile2ToCheck[1];
 	var tileElement = $(tile1ID);
 	if (tile1EdgesAreValid) {
 		if (tileElement.hasClass("tile-error")) {
@@ -227,40 +229,42 @@ function lineClick(event) {
 			tileElement.addClass("tile-error");
 		}
 	}
+
+	checkForGameEnd();
 }
 
 //returns an array of tiles cardinally adjacent to one
 function getAdjacentTiles(tile) {
 	var tileID = tile.attr("id");
-	var idSplit = tileID.split(del);
-	var tileX = parseInt(idSplit[1]);
-	var tileY = parseInt(idSplit[2]);
+	var idSplit = tileID.split(DEL);
+	var tileRow = parseInt(idSplit[1]);
+	var tileCol = parseInt(idSplit[2]);
 
 	var adjacentTiles = [];
 
-	var leftTileX = tileX - 1;
-	var rightTileX = tileX + 1;
-	var topTileY = tileY - 1;
-	var botTileY = tileY + 1;
+	var topTileRow = tileRow - 1;
+	var botTileRow = tileRow + 1;
+	var leftTileCol = tileCol - 1;
+	var rightTileCol = tileCol + 1;
 
-	if (leftTileX >= 0) {
-		var leftTileId = "#t" + del + leftTileX + del + tileY;
-		adjacentTiles.push($(leftTileId));
-	}
-
-	if (rightTileX < columns) {
-		var rightTileId = "#t" + del + rightTileX + del + tileY;
-		adjacentTiles.push($(rightTileId));
-	}
-
-	if (topTileY >= 0) {
-		var topTileId = "#t" + del + tileX + del + topTileY;
+	if (topTileRow >= 0) {
+		var topTileId = "#t" + DEL + topTileRow + DEL + tileCol;
 		adjacentTiles.push($(topTileId));
 	}
 
-	if (botTileY < rows) {
-		var botTileId = "#t" + del + tileX + del + botTileY;
+	if (botTileRow < COLUMNS) {
+		var botTileId = "#t" + DEL + botTileRow + DEL + tileCol;
 		adjacentTiles.push($(botTileId));
+	}
+
+	if (leftTileCol >= 0) {
+		var leftTileId = "#t" + DEL + tileRow + DEL + leftTileCol;
+		adjacentTiles.push($(leftTileId));
+	}
+
+	if (rightTileCol < ROWS) {
+		var rightTileId = "#t" + DEL + tileRow + DEL + rightTileCol;
+		adjacentTiles.push($(rightTileId));
 	}
 
 	return adjacentTiles;
@@ -269,14 +273,14 @@ function getAdjacentTiles(tile) {
 //returns an array with the 4 edges surrounding a tile
 function getTileEdges(tile) {
 	var tileID = tile.attr("id");
-	var idSplit = tileID.split(del);
-	var tileX = parseInt(idSplit[1]);
-	var tileY = parseInt(idSplit[2]);
+	var idSplit = tileID.split(DEL);
+	var tileRow = parseInt(idSplit[1]);
+	var tileCol = parseInt(idSplit[2]);
 
-	var vEdge1 = $("#v" + del + tileX + del + tileY);
-	var vEdge2 = $("#v" + del + tileX + del + (tileY + 1));
-	var hEdge1 = $("#h" + del + tileX + del + tileY);
-	var hEdge2 = $("#h" + del + (tileX + 1) + del + tileY);
+	var vEdge1 = $("#v" + DEL + tileRow + DEL + tileCol);
+	var vEdge2 = $("#v" + DEL + tileRow + DEL + (tileCol + 1));
+	var hEdge1 = $("#h" + DEL + tileRow + DEL + tileCol);
+	var hEdge2 = $("#h" + DEL + (tileRow + 1) + DEL + tileCol);
 
 	var edges = [vEdge1, vEdge2, hEdge1, hEdge2];
 	return edges;
@@ -284,22 +288,19 @@ function getTileEdges(tile) {
 
 //return true if tile has equal or less edges filled in
 //return false if tile has more edges filled in than its number
-//return false if too many lines have been made dormant
-function tileEdgeCountIsValid(x,y) {
-	x = parseInt(x);
-	y = parseInt(y);
-
-	var tileElement = $("#t" + del + x + del + y);
-	var tileNum = tileElement.text();
+//return false if too many lines have been turned off
+function tileEdgeCountIsValid(tileRow, tileCol) {
+	var tileElement = $("#t" + DEL + tileRow + DEL + tileCol);
+	var tileNum = boardState_tiles[tileRow][tileCol];
 
 	var committedCount = 0;
 	var availableCount = 0;
 
 	var edgeValues = [
-		boardState_horizontalLines[x][y],
-		boardState_horizontalLines[(x+1)][y],
-		boardState_verticalLines[x][y],
-		boardState_verticalLines[x][(y+1)]
+		boardState_horizontalLines[tileRow][tileCol],
+		boardState_horizontalLines[(tileRow+1)][tileCol],
+		boardState_verticalLines[tileRow][tileCol],
+		boardState_verticalLines[tileRow][(tileCol+1)]
 	];
 
 	for (var i = 0; i < edgeValues.length; i++) {
@@ -322,10 +323,10 @@ function tileEdgeCountIsValid(x,y) {
 
 function getLineState(line) {
 	var lineID = line.attr("id");
-	var idSplit = lineID.split(del);
+	var idSplit = lineID.split(DEL);
 	var lineType = idSplit[0];
-	var lineX = parseInt(idSplit[1]);
-	var lineY = parseInt(idSplit[2]);
+	var lineRow = parseInt(idSplit[1]);
+	var lineCol = parseInt(idSplit[2]);
 	var lineArray;
 	if (lineType == "h") {
 		lineArray = boardState_horizontalLines;
@@ -333,7 +334,7 @@ function getLineState(line) {
 		lineArray = boardState_verticalLines;
 	}
 
-	var state = lineArray[lineX][lineY];
+	var state = lineArray[lineRow][lineCol];
 	if (state == 1) {
 		return "on";
 	} else if (state == 0) {
@@ -360,10 +361,10 @@ function setLineState(line, state) {
 		alert("tried to set line to invalid state");
 	}
 	var lineID = line.attr("id");
-	var idSplit = lineID.split(del);
+	var idSplit = lineID.split(DEL);
 	var lineType = idSplit[0];
-	var lineX = parseInt(idSplit[1]);
-	var lineY = parseInt(idSplit[2]);
+	var lineRow = parseInt(idSplit[1]);
+	var lineCol = parseInt(idSplit[2]);
 	var lineArray;
 	if (lineType == "h") {
 		lineArray = boardState_horizontalLines;
@@ -371,7 +372,7 @@ function setLineState(line, state) {
 		lineArray = boardState_verticalLines;
 	}
 
-	lineArray[lineX][lineY] = stateNum;
+	lineArray[lineRow][lineCol] = stateNum;
 	line.addClass("line-" + state);
 }
 
@@ -404,12 +405,12 @@ var tileSubtractCandidatesUsed = [];
 
 function initiateLoopCreation() {
 	for (var i = 0; i < boardState_horizontalLines[0].length; i++) {
-		var hTopLine = $("#h" + del + "0" + del + i);
-		var topTile = $("#t" + del + "0" + del + i);
+		var hTopLine = $("#h" + DEL + "0" + DEL + i);
+		var topTile = $("#t" + DEL + "0" + DEL + i);
 		setLineState(hTopLine, "on");
 
-		var hBotLine = $("#h" + del + (boardState_horizontalLines.length - 1) + del + i);
-		var botTile = $("#t" + del + (boardState_horizontalLines.length - 2) + del + i)
+		var hBotLine = $("#h" + DEL + (boardState_horizontalLines.length - 1) + DEL + i);
+		var botTile = $("#t" + DEL + (boardState_horizontalLines.length - 2) + DEL + i)
 		setLineState(hBotLine, "on");
 
 		tileSubtractCandidates.push(topTile);
@@ -417,12 +418,12 @@ function initiateLoopCreation() {
 	}
 
 	for (var i = 0; i < boardState_verticalLines.length; i++) {
-		var vLeftLine = $("#v" + del + i + del + "0");
-		var leftTile = $("#t" + del + i + del + "0");
+		var vLeftLine = $("#v" + DEL + i + DEL + "0");
+		var leftTile = $("#t" + DEL + i + DEL + "0");
 		setLineState(vLeftLine, "on");
 
-		var vRightLine = $("#v" + del + i + del + (boardState_verticalLines[0].length - 1));
-		var rightTile = $("#t" + del + i + del + (boardState_verticalLines[0].length - 2));
+		var vRightLine = $("#v" + DEL + i + DEL + (boardState_verticalLines[0].length - 1));
+		var rightTile = $("#t" + DEL + i + DEL + (boardState_verticalLines[0].length - 2));
 		setLineState(vRightLine, "on");
 
 		//don't re-add the corners
@@ -455,12 +456,11 @@ function removeRandomCandidate() {
 	var randomTileEdges = getTileEdges(randomTile);
 	//track horizontal/vertical lines that are "on" around the potential new tile
 	//if the difference between h and v lines on are exactly 2, we cannot use this and have to redo
-	//it would split the board if
 	var hOn = 0;
 	var vOn = 0;
 	for (var i = 0; i < randomTileEdges.length; i++) {
 		var state = getLineState(randomTileEdges[i]);
-		var lineType = randomTileEdges[i].attr("id").split(del)[0];
+		var lineType = randomTileEdges[i].attr("id").split(DEL)[0];
 		if (state == "on") {
 			setLineState(randomTileEdges[i], "dormant");
 			if (lineType == "h") {
@@ -528,14 +528,14 @@ function tileIdExistsInArray(tileId, array) {
 
 //check lines around each vertices, make sure there are never more than 2 because that would be invalid
 function checkLineCountAtVertices() {
-	for (var i = 1; i < rows; i++) {
-		for (var k = 1; k < columns; k++) {
+	for (var i = 1; i < ROWS; i++) {
+		for (var k = 1; k < COLUMNS; k++) {
 			var lineOnCount = 0;
 
-			var rightLineState = getLineState($("#h" + del + i + del + k));
-			var leftLineState = getLineState($("#h" + del + i + del + (k - 1)));
-			var botLineState = getLineState($("#v" + del + i + del + k));
-			var topLineState = getLineState($("#v" + del + (i - 1) + del + k));
+			var rightLineState = getLineState($("#h" + DEL + i + DEL + k));
+			var leftLineState = getLineState($("#h" + DEL + i + DEL + (k - 1)));
+			var botLineState = getLineState($("#v" + DEL + i + DEL + k));
+			var topLineState = getLineState($("#v" + DEL + (i - 1) + DEL + k));
 
 			if (rightLineState == "on") {
 				lineOnCount++;
@@ -552,6 +552,7 @@ function checkLineCountAtVertices() {
 
 			if (lineOnCount > 2) {
 				return false;
+				console.log("fail");
 			}
 		}
 	}
@@ -566,9 +567,9 @@ function testGenerateGrid() {
 	}
 
 	//populate the grid with numbers based on the randomly generated loop
-	for (var i = 0; i < rows; i++) {
-		for (var k = 0; k < columns; k++) {
-			var nextTile = $("#t" + del + i + del + k);
+	for (var i = 0; i < ROWS; i++) {
+		for (var k = 0; k < COLUMNS; k++) {
+			var nextTile = $("#t" + DEL + i + DEL + k);
 			var tileEdges = getTileEdges(nextTile);
 			var lineOnCount = 0;
 			for (var j = 0; j < tileEdges.length; j++) {
@@ -580,18 +581,44 @@ function testGenerateGrid() {
 			boardState_tiles[i][k] = lineOnCount;
 		}
 	}
+
+	resetVisibleBoard();
 }
 
-function test2() {
-	var randX = Math.floor(Math.random() * columns);
-	var randY = Math.floor(Math.random() * rows);
-	var saveVar = boardState_tiles[randX][randY];
-	$("#t" + del + randX + del + randY).text("");
-	boardState_tiles[randX][randY] = "";
+//set all lines back to dormant
+//clear all tile numbers
+function resetVisibleBoard() {
+	$(".tile").text("");
 
+	$(".horizontal-line").each(function() {
+		var el = $(this);
+		setLineState(el, "dormant");
+	});
 
+	$(".vertical-line").each(function() {
+		var el = $(this);
+		setLineState(el, "dormant");
+	});
 }
 
-function validateBoardComplete() {
-	var verticesValid = checkLineCountAtVertices();
+function checkForGameEnd() {
+	var gameWon = true;
+	for (var currentRow = 0; currentRow < ROWS; currentRow++) {
+		for (var currentCol = 0; currentCol < COLUMNS; currentCol++) {
+			var nextTile = $("#t" + DEL + currentRow + DEL + currentCol);
+			var nextTileEdges = getTileEdges(nextTile);
+			var onCount = 0;
+			for (var i = 0; i < nextTileEdges.length; i++) {
+				if (nextTileEdges[i].hasClass("line-on")) {
+					onCount++;
+				}
+			}
+			if (onCount != boardState_tiles[currentRow][currentCol]) {
+				gameWon = false;
+			}
+		}
+	}
+	if (gameWon) {
+		alert("you win!");
+	}
 }
