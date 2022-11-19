@@ -1,6 +1,7 @@
 var ROWS,
 		COLUMNS,
 		DEL,
+		SCORE,
 		boardState_horizontalLines,
 		boardState_verticalLines,
 		boardState_tiles;
@@ -17,6 +18,8 @@ $(function() {
 function initializeVariables() {
 	ROWS = 7;
 	COLUMNS = 7;
+
+	SCORE = 0;
 
 	//DELiniator for element IDs on the grid
 	DEL = "_";
@@ -136,15 +139,62 @@ function tileClick(event) {
 	var tileRow = parseInt(idValues[1]);
 	var tileCol = parseInt(idValues[2]);
 
-	if (!$(this).hasClass("revealed")) {
-		$(this).addClass("revealed");
-		$(this).text(boardState_tiles[tileRow][tileCol]);
+	var mouseX = event.pageX;
+	var mouseY = event.pageY;
+	var tileOffset = $(this).offset();
+	var tileHeight = $(this).height();
+	var tileWidth = $(this).width();
+
+	var relX = mouseX - tileOffset.left;
+	var relY = mouseY - tileOffset.top;
+
+	var checkX = relX - (tileWidth / 2);
+	var checkY = relY - (tileHeight / 2);
+
+	var lineMargin = 15;
+	var lineClickTriggered = false;
+	if (Math.abs(checkX) > Math.abs(checkY)) {
+		if (Math.abs(checkX) > lineMargin) {
+			if (checkX >= 0) {
+				console.log("right");
+				triggerLineClick($("#v" + DEL + tileRow + DEL + (tileCol + 1)));
+				lineClickTriggered = true;
+			} else {
+				console.log("left");
+				triggerLineClick($("#v" + DEL + tileRow + DEL + tileCol));
+				lineClickTriggered = true;
+			}
+		}
+	} else {
+		if (Math.abs(checkY) > lineMargin) {
+			if (checkY >= 0) {
+				console.log("bottom");
+				triggerLineClick($("#h" + DEL + (tileRow + 1) + DEL + tileCol));
+				lineClickTriggered = true;
+			} else {
+				console.log("top");
+				triggerLineClick($("#h" + DEL + tileRow + DEL + tileCol));
+				lineClickTriggered = true;
+			}
+		}
+	}
+
+	if (!lineClickTriggered) {
+		if (!$(this).hasClass("revealed")) {
+			$(this).addClass("revealed");
+			$(this).text(boardState_tiles[tileRow][tileCol]);
+			SCORE++;
+		}
 	}
 }
 
 function lineClick(event) {
+	var lineElement = $(this);
+	triggerLineClick(lineElement);
+}
 
-	var id = $(this).attr('id');
+function triggerLineClick(lineElement) {
+	var id = lineElement.attr('id');
 	var idValues = id.split(DEL);
 	var lineType = idValues[0];
 	var lineRow = parseInt(idValues[1]);
@@ -161,18 +211,18 @@ function lineClick(event) {
 
 	switch(event.which) {
 		case 1:
-			if ($(this).hasClass("line-dormant")) {
-				setLineState($(this), "on");
-			} else if ($(this).hasClass("line-on")) {
-				setLineState($(this), "off");
-			} else if ($(this).hasClass("line-off")) {
-				setLineState($(this), "dormant");
+			if (lineElement.hasClass("line-dormant")) {
+				setLineState(lineElement, "on");
+			} else if (lineElement.hasClass("line-on")) {
+				setLineState(lineElement, "off");
+			} else if (lineElement.hasClass("line-off")) {
+				setLineState(lineElement, "dormant");
 			} else {
 				alert("what happened here, how did this happen, a line is missing a class");
 			}
 			break;
 		case 3:
-			setLineState($(this), "off");
+			setLineState(lineElement, "off");
 			break;
 		default:
 	}
@@ -447,7 +497,7 @@ function initiateLoopCreation() {
 
 function removeRandomCandidate() {
 	if (tileSubtractCandidates.length == 0) {
-		console.log("NO CANDIDATES LEFT");
+		//console.log("NO CANDIDATES LEFT");
 		return;
 	}
 	var randomTileNumber = Math.floor(Math.random() * tileSubtractCandidates.length);
@@ -552,7 +602,6 @@ function checkLineCountAtVertices() {
 
 			if (lineOnCount > 2) {
 				return false;
-				console.log("fail");
 			}
 		}
 	}
@@ -619,6 +668,6 @@ function checkForGameEnd() {
 		}
 	}
 	if (gameWon) {
-		alert("you win!");
+		alert("you win! score = " + SCORE);
 	}
 }
